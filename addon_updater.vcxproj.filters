@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="src\main.cc" />
+    <ClCompile Include="src\pch.cc" />
+    <ClCompile Include="src\http_client.cc" />
+    <ClCompile Include="src\wow_path.cc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\pch.h" />
+    <ClInclude Include="src\http_client.h" />
+    <ClInclude Include="src\singleton.h" />
+    <ClInclude Include="src\wow_path.h" />
+  </ItemGroup>
+</Project>
