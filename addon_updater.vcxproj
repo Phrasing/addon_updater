@@ -82,7 +82,7 @@
     <IntDir>$(SolutionDir)bin\build\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)-$(Configuration)</TargetName>
     <IncludePath>C:\Libraries\boost_1_74_0;$(SolutionDir)third_party\openssl\include;$(SolutionDir)third_party\uri\include;$(SolutionDir)third_party\protobuf\$(Configuration)\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Libraries\boost_1_74_0\lib64-msvc-14.2;$(SolutionDir)third_party\openssl\lib\$(Platform)\$(Configuration);$(SolutionDir)third_party\uri\lib\$(Platform)\$(Configuration);$(SolutionDir)third_party\protobuf\$(Configuration)\include;$(LibraryPath)</LibraryPath>
+    <LibraryPath>C:\Libraries\boost_1_74_0\lib64-msvc-14.2;$(SolutionDir)third_party\openssl\lib\$(Platform)\$(Configuration);$(SolutionDir)third_party\uri\lib\$(Platform)\$(Configuration);$(SolutionDir)third_party\protobuf\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -90,7 +90,7 @@
     <IntDir>$(SolutionDir)bin\build\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)-$(Configuration)</TargetName>
     <IncludePath>C:\Libraries\boost_1_74_0;$(SolutionDir)third_party\openssl\include;$(SolutionDir)third_party\uri\include;$(SolutionDir)third_party\protobuf\$(Configuration)\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Libraries\boost_1_74_0\lib64-msvc-14.2;$(SolutionDir)third_party\openssl\lib\$(Platform)\$(Configuration);$(SolutionDir)third_party\uri\lib\$(Platform)\$(Configuration);$(SolutionDir)third_party\protobuf\$(Configuration)\include;$(LibraryPath)</LibraryPath>
+    <LibraryPath>C:\Libraries\boost_1_74_0\lib64-msvc-14.2;$(SolutionDir)third_party\openssl\lib\$(Platform)\$(Configuration);$(SolutionDir)third_party\uri\lib\$(Platform)\$(Configuration);$(SolutionDir)third_party\protobuf\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -132,6 +132,7 @@
       <DisableSpecificWarnings>4244</DisableSpecificWarnings>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -158,6 +159,7 @@
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <OmitFramePointers>true</OmitFramePointers>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -169,6 +171,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\addon.cc" />
     <ClCompile Include="src\http_client.cc" />
     <ClCompile Include="src\main.cc" />
     <ClCompile Include="src\pch.cc">
@@ -177,13 +180,19 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="src\wow_path.cc" />
+    <ClCompile Include="src\product_db.pb.cc">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\products.cc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\addon.h" />
     <ClInclude Include="src\http_client.h" />
     <ClInclude Include="src\pch.h" />
+    <ClInclude Include="src\product_db.pb.h" />
     <ClInclude Include="src\singleton.h" />
-    <ClInclude Include="src\wow_path.h" />
+    <ClInclude Include="src\products.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

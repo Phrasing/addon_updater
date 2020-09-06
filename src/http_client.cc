@@ -17,13 +17,12 @@ AsyncHttpClient::AsyncHttpClient(const net::any_io_executor& ex,
   (*res_).body_limit(std::numeric_limits<std::uint64_t>::max());
 }
 
-void AsyncHttpClient::GetImpl(std::string_view url,
-                              const Parameters& parameters,
-                              const Headers& headers) {
+void AsyncHttpClient::GetImpl(std::string_view url, const Headers& headers) {
   const auto uri = network::uri{url.data()};
 
-  auto host = std::string{uri.host().data(), uri.host().length()};
-  auto path = std::string{uri.path().data(), uri.path().length()};
+  const auto host = std::string{uri.host().data(), uri.host().length()};
+  const auto path = std::string{uri.path().data(), uri.path().length()};
+  const auto query = std::string{uri.query().data(), uri.query().length()};
 
   if (!SSL_set_tlsext_host_name(stream_.native_handle(), host.c_str())) {
     beast::error_code ec{static_cast<int>(::ERR_get_error()),
@@ -32,25 +31,17 @@ void AsyncHttpClient::GetImpl(std::string_view url,
     return;
   }
 
-  if (!parameters.empty()) {
-    if (path.back() == '/') path.pop_back();
-    path.append("?");
-  }
-
   req_.version(kHttpVersion);
   req_.method(http::verb::get);
 
-  for (auto& parameter : parameters) {
-    path.append(parameter.first + "=" + parameter.second + "&");
-  }
-
+  req_.target(path + "?" + query);
+  req_.set(http::field::host, host);
+  req_.set(http::field::user_agent, BOOST_BEAST_VERSION_STRING);
   for (auto& header : headers) {
     req_.set(http::string_to_field(header.first), header.second);
   }
 
-  req_.target(path);
-  req_.set(http::field::host, host);
-  req_.set(http::field::user_agent, BOOST_BEAST_VERSION_STRING);
+  std::cout << "\n[REQUEST]\n" << req_.base() << std::endl;
 
   resolver_.async_resolve(
       host, kSslPort,
@@ -59,17 +50,16 @@ void AsyncHttpClient::GetImpl(std::string_view url,
 
 void AsyncHttpClient::Get(std::string_view url,
                           const RequestCallback& request_callback,
-                          const Parameters& parameters,
                           const Headers& headers) {
   request_callback_ = request_callback;
-  GetImpl(std::move(url), parameters, headers);
+  GetImpl(std::move(url), headers);
 }
 
 void AsyncHttpClient::Download(std::string_view url,
                                const DownloadCallback& download_callback,
                                const Headers& headers) {
   download_callback_ = (download_callback);
-  GetImpl(std::move(url), Parameters(), (headers));
+  GetImpl(std::move(url), headers);
 }
 
 void AsyncHttpClient::Download(std::string_view url,
@@ -78,8 +68,10 @@ void AsyncHttpClient::Download(std::string_view url,
                                const Headers& headers) {
   request_callback_ = (request_callback);
   progress_callback_ = (progress_callback);
-  GetImpl(std::move(url), Parameters(), (headers));
+  GetImpl(std::move(url), headers);
 }
+
+void AsyncHttpClient::Verbose(bool enable) { verbose_enabled_ = enable; }
 
 void AsyncHttpClient::Resolve(beast::error_code ec,
                               tcp::resolver::results_type results) {
@@ -172,6 +164,10 @@ void AsyncHttpClient::ReadHeader(beast::error_code ec,
                         : 0;
   }
 
+  if (verbose_enabled_) {
+    std::cout << "\n[HEADER]\n" << (*res_).get().base() << std::endl;
+  }
+
   boost::beast::http::async_read_some(
       stream_, buffer_, (*res_),
       beast::bind_front_handler(&AsyncHttpClient::Read, shared_from_this()));
@@ -212,8 +208,9 @@ HttpResponse SyncHttpClient::Get(std::string_view url,
                                  const Parameters& parameters,
                                  const Headers& headers) {
   auto uri = network::uri{url.data()};
-  auto host = std::string{uri.host().data(), uri.host().length()};
-  auto path = std::string{uri.path().data(), uri.path().length()};
+  const auto host = std::string{uri.host().data(), uri.host().length()};
+  const auto path = std::string{uri.path().data(), uri.path().length()};
+  const auto query = std::string{uri.query().data(), uri.query().length()};
 
   if (!SSL_set_tlsext_host_name(stream_.native_handle(), host.c_str())) {
     beast::error_code ec{static_cast<int>(::ERR_get_error()),
@@ -228,16 +225,8 @@ HttpResponse SyncHttpClient::Get(std::string_view url,
   stream_.next_layer().socket().set_option(option);
   stream_.handshake(ssl::stream_base::client);
 
-  if (!parameters.empty()) {
-    if (path.back() == '/') path.pop_back();
-    path.append("?");
-  }
-
-  for (auto& parameter : parameters) {
-    path.append(parameter.first + "=" + parameter.second + "&");
-  }
-
-  http::request<http::string_body> req{http::verb::get, path, kHttpVersion};
+  http::request<http::string_body> req{http::verb::get, path + "?" + query,
+                                       kHttpVersion};
   req.set(http::field::host, host);
   req.set(http::field::user_agent, BOOST_BEAST_VERSION_STRING);
 
@@ -247,8 +236,7 @@ HttpResponse SyncHttpClient::Get(std::string_view url,
 
   http::write(stream_, req);
 
-  boost::optional<http::response_parser<boost::beast::http::string_body>>
-      result;
+  boost::optional<http::response_parser<http::string_body>> result;
   result.emplace();
   (*result).body_limit(std::numeric_limits<std::uint64_t>::max());
 

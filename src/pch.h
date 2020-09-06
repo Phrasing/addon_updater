@@ -13,6 +13,8 @@
 #define NOMINMAX
 #endif // !NOMINMAX
 
+#include "product_db.pb.h"
+
 #include <Windows.h>
 
 #include <boost/beast/core.hpp>
@@ -38,6 +40,7 @@ using tcp = boost::asio::ip::tcp;  // from <boost/asio/ip/tcp.hpp>
 #include <chrono>
 #include <fstream>
 #include <optional>
+#include <filesystem>
 
 
 // clang-format off

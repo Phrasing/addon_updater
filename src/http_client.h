@@ -42,7 +42,6 @@ class AsyncHttpClient : public std::enable_shared_from_this<AsyncHttpClient> {
     @request_callback - (const beast::error_code& ec, std::string_view body)
   */
   void Get(std::string_view url, const RequestCallback& request_callback,
-           const Parameters& paramters = Parameters(),
            const Headers& headers = Headers());
 
   /*
@@ -62,6 +61,8 @@ class AsyncHttpClient : public std::enable_shared_from_this<AsyncHttpClient> {
                 const ProgressCallback& progress_callback,
                 const Headers& headers = Headers());
 
+  void Verbose(bool enable);
+
  private:
   void Resolve(beast::error_code ec, tcp::resolver::results_type results);
   void Connect(beast::error_code ec,
@@ -72,8 +73,7 @@ class AsyncHttpClient : public std::enable_shared_from_this<AsyncHttpClient> {
   void ReadHeader(beast::error_code ec, std::size_t bytes_transferred);
   void Shutdown(beast::error_code ec);
 
-  void GetImpl(std::string_view url, const Parameters& paramters = Parameters(),
-               const Headers& headers = Headers());
+  void GetImpl(std::string_view url, const Headers& headers = Headers());
 
   DownloadCallback download_callback_;
   RequestCallback request_callback_;
@@ -90,6 +90,8 @@ class AsyncHttpClient : public std::enable_shared_from_this<AsyncHttpClient> {
   std::string response_;
   size_t content_size_;
   size_t bytes_read_;
+
+  bool verbose_enabled_;
 };
 
 class SyncHttpClient {
