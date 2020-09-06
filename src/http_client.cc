@@ -12,7 +12,11 @@ constexpr auto kSslPort = "443";
 
 AsyncHttpClient::AsyncHttpClient(const net::any_io_executor& ex,
                                  ssl::context& ctx)
-    : resolver_(ex), stream_(ex, ctx), bytes_read_(0), content_size_(0) {
+    : resolver_(ex),
+      stream_(ex, ctx),
+      bytes_read_(0),
+      content_size_(0),
+      verbose_enabled_(false) {
   res_.emplace();
   (*res_).body_limit(std::numeric_limits<std::uint64_t>::max());
 }
@@ -41,7 +45,9 @@ void AsyncHttpClient::GetImpl(std::string_view url, const Headers& headers) {
     req_.set(http::string_to_field(header.first), header.second);
   }
 
-  std::cout << "\n[REQUEST]\n" << req_.base() << std::endl;
+  if (verbose_enabled_) {
+    std::cout << "\n[REQUEST]\n" << req_.base() << std::endl;
+  }
 
   resolver_.async_resolve(
       host, kSslPort,
