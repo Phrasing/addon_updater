@@ -5,7 +5,26 @@
 
 namespace addon_updater {
 
-std::string UpdaterConfig::Serialize() { return std::string(); }
+bool UpdaterConfig::SerializeToFile() {
+  rj::StringBuffer string_buffer;
+  rj::PrettyWriter<rj::StringBuffer> writer(string_buffer);
+  writer.StartArray();
+  {
+    for (const auto& addon : this->installed_addons_) {
+      addon.Serialize(&writer);
+    }
+  }
+  writer.EndArray();
+
+  auto config_file = std::make_unique<std::fstream>(
+      this->config_file_path_, std::ios::out | std::ios::trunc);
+
+  if (!config_file->is_open()) return false;
+
+  config_file->write(string_buffer.GetString(), string_buffer.GetLength());
+
+  return true;
+}
 
 bool UpdaterConfig::DeserializeFromFile() {
   auto config_file = std::make_unique<std::ifstream>(this->config_file_path_);
@@ -35,7 +54,7 @@ bool UpdaterConfig::DeserializeFromFile() {
   return true;
 }
 
-bool UpdaterConfig::UpdateFile() { return false; }
+bool UpdaterConfig::UpdateConfig() { return false; }
 
 bool UpdaterConfig::UninstallAddon(const InstalledAddon& installed_addon) {
   const auto result = FindAddon(installed_addon.id);
@@ -48,7 +67,10 @@ bool UpdaterConfig::UninstallAddon(const InstalledAddon& installed_addon) {
   return false;
 }
 
-bool UpdaterConfig::InstallAddon() { return false; }
+bool UpdaterConfig::InstallAddon(const Addon& addon) {
+ // installed_addons_.emplace_back(addon.Install());
+  return this->UpdateConfig();
+}
 
 std::optional<InstalledAddon> UpdaterConfig::FindAddon(int32_t id) {
   const auto result =

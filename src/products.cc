@@ -4,13 +4,15 @@
 #include "string_util.h"
 // clang-format on
 
-product_wrapper::ProductDbWrapper::ProductDbWrapper(
-    const std::string_view file_path) {
+bool product_wrapper::ProductDbWrapper::LoadProtoDbFile(
+    std::string_view file_path) {
   auto istream = std::make_unique<std::fstream>(
       file_path.data(), std::ios::binary | std::ios::in);
   if (!product_db_.ParseFromIstream(istream.get())) {
     //@TODO: Error Handling
+    return false;
   }
+  return true;
 }
 
 std::vector<product_wrapper::WowInstallation>

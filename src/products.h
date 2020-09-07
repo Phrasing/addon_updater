@@ -22,11 +22,13 @@ struct WowInstallation {
   std::string base_path;
 };
 
-class ProductDbWrapper {
+class ProductDbWrapper : public Singleton<ProductDbWrapper> {
  public:
-  ProductDbWrapper(const std::string_view file_path);
+  ProductDbWrapper() = default;
   ~ProductDbWrapper() = default;
 
+
+  bool LoadProtoDbFile(std::string_view file_path);
   std::vector<WowInstallation> GetWowInstallations();
 
  private:

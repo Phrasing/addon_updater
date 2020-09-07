@@ -14,10 +14,10 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
     freopen_s(&dummy, "CONOUT$", "w", stdout);
   }
 
-  product_wrapper::ProductDbWrapper wrapper{
-      R"(C:\ProgramData\Battle.net\Agent\product.db)"};
+  auto& products = product_wrapper::ProductDbWrapper::GetInstance();
+  products.LoadProtoDbFile(R"(C:\ProgramData\Battle.net\Agent\product.db)");
 
-  auto installs = wrapper.GetWowInstallations();
+  auto installs = products.GetWowInstallations();
   for (auto& install : installs) {
     std::cout << install.GetRetailAddonsPath() << std::endl;
   }

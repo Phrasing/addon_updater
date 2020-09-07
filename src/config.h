@@ -10,13 +10,13 @@ struct UpdaterConfig {
   explicit UpdaterConfig(std::string_view config_file_path)
       : config_file_path_(config_file_path) {}
 
-  std::string Serialize();
+  bool SerializeToFile();
 
   bool DeserializeFromFile();
-  bool UpdateFile();
+  bool UpdateConfig();
 
   bool UninstallAddon(const InstalledAddon& installed_addon);
-  bool InstallAddon();
+  bool InstallAddon(const Addon& addon);
 
   std::optional<InstalledAddon> FindAddon(int32_t id);
 

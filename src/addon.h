@@ -57,9 +57,12 @@ struct AddonThumbnail {
   int32_t channels;
 };
 
+struct InstalledAddon;
+
 struct Addon {
   bool Deserialize(const rj::Value::ConstObject& object);
-  bool Install();
+  InstalledAddon Install() const;
+
   bool operator==(const Addon& addon) { return id == addon.id; }
 
   int32_t id;
@@ -78,7 +81,7 @@ struct Addon {
 };
 
 struct InstalledAddon : Addon {
-  std::string Serialize() const;
+  void Serialize(rj::PrettyWriter<rj::StringBuffer>* writer) const;
 
   void Uninstall();
   bool Update();

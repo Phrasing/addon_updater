@@ -49,6 +49,7 @@ namespace rj = rapidjson;
 #include <optional>
 #include <filesystem>
 
+#include "singleton.h"
 #include "rapidjson_util.h"
 #include "product_db.pb.h"
 

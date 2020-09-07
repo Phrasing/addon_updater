@@ -164,10 +164,8 @@ void AsyncHttpClient::Read(beast::error_code ec,
 
 void AsyncHttpClient::ReadHeader(beast::error_code ec,
                                  std::size_t bytes_transferred) {
-  if (!(*res_).chunked()) {
-    content_size_ = (*res_).content_length().is_initialized()
-                        ? (*res_).content_length().value()
-                        : 0;
+  if ((*res_).content_length().is_initialized()) {
+    content_size_ = (*res_).content_length().value();
   }
 
   if (verbose_enabled_) {
