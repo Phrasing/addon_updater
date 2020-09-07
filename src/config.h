@@ -7,13 +7,12 @@
 namespace addon_updater {
 
 struct UpdaterConfig {
-  UpdaterConfig(const std::string_view config_file_path)
+  explicit UpdaterConfig(std::string_view config_file_path)
       : config_file_path_(config_file_path) {}
 
   std::string Serialize();
-  bool DeserializeFromFile(std::string_view file_contents);
 
-  bool Ingest();
+  bool DeserializeFromFile();
   bool UpdateFile();
 
   bool UninstallAddon(const InstalledAddon& installed_addon);

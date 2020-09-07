@@ -19,16 +19,13 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
   auto installs = wrapper.GetWowInstallations();
   for (auto& install : installs) {
-    std::cout << install.GetRetailAddonsPath().value() << std::endl;
+    std::cout << install.GetRetailAddonsPath() << std::endl;
   }
 
-  auto config =
-      UpdaterConfig{installs.front().GetRetailAddonsPath().value_or("") +
-                    R"(\WTF\addon_updater.json)"};
+  auto config = UpdaterConfig{installs.front().GetRetailAddonsPath() +
+                              R"(\WTF\addon_updater.json)"};
 
-  config.Ingest();
-
- 
+  config.DeserializeFromFile();
 
   system("pause");
   return 0;

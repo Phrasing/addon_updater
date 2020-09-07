@@ -5,6 +5,7 @@
 
 namespace http_client {
 
+namespace {
 struct PairHash {
   template <class T1, class T2>
   std::size_t operator()(std::pair<T1, T2> const& pair) const {
@@ -13,6 +14,8 @@ struct PairHash {
     return h1 ^ h2;
   }
 };
+
+}  // namespace
 
 struct HttpResponse {
   std::string data;
@@ -30,6 +33,7 @@ using DownloadCallback = std::function<void(const beast::error_code&, uint32_t,
                                             std::string_view, RequestState)>;
 
 using Parameters = std::vector<std::pair<std::string, std::string>>;
+
 using Headers =
     std::unordered_set<std::pair<std::string, std::string>, PairHash>;
 
@@ -44,19 +48,9 @@ class AsyncHttpClient : public std::enable_shared_from_this<AsyncHttpClient> {
   void Get(std::string_view url, const RequestCallback& request_callback,
            const Headers& headers = Headers());
 
-  /*
-  @DownloadCallback - (const beast::error_code& ec,
-                      uint32_t percent,
-                      std::string_view chunk,
-                      http_client::RequestStatus status)
-  */
   void Download(std::string_view url, const DownloadCallback& download_callback,
                 const Headers& headers = Headers());
 
-  /*
-  @request_callback - (const beast::error_code& ec, std::string_view body)
-  @progress_callback - (uint32_t percent, http_client::RequestState state)
-*/
   void Download(std::string_view url, const RequestCallback& request_callback,
                 const ProgressCallback& progress_callback,
                 const Headers& headers = Headers());

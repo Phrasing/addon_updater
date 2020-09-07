@@ -30,37 +30,27 @@ product_wrapper::ProductDbWrapper::GetWowInstallations() {
   return wow_installations;
 }
 
-std::optional<std::string>
-product_wrapper::WowInstallation::GetClassicAddonsPath() {
+std::string product_wrapper::WowInstallation::GetClassicAddonsPath() {
   const auto path = base_path + R"(\_classic_)";
-  return std::filesystem::exists(path) ? std::optional<std::string>(path)
-                                       : std::nullopt;
+  return std::filesystem::exists(path) ? path : std::string();
 }
 
-std::optional<std::string>
-product_wrapper::WowInstallation::GetRetailAddonsPath() {
+std::string product_wrapper::WowInstallation::GetRetailAddonsPath() {
   const auto path = base_path + R"(\_retail_)";
-  return std::filesystem::exists(path) ? std::optional<std::string>(path)
-                                       : std::nullopt;
+  return std::filesystem::exists(path) ? path : std::string();
 }
 
-std::optional<std::string>
-product_wrapper::WowInstallation::GetRetailPtrAddonsPath() {
+std::string product_wrapper::WowInstallation::GetRetailPtrAddonsPath() {
   const auto path = base_path + R"(\_ptr_)";
-  return std::filesystem::exists(path) ? std::optional<std::string>(path)
-                                       : std::nullopt;
+  return std::filesystem::exists(path) ? path : std::string();
 }
 
-std::optional<std::string>
-product_wrapper::WowInstallation::GetClassicPtrAddonsPath() {
+std::string product_wrapper::WowInstallation::GetClassicPtrAddonsPath() {
   const auto path = base_path + R"(\_classic_ptr_)";
-  return std::filesystem::exists(path) ? std::optional<std::string>(path)
-                                       : std::nullopt;
+  return std::filesystem::exists(path) ? path : std::string();
 }
 
-std::optional<std::string>
-product_wrapper::WowInstallation::GetBetaAddonsPath() {
+std::string product_wrapper::WowInstallation::GetBetaAddonsPath() {
   const auto path = base_path + R"(\_beta_)";
-  return std::filesystem::exists(path) ? std::optional<std::string>(path)
-                                       : std::nullopt;
+  return std::filesystem::exists(path) ? path : std::string();
 }

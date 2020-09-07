@@ -213,7 +213,7 @@ SyncHttpClient::SyncHttpClient(const net::any_io_executor& ex,
 HttpResponse SyncHttpClient::Get(std::string_view url,
                                  const Parameters& parameters,
                                  const Headers& headers) {
-  const auto uri = network::uri{url.data()};
+  auto uri = network::uri{url.data()};
 
   const auto host = std::string{uri.host().data(), uri.host().length()};
   const auto path = std::string{uri.path().data(), uri.path().length()};

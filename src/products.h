@@ -13,11 +13,11 @@ enum class ClientType {
 };
 
 struct WowInstallation {
-  std::optional<std::string> GetClassicAddonsPath();
-  std::optional<std::string> GetRetailAddonsPath();
-  std::optional<std::string> GetRetailPtrAddonsPath();
-  std::optional<std::string> GetClassicPtrAddonsPath();
-  std::optional<std::string> GetBetaAddonsPath();
+  std::string GetClassicAddonsPath();
+  std::string GetRetailAddonsPath();
+  std::string GetRetailPtrAddonsPath();
+  std::string GetClassicPtrAddonsPath();
+  std::string GetBetaAddonsPath();
 
   std::string base_path;
 };

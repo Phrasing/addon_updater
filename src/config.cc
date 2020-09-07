@@ -7,9 +7,17 @@ namespace addon_updater {
 
 std::string UpdaterConfig::Serialize() { return std::string(); }
 
-bool UpdaterConfig::DeserializeFromFile(std::string_view file_contents) {
+bool UpdaterConfig::DeserializeFromFile() {
+  auto config_file = std::make_unique<std::ifstream>(this->config_file_path_);
+
+  if (!config_file->good()) return false;
+
+  const auto contents =
+      std::string{std::istreambuf_iterator<char>((*config_file)),
+                  std::istreambuf_iterator<char>()};
+
   rj::Document document{};
-  document.Parse(file_contents.data());
+  document.Parse(contents.data());
 
   if (document.HasParseError()) {
     return false;
@@ -23,20 +31,6 @@ bool UpdaterConfig::DeserializeFromFile(std::string_view file_contents) {
       }
     }
   }
-
-  return true;
-}
-
-bool UpdaterConfig::Ingest() {
-  auto config_file = std::make_unique<std::ifstream>(this->config_file_path_);
-
-  if (!config_file->good()) return false;
-
-  const auto contents =
-      std::string{std::istreambuf_iterator<char>((*config_file)),
-                  std::istreambuf_iterator<char>()};
-
-  if (!DeserializeFromFile(contents)) return false;
 
   return true;
 }
