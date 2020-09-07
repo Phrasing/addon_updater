@@ -60,7 +60,7 @@ struct AddonThumbnail {
 struct Addon {
   bool Deserialize(const rj::Value::ConstObject& object);
   bool Install();
-  bool operator==(const Addon& addon) { return hash == addon.hash; }
+  bool operator==(const Addon& addon) { return id == addon.id; }
 
   int32_t id;
   std::string name;

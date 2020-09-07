@@ -1,6 +1,7 @@
 // clang-format off
 #include "pch.h"
 #include "products.h"
+#include "string_util.h"
 // clang-format on
 
 product_wrapper::ProductDbWrapper::ProductDbWrapper(
@@ -20,7 +21,9 @@ product_wrapper::ProductDbWrapper::GetWowInstallations() {
 
   for (auto& installs : product_db_.product_installs()) {
     if (installs.product_code() == "wow") {
-      wow_installations.push_back({installs.settings().install_path()});
+      auto install_path = installs.settings().install_path();
+      string_util::ReplaceAll(&install_path, "/", R"(\)");
+      wow_installations.push_back({install_path});
     }
   }
 

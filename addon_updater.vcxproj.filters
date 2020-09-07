@@ -9,6 +9,7 @@
     <ClCompile Include="src\products.cc" />
     <ClCompile Include="src\rapidjson_util.cc" />
     <ClCompile Include="src\config.cc" />
+    <ClCompile Include="src\string_util.cc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.h" />
@@ -19,8 +20,10 @@
     <ClInclude Include="src\products.h" />
     <ClInclude Include="src\rapidjson_util.h" />
     <ClInclude Include="src\config.h" />
+    <ClInclude Include="src\string_util.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\rapidjson_util.inl" />
+    <None Include="src\string_util.inl" />
   </ItemGroup>
 </Project>

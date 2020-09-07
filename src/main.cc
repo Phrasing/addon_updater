@@ -22,6 +22,13 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
     std::cout << install.GetRetailAddonsPath().value() << std::endl;
   }
 
+  auto config =
+      UpdaterConfig{installs.front().GetRetailAddonsPath().value_or("") +
+                    R"(\WTF\addon_updater.json)"};
+
+  config.Ingest();
+
+ 
 
   system("pause");
   return 0;

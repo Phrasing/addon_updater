@@ -187,6 +187,7 @@
     </ClCompile>
     <ClCompile Include="src\products.cc" />
     <ClCompile Include="src\rapidjson_util.cc" />
+    <ClCompile Include="src\string_util.cc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\addon.h" />
@@ -197,9 +198,11 @@
     <ClInclude Include="src\rapidjson_util.h" />
     <ClInclude Include="src\singleton.h" />
     <ClInclude Include="src\products.h" />
+    <ClInclude Include="src\string_util.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\rapidjson_util.inl" />
+    <None Include="src\string_util.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
