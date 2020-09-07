@@ -5,7 +5,6 @@
 
 namespace http_client {
 
-namespace {
 struct PairHash {
   template <class T1, class T2>
   std::size_t operator()(std::pair<T1, T2> const& pair) const {
@@ -14,8 +13,6 @@ struct PairHash {
     return h1 ^ h2;
   }
 };
-
-}  // namespace
 
 struct HttpResponse {
   std::string data;
@@ -66,7 +63,7 @@ class AsyncHttpClient : public std::enable_shared_from_this<AsyncHttpClient> {
   void Read(beast::error_code ec, std::size_t bytes_transferred);
   void ReadHeader(beast::error_code ec, std::size_t bytes_transferred);
   void Shutdown(beast::error_code ec);
-
+  void CallbackError(const beast::error_code& ec);
   void GetImpl(std::string_view url, const Headers& headers = Headers());
 
   DownloadCallback download_callback_;
@@ -93,9 +90,7 @@ class SyncHttpClient {
   SyncHttpClient(const net::any_io_executor& ex, ssl::context& ctx);
   ~SyncHttpClient() = default;
 
-  HttpResponse Get(std::string_view url,
-                   const Parameters& parameters = Parameters(),
-                   const Headers& headers = Headers());
+  HttpResponse Get(std::string_view url, const Headers& headers = Headers());
 
  private:
   beast::ssl_stream<beast::tcp_stream> stream_;

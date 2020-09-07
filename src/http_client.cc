@@ -8,6 +8,12 @@ namespace http_client {
 namespace {
 constexpr auto kHttpVersion = 11;
 constexpr auto kSslPort = "443";
+
+inline void DumpError(const beast::error_code& error_code) {
+  std::cerr << __FILE__ << " : " << __LINE__ << std::endl
+            << error_code.message() << std::endl;
+}
+
 }  // namespace
 
 AsyncHttpClient::AsyncHttpClient(const net::any_io_executor& ex,
@@ -81,6 +87,12 @@ void AsyncHttpClient::Verbose(bool enable) { verbose_enabled_ = enable; }
 
 void AsyncHttpClient::Resolve(beast::error_code ec,
                               tcp::resolver::results_type results) {
+  if (ec) {
+    CallbackError(ec);
+    if (verbose_enabled_) DumpError(ec);
+    return;
+  }
+
   stream_.set_verify_mode(boost::asio::ssl::verify_none);
   beast::get_lowest_layer(stream_).async_connect(
       results,
@@ -89,6 +101,12 @@ void AsyncHttpClient::Resolve(beast::error_code ec,
 
 void AsyncHttpClient::Connect(beast::error_code ec,
                               tcp::resolver::results_type::endpoint_type) {
+  if (ec) {
+    CallbackError(ec);
+    if (verbose_enabled_) DumpError(ec);
+    return;
+  }
+
   tcp::no_delay option(true);
   stream_.next_layer().socket().set_option(option);
   stream_.async_handshake(boost::asio::ssl::stream_base::client,
@@ -97,6 +115,12 @@ void AsyncHttpClient::Connect(beast::error_code ec,
 }
 
 void AsyncHttpClient::Handshake(beast::error_code ec) {
+  if (ec) {
+    CallbackError(ec);
+    if (verbose_enabled_) DumpError(ec);
+    return;
+  }
+
   boost::beast::http::async_write(
       stream_, req_,
       beast::bind_front_handler(&AsyncHttpClient::Write, shared_from_this()));
@@ -104,6 +128,13 @@ void AsyncHttpClient::Handshake(beast::error_code ec) {
 
 void AsyncHttpClient::Write(beast::error_code ec,
                             std::size_t bytes_transferred) {
+  if (ec) {
+    CallbackError(ec);
+    if (verbose_enabled_) DumpError(ec);
+    return;
+  }
+
+  boost::ignore_unused(bytes_transferred);
   boost::beast::http::async_read_header(
       stream_, buffer_, (*res_),
       beast::bind_front_handler(&AsyncHttpClient::ReadHeader,
@@ -164,6 +195,12 @@ void AsyncHttpClient::Read(beast::error_code ec,
 
 void AsyncHttpClient::ReadHeader(beast::error_code ec,
                                  std::size_t bytes_transferred) {
+  if (ec) {
+    CallbackError(ec);
+    if (verbose_enabled_) DumpError(ec);
+    return;
+  }
+
   if ((*res_).content_length().is_initialized()) {
     content_size_ = (*res_).content_length().value();
   }
@@ -180,6 +217,17 @@ void AsyncHttpClient::ReadHeader(beast::error_code ec,
 void AsyncHttpClient::Shutdown(beast::error_code ec) {
   if (ec == boost::asio::error::eof) {
     ec.assign(0, ec.category());
+  }
+}
+
+void AsyncHttpClient::CallbackError(const beast::error_code& ec) {
+  if (request_callback_) {
+    request_callback_(ec, "");
+  } else if (download_callback_) {
+    download_callback_(ec, 0, "", RequestState::kStateError);
+  }
+  if (progress_callback_) {
+    progress_callback_(0, RequestState::kStateError);
   }
 }
 
@@ -209,13 +257,13 @@ SyncHttpClient::SyncHttpClient(const net::any_io_executor& ex,
     : stream_(ex, ctx), resolver_(ex) {}
 
 HttpResponse SyncHttpClient::Get(std::string_view url,
-                                 const Parameters& parameters,
                                  const Headers& headers) {
   auto uri = network::uri{url.data()};
 
   const auto host = std::string{uri.host().data(), uri.host().length()};
   const auto path = std::string{uri.path().data(), uri.path().length()};
   const auto query = std::string{uri.query().data(), uri.query().length()};
+  
 
   if (!SSL_set_tlsext_host_name(stream_.native_handle(), host.c_str())) {
     beast::error_code ec{static_cast<int>(::ERR_get_error()),

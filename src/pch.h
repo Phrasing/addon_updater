@@ -22,7 +22,6 @@
 
 #undef GetObject
 
-
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
 #include <boost/beast/ssl.hpp>
@@ -35,6 +34,24 @@ namespace net = boost::asio;       // from <boost/asio.hpp>
 namespace ssl = boost::asio::ssl;  // from <boost/asio/ssl.hpp>
 using tcp = boost::asio::ip::tcp;  // from <boost/asio/ip/tcp.hpp>
 namespace rj = rapidjson;
+
+#include <imgui.h>
+#include <imgui_impl_win32.h>
+#include <imgui_impl_dx12.h>
+#include <imgui_stdlib.h>
+#include <imgui_freetype.h>
+#include <d3d12.h>
+#include <dxgi1_4.h>
+
+#ifdef _DEBUG
+#define DX12_ENABLE_DEBUG_LAYER
+#endif
+
+#ifdef DX12_ENABLE_DEBUG_LAYER
+#include <dxgidebug.h>
+#pragma comment(lib, "dxguid.lib")
+#endif
+
 
 #include <unordered_set>
 #include <iostream>
@@ -50,8 +67,7 @@ namespace rj = rapidjson;
 #include <filesystem>
 
 #include "singleton.h"
-#include "rapidjson_util.h"
-#include "product_db.pb.h"
+#include "products.pb.h"
 
 // clang-format off
 

@@ -1,14 +1,22 @@
 // clang-format off
 #include "pch.h"
 #include "addon.h"
+#include "rapidjson_util.h"
 // clang-format on
 
 namespace addon_updater {
 
-namespace {
-
 bool DeserializeCurse(const rj::Value::ConstObject& object, Addon* addon) {
-  MessageBoxA(nullptr, addon->hash.c_str(), nullptr, 0);
+  addon->id = rj_util::GetField<uint32_t>(object, curse_structs::kField_Id,
+                                          rj::kNumberType);
+  addon->name =
+      std::move(rj_util::GetStringDef(object, curse_structs::kField_Name));
+  addon->description =
+      std::move(rj_util::GetStringDef(object, curse_structs::kField_Summary));
+  addon->slug =
+      std::move(rj_util::GetStringDef(object, curse_structs::kField_Slug));
+  addon->type = AddonType::kCurse;
+
   return true;
 }
 
@@ -16,10 +24,8 @@ bool DeserializeTukui(const rj::Value::ConstObject& object, Addon* addon) {
   return true;
 }
 
-}  // namespace
-
 bool Addon::Deserialize(const rj::Value::ConstObject& object) {
-  switch (type) {
+  switch (this->type) {
     case AddonType::kCurse: {
       DeserializeCurse(object, this);
     } break;
@@ -31,7 +37,7 @@ bool Addon::Deserialize(const rj::Value::ConstObject& object) {
     default:
       break;
   }
-  return false;
+  return true;
 }
 
 InstalledAddon Addon::Install() const {
@@ -52,21 +58,21 @@ void InstalledAddon::Serialize(
     rj::PrettyWriter<rj::StringBuffer>* writer) const {
   writer->StartObject();
   writer->String("id");
-  writer->Int(std::move(this->id));
+  writer->Int(this->id);
   writer->String("name");
-  writer->String(std::move(this->name));
-  writer->String("downloadUrl");
-  writer->String(std::move(this->download_url));
+  writer->String(this->name);
+  writer->String("download_url");
+  writer->String(this->download_url);
   writer->String("slug");
-  writer->String(std::move(this->slug));
+  writer->String(this->slug);
   writer->String("checksum");
-  writer->String(std::move(this->hash));
+  writer->String(this->hash);
   writer->String("flavor");
-  writer->Int(static_cast<int32_t>(std::move(this->flavor)));
+  writer->Int(static_cast<int32_t>(this->flavor));
   writer->String("type");
-  writer->Int(static_cast<int32_t>(std::move(this->type)));
+  writer->Int(static_cast<int32_t>(this->type));
   writer->String("version");
-  writer->String(std::move(this->readable_version));
+  writer->String(this->readable_version);
 
   if (!this->directories.empty()) {
     writer->String("directories");
@@ -89,5 +95,25 @@ void InstalledAddon::Uninstall() {
 }
 
 bool InstalledAddon::Update() { return false; }
+
+std::vector<Addon> DeserializeAddons(std::string_view json,
+                                     AddonType addon_type) {
+  rj::Document document{};
+  document.Parse(json.data(), json.length());
+  if (document.HasParseError()) {
+    return std::vector<Addon>();
+  }
+
+  std::vector<Addon> addons{};
+  for (const auto* it = document.Begin(); it != document.End(); ++it) {
+    Addon addon{};
+    addon.type = addon_type;
+    if (addon.Deserialize(it->GetObject())) {
+      addons.push_back(addon);
+    }
+  }
+
+  return addons;
+}
 
 }  // namespace addon_updater

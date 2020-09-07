@@ -9,16 +9,16 @@
 namespace rj_util {
 
 inline bool HasMemberOfType(const rj::Value::ConstObject& obj,
-                            const char* const member, const rj::Type type) {
-  const auto result = obj.FindMember(member);
+                            std::string_view member, const rj::Type type) {
+  const auto result = obj.FindMember(member.data());
   return result != obj.MemberEnd() && result->value.GetType() == type;
 }
 
 template <typename T>
 inline std::optional<T> GetFieldIfExists(const rj::Value::ConstObject& obj,
-                                         const char* const member,
+                                         std::string_view member,
                                          const rj::Type type) {
-  const auto result = obj.FindMember(member);
+  const auto result = obj.FindMember(member.data());
   if (result != obj.MemberEnd() && result->value.GetType() == type) {
     return result->value.Get<T>();
   }
@@ -26,19 +26,19 @@ inline std::optional<T> GetFieldIfExists(const rj::Value::ConstObject& obj,
 }
 
 template <typename T>
-inline T GetField(const rj::Value::ConstObject& obj, const char* const member,  
+inline T GetField(const rj::Value::ConstObject& obj, std::string_view member,
                   const rj::Type type, T def) {
   return GetFieldIfExists<T>(obj, member, type).value_or(def);
 }
 
 inline std::optional<std::string> GetString(const rj::Value::ConstObject& obj,
-                                            const char* const member) {
+                                            std::string_view member) {
   return GetFieldIfExists<std::string>(obj, member, rj::kStringType);
 }
 
 inline std::optional<bool> GetBool(const rj::Value::ConstObject& obj,
-                                   const char* const member) {
-  const auto result = obj.FindMember(member);
+                                   std::string_view member) {
+  const auto result = obj.FindMember(member.data());
   if (result != obj.MemberEnd() && result->value.GetType() == rj::kTrueType ||
       result->value.GetType() == rj::kFalseType) {
     return result->value.Get<bool>();
@@ -47,19 +47,19 @@ inline std::optional<bool> GetBool(const rj::Value::ConstObject& obj,
 }
 
 inline bool GetBoolDef(const rj::Value::ConstObject& obj,
-                       const char* const member, bool const defaultOr) {
-  return GetBool(obj, member).value_or(defaultOr);
+                       std::string_view member, bool default_or) {
+  return GetBool(obj, member).value_or(default_or);
 }
 
 inline std::string GetStringDef(const rj::Value::ConstObject& obj,
-                                const char* const member,
-                                const char* const defaultOr) {
-  return GetString(obj, member).value_or(defaultOr);
+                                std::string_view member,
+                                std::string_view default_or) {
+  return GetString(obj, member).value_or(default_or.data());
 }
 
-template <typename T = int32_t>
+template <typename T>
 inline T ParseInt(const std::string& str) {
-  return std::atoi(str.c_str());
+  return static_cast<T>(std::atoi(str.c_str()));
 }
 
 }  // namespace rj_util

@@ -4,23 +4,25 @@
     <ClCompile Include="src\main.cc" />
     <ClCompile Include="src\pch.cc" />
     <ClCompile Include="src\http_client.cc" />
-    <ClCompile Include="src\product_db.pb.cc" />
     <ClCompile Include="src\addon.cc" />
     <ClCompile Include="src\products.cc" />
     <ClCompile Include="src\rapidjson_util.cc" />
     <ClCompile Include="src\config.cc" />
     <ClCompile Include="src\string_util.cc" />
+    <ClCompile Include="src\products.pb.cc" />
+    <ClCompile Include="src\window.cc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\http_client.h" />
     <ClInclude Include="src\singleton.h" />
-    <ClInclude Include="src\product_db.pb.h" />
     <ClInclude Include="src\addon.h" />
     <ClInclude Include="src\products.h" />
     <ClInclude Include="src\rapidjson_util.h" />
     <ClInclude Include="src\config.h" />
     <ClInclude Include="src\string_util.h" />
+    <ClInclude Include="src\products.pb.h" />
+    <ClInclude Include="src\window.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\rapidjson_util.inl" />

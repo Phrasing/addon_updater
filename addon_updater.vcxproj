@@ -81,16 +81,16 @@
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)bin\build\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)-$(Configuration)</TargetName>
-    <IncludePath>C:\Libraries\boost_1_74_0;$(SolutionDir)third_party\openssl\include;$(SolutionDir)third_party\uri\include;$(SolutionDir)third_party\protobuf\$(Configuration)\include;$(SolutionDir)third_party\rapidjson\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Libraries\boost_1_74_0\lib64-msvc-14.2;$(SolutionDir)third_party\openssl\lib\$(Platform)\$(Configuration);$(SolutionDir)third_party\uri\lib\$(Platform)\$(Configuration);$(SolutionDir)third_party\protobuf\$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Libraries\boost_1_74_0;$(SolutionDir)third_party\openssl\include;$(SolutionDir)third_party\uri\include;$(SolutionDir)third_party\protobuf\$(Configuration)\include;$(SolutionDir)third_party\rapidjson\include;$(SolutionDir)third_party\imgui\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Libraries\boost_1_74_0\lib64-msvc-14.2;$(SolutionDir)third_party\openssl\lib\$(Platform)\$(Configuration);$(SolutionDir)third_party\uri\lib\$(Platform)\$(Configuration);$(SolutionDir)third_party\protobuf\$(Configuration);$(SolutionDir)third_party\imgui\lib\$(Configuration);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)bin\build\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)-$(Configuration)</TargetName>
-    <IncludePath>C:\Libraries\boost_1_74_0;$(SolutionDir)third_party\openssl\include;$(SolutionDir)third_party\uri\include;$(SolutionDir)third_party\protobuf\$(Configuration)\include;$(SolutionDir)third_party\rapidjson\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Libraries\boost_1_74_0\lib64-msvc-14.2;$(SolutionDir)third_party\openssl\lib\$(Platform)\$(Configuration);$(SolutionDir)third_party\uri\lib\$(Platform)\$(Configuration);$(SolutionDir)third_party\protobuf\$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Libraries\boost_1_74_0;$(SolutionDir)third_party\openssl\include;$(SolutionDir)third_party\uri\include;$(SolutionDir)third_party\protobuf\$(Configuration)\include;$(SolutionDir)third_party\rapidjson\include;$(SolutionDir)third_party\imgui\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Libraries\boost_1_74_0\lib64-msvc-14.2;$(SolutionDir)third_party\openssl\lib\$(Platform)\$(Configuration);$(SolutionDir)third_party\uri\lib\$(Platform)\$(Configuration);$(SolutionDir)third_party\protobuf\$(Configuration);$(SolutionDir)third_party\imgui\lib\$(Configuration);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -122,7 +122,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WarningLevel>TurnOffAllWarnings</WarningLevel>
+      <WarningLevel>Level1</WarningLevel>
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
@@ -133,17 +133,18 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>libcrypto.lib;libssl.lib;network-uri.lib;libprotobuf.lib;Crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcrypto.lib;libssl.lib;network-uri.lib;libprotobuf.lib;imgui.lib;Crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions> /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <WarningLevel>TurnOffAllWarnings</WarningLevel>
+      <WarningLevel>Level1</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
@@ -160,13 +161,14 @@
       <OmitFramePointers>true</OmitFramePointers>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalDependencies>libcrypto.lib;libssl.lib;network-uri.lib;libprotobuf.lib;Crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcrypto.lib;libssl.lib;network-uri.lib;libprotobuf.lib;imgui.lib;Crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions> /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
@@ -181,24 +183,26 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="src\product_db.pb.cc">
+    <ClCompile Include="src\products.pb.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\products.cc" />
     <ClCompile Include="src\rapidjson_util.cc" />
     <ClCompile Include="src\string_util.cc" />
+    <ClCompile Include="src\window.cc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\addon.h" />
     <ClInclude Include="src\config.h" />
     <ClInclude Include="src\http_client.h" />
     <ClInclude Include="src\pch.h" />
-    <ClInclude Include="src\product_db.pb.h" />
+    <ClInclude Include="src\products.pb.h" />
     <ClInclude Include="src\rapidjson_util.h" />
     <ClInclude Include="src\singleton.h" />
     <ClInclude Include="src\products.h" />
     <ClInclude Include="src\string_util.h" />
+    <ClInclude Include="src\window.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\rapidjson_util.inl" />
