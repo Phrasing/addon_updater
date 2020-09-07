@@ -14,10 +14,13 @@ inline std::optional<T> GetFieldIfExists(const rj::Value::ConstObject& obj,
 template <typename T>
 inline T GetField(const rj::Value::ConstObject& obj, const char* const member,
                   const rj::Type type, T def = T());
+
 inline std::optional<std::string> GetString(const rj::Value::ConstObject& obj,
                                             const char* const member);
+
 inline std::optional<bool> GetBool(const rj::Value::ConstObject& obj,
                                    const char* const member);
+
 inline bool GetBoolDef(const rj::Value::ConstObject& obj,
                        const char* const member, bool const defaultOr = false);
 

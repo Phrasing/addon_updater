@@ -8,6 +8,7 @@
     <ClCompile Include="src\addon.cc" />
     <ClCompile Include="src\products.cc" />
     <ClCompile Include="src\rapidjson_util.cc" />
+    <ClCompile Include="src\config.cc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.h" />
@@ -17,6 +18,7 @@
     <ClInclude Include="src\addon.h" />
     <ClInclude Include="src\products.h" />
     <ClInclude Include="src\rapidjson_util.h" />
+    <ClInclude Include="src\config.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\rapidjson_util.inl" />

@@ -26,14 +26,16 @@ inline std::optional<T> GetFieldIfExists(const rj::Value::ConstObject& obj,
 }
 
 template <typename T>
-inline T GetField(const rj::Value::ConstObject& obj, const char* const member,
+inline T GetField(const rj::Value::ConstObject& obj, const char* const member,  
                   const rj::Type type, T def) {
   return GetFieldIfExists<T>(obj, member, type).value_or(def);
 }
+
 inline std::optional<std::string> GetString(const rj::Value::ConstObject& obj,
                                             const char* const member) {
   return GetFieldIfExists<std::string>(obj, member, rj::kStringType);
 }
+
 inline std::optional<bool> GetBool(const rj::Value::ConstObject& obj,
                                    const char* const member) {
   const auto result = obj.FindMember(member);
@@ -43,6 +45,7 @@ inline std::optional<bool> GetBool(const rj::Value::ConstObject& obj,
   }
   return std::nullopt;
 }
+
 inline bool GetBoolDef(const rj::Value::ConstObject& obj,
                        const char* const member, bool const defaultOr) {
   return GetBool(obj, member).value_or(defaultOr);
@@ -53,6 +56,7 @@ inline std::string GetStringDef(const rj::Value::ConstObject& obj,
                                 const char* const defaultOr) {
   return GetString(obj, member).value_or(defaultOr);
 }
+
 template <typename T = int32_t>
 inline T ParseInt(const std::string& str) {
   return std::atoi(str.c_str());

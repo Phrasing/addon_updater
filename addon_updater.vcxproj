@@ -172,6 +172,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\addon.cc" />
+    <ClCompile Include="src\config.cc" />
     <ClCompile Include="src\http_client.cc" />
     <ClCompile Include="src\main.cc" />
     <ClCompile Include="src\pch.cc">
@@ -189,6 +190,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\addon.h" />
+    <ClInclude Include="src\config.h" />
     <ClInclude Include="src\http_client.h" />
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\product_db.pb.h" />

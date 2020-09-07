@@ -3,6 +3,7 @@
 #pragma once
 // clang-format off
 
+
 #define RAPIDJSON_HAS_STDSTRING 1
 #include <rapidjson/document.h>
 #include <rapidjson/prettywriter.h>
@@ -18,6 +19,9 @@
 #define NOMINMAX
 #endif // !NOMINMAX
 #include <Windows.h>
+
+#undef GetObject
+
 
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
