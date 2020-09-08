@@ -52,12 +52,12 @@ namespace rj = rapidjson;
 #pragma comment(lib, "dxguid.lib")
 #endif
 
-
 #include <unordered_set>
 #include <iostream>
 #include <string>
 #include <thread>
 #include <functional>
+#include <type_traits>
 #include <vector>
 #include <memory>
 #include <cstdint>

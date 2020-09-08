@@ -3,6 +3,7 @@
 #include "products.h"
 #include "http_client.h"
 #include "config.h"
+#include "window.h"
 #include "addon.h"
 // clang-format on
 
@@ -16,7 +17,7 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
     freopen_s(&dummy, "CONOUT$", "w", stderr);
   }
 #endif  // !DEBUG
- 
+
   auto& products = product_wrapper::ProductDbWrapper::GetInstance();
   products.LoadProtoDbFile(R"(C:\ProgramData\Battle.net\Agent\product.db)");
 
@@ -24,6 +25,21 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
   for (auto& install : installs) {
     std::cout << install.GetRetailAddonsPath() << std::endl;
   }
+
+  auto window = addon_updater_window::Window("Test", {1280, 720});
+
+  bool show_demo_window = true;
+  bool show_another_window = false;
+
+  window.Render([&](const std::pair<int32_t, int32_t>& window_size) {
+    {
+      ImGui::SetNextWindowPos(ImVec2(0, 0));
+      ImGui::SetNextWindowSize(ImVec2(window_size.first, window_size.second));
+      ImGui::Begin("Test");
+      ImGui::Text("test");
+      ImGui::End();
+    }
+  });
 
   /*auto config = UpdaterConfig{installs.front().GetRetailAddonsPath() +
                               R"(\WTF\addon_updater.json)"};
@@ -44,6 +60,6 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
       std::cout << addon.name << std::endl;
     }*/
 
-  system("pause");
+  // system("pause");
   return 0;
 }
