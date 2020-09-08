@@ -50,29 +50,22 @@ std::function<Ret(Params...)> Callback<Ret(Params...), n, CallerType>::function;
 
 Window::Window(std::string_view window_title,
                std::pair<int32_t, int32_t> window_size)
-    : d3d12_context_(std::make_shared<d3d12_context::D3D12Context>()) {
-  WNDCLASSEXA window_class = {
-      sizeof(WNDCLASSEXA),
-      CS_CLASSDC,
-      GET_CALLBACK(WNDPROC, Window)(std::bind(
-          &Window::WndProc, this, std::placeholders::_1, std::placeholders::_2,
-          std::placeholders::_3, std::placeholders::_4)),
-      0L,
-      0L,
-      GetModuleHandle(nullptr),
-      nullptr,
-      nullptr,
-      nullptr,
-      nullptr,
-      window_title.data(),
-      nullptr};
+    : window_size_(window_size), d3d12_context_(std::make_shared<d3d12_context::D3D12Context>()) {
+  WNDCLASSA window_class = {};
+  window_class.hInstance = GetModuleHandleA(nullptr);
+  window_class.lpszClassName = window_title.data();
+  window_class.lpfnWndProc = GET_CALLBACK(WNDPROC, Window)(std::bind(
+      &Window::WndProc, this, std::placeholders::_1, std::placeholders::_2,
+      std::placeholders::_3, std::placeholders::_4));
 
-  RegisterClassExA(&window_class);
 
-  window_handle_ = CreateWindowA(
-      window_class.lpszClassName, window_title.data(), WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, CW_USEDEFAULT, window_size.first, window_size.second,
-      nullptr, nullptr, window_class.hInstance, nullptr);
+  RegisterClassA(&window_class);
+
+  window_handle_ =
+      CreateWindowA(window_class.lpszClassName, window_title.data(),
+                    WS_OVERLAPPEDWINDOW | WS_VISIBLE, CW_USEDEFAULT,
+                    CW_USEDEFAULT, window_size.first, window_size.second,
+                    nullptr, nullptr, window_class.hInstance, nullptr);
 
   if (!d3d12_context_->CreateDeviceD3D(window_handle_)) {
     d3d12_context_->CleanupDeviceD3D();
