@@ -33,14 +33,14 @@ inline T GetField(const rj::Value::ConstObject& obj, std::string_view member,
 
 inline std::optional<std::string> GetString(const rj::Value::ConstObject& obj,
                                             std::string_view member) {
-  return GetFieldIfExists<std::string>(obj, member, rj::kStringType);
+  return GetFieldIfExists<std::string>(obj, member, rj::Type::kStringType);
 }
 
 inline std::optional<bool> GetBool(const rj::Value::ConstObject& obj,
                                    std::string_view member) {
   const auto result = obj.FindMember(member.data());
-  if (result != obj.MemberEnd() && result->value.GetType() == rj::kTrueType ||
-      result->value.GetType() == rj::kFalseType) {
+  if (result != obj.MemberEnd() && result->value.GetType() == rj::Type::kTrueType ||
+      result->value.GetType() == rj::Type::kFalseType) {
     return result->value.Get<bool>();
   }
   return std::nullopt;

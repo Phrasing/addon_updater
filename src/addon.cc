@@ -17,6 +17,20 @@ bool DeserializeCurse(const rj::Value::ConstObject& object, Addon* addon) {
       std::move(rj_util::GetStringDef(object, curse_structs::kField_Slug));
   addon->type = AddonType::kCurse;
 
+  if (rj_util::HasMemberOfType(object, curse_structs::kField_Attachments,
+                               rj::kArrayType)) {
+    const auto array = object[curse_structs::kField_Attachments].GetArray();
+    for (const auto* it = array.Begin(); it != array.End(); ++it) {
+      if (!it->IsObject()) continue;
+      curse_structs::CurseAttachment attachment{};
+      if (attachment.Deserialize(it->GetObject()) && attachment.is_default) {
+        string_util::ReplaceAll(&attachment.thumbnail_url, R"(/256)", R"(/64)");
+        addon->screenshot_url = attachment.thumbnail_url;
+        break;
+      }
+    }
+  }
+
   return true;
 }
 
@@ -73,7 +87,6 @@ void InstalledAddon::Serialize(
   writer->Int(static_cast<int32_t>(this->type));
   writer->String("version");
   writer->String(this->readable_version);
-
   if (!this->directories.empty()) {
     writer->String("directories");
     writer->StartArray();
@@ -96,24 +109,42 @@ void InstalledAddon::Uninstall() {
 
 bool InstalledAddon::Update() { return false; }
 
-std::vector<Addon> DeserializeAddons(std::string_view json,
-                                     AddonType addon_type) {
+bool DeserializeAddons(std::string_view json, AddonType addon_type,
+                       AddonVect* addons) {
   rj::Document document{};
   document.Parse(json.data(), json.length());
   if (document.HasParseError()) {
-    return std::vector<Addon>();
+    return false;
   }
 
-  std::vector<Addon> addons{};
   for (const auto* it = document.Begin(); it != document.End(); ++it) {
     Addon addon{};
     addon.type = addon_type;
     if (addon.Deserialize(it->GetObject())) {
-      addons.push_back(addon);
+      addons->push_back(addon);
     }
   }
 
-  return addons;
+  return true;
 }
 
 }  // namespace addon_updater
+
+bool addon_updater::curse_structs::CurseAttachment::Deserialize(
+    const rj::Value::ConstObject& object) {
+  this->id = rj_util::GetField<uint32_t>(
+      object, curse_structs::attachments::kField_Id, rj::kNumberType);
+  this->project_id = rj_util::GetField<uint32_t>(
+      object, curse_structs::attachments::kField_ProjectId, rj::kNumberType);
+  this->description = std::move(rj_util::GetStringDef(
+      object, curse_structs::attachments::kField_Description));
+  this->is_default =
+      rj_util::GetBoolDef(object, curse_structs::attachments::kField_IsDefault);
+  this->url = std::move(
+      rj_util::GetStringDef(object, curse_structs::attachments::kField_Url));
+
+  this->thumbnail_url = std::move(rj_util::GetStringDef(
+      object, curse_structs::attachments::kField_ThumbnailUrl));
+
+  return true;
+}

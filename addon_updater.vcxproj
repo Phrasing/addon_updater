@@ -81,16 +81,20 @@
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)bin\build\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)-$(Configuration)</TargetName>
-    <IncludePath>C:\Libraries\boost_1_74_0;$(SolutionDir)third_party\openssl\include;$(SolutionDir)third_party\uri\include;$(SolutionDir)third_party\protobuf\$(Configuration)\include;$(SolutionDir)third_party\rapidjson\include;$(SolutionDir)third_party\imgui\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Libraries\boost_1_74_0\lib64-msvc-14.2;$(SolutionDir)third_party\openssl\lib\$(Platform)\$(Configuration);$(SolutionDir)third_party\uri\lib\$(Platform)\$(Configuration);$(SolutionDir)third_party\protobuf\$(Configuration);$(SolutionDir)third_party\imgui\lib\$(Configuration);$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Libraries\boost_1_74_0;$(SolutionDir)third_party\openssl\include;$(SolutionDir)third_party\uri\include;$(SolutionDir)third_party\protobuf\$(Configuration)\include;$(SolutionDir)third_party\rapidjson\include;$(SolutionDir)third_party\imgui\include;$(SolutionDir)third_party\glew\include;$(SolutionDir)third_party\glfw\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Libraries\boost_1_74_0\lib64-msvc-14.2;$(SolutionDir)third_party\openssl\lib\$(Platform)\$(Configuration);$(SolutionDir)third_party\uri\lib\$(Platform)\$(Configuration);$(SolutionDir)third_party\protobuf\$(Configuration);$(SolutionDir)third_party\imgui\lib\$(Configuration);$(SolutionDir)third_party\glfw\lib\$(Configuration);$(SoltutionDir)third_party\glew\lib\$(Configuration);$(LibraryPath)</LibraryPath>
+    <EnableMicrosoftCodeAnalysis>false</EnableMicrosoftCodeAnalysis>
+    <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)bin\build\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)-$(Configuration)</TargetName>
-    <IncludePath>C:\Libraries\boost_1_74_0;$(SolutionDir)third_party\openssl\include;$(SolutionDir)third_party\uri\include;$(SolutionDir)third_party\protobuf\$(Configuration)\include;$(SolutionDir)third_party\rapidjson\include;$(SolutionDir)third_party\imgui\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Libraries\boost_1_74_0\lib64-msvc-14.2;$(SolutionDir)third_party\openssl\lib\$(Platform)\$(Configuration);$(SolutionDir)third_party\uri\lib\$(Platform)\$(Configuration);$(SolutionDir)third_party\protobuf\$(Configuration);$(SolutionDir)third_party\imgui\lib\$(Configuration);$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Libraries\boost_1_74_0;$(SolutionDir)third_party\openssl\include;$(SolutionDir)third_party\uri\include;$(SolutionDir)third_party\protobuf\$(Configuration)\include;$(SolutionDir)third_party\rapidjson\include;$(SolutionDir)third_party\imgui\include;$(SolutionDir)third_party\glew\include;$(SolutionDir)third_party\glfw\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Libraries\boost_1_74_0\lib64-msvc-14.2;$(SolutionDir)third_party\openssl\lib\$(Platform)\$(Configuration);$(SolutionDir)third_party\uri\lib\$(Platform)\$(Configuration);$(SolutionDir)third_party\protobuf\$(Configuration);$(SolutionDir)third_party\imgui\lib\$(Configuration);$(SolutionDir)third_party\glfw\lib\$(Configuration);$(SoltutionDir)third_party\glew\lib\$(Configuration);$(LibraryPath)</LibraryPath>
+    <EnableMicrosoftCodeAnalysis>false</EnableMicrosoftCodeAnalysis>
+    <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -126,7 +130,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <DisableSpecificWarnings>4244</DisableSpecificWarnings>
@@ -138,8 +142,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>libcrypto.lib;libssl.lib;network-uri.lib;libprotobuf.lib;imgui.lib;dxgi.lib;d3d12.lib;Crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalOptions> /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>libcrypto.lib;libssl.lib;network-uri.lib;libprotobuf.lib;imgui.lib;glfw3.lib;opengl32.lib;crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions> /ignore:4099 /NODEFAULTLIB:MSVCRTD /ignore:4217 %(AdditionalOptions)</AdditionalOptions>
       <Profile>false</Profile>
     </Link>
   </ItemDefinitionGroup>
@@ -151,7 +155,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <DisableSpecificWarnings>4244</DisableSpecificWarnings>
@@ -169,14 +173,17 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>libcrypto.lib;libssl.lib;network-uri.lib;libprotobuf.lib;imgui.lib;dxgi.lib;d3d12.lib;Crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalOptions> /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>libcrypto.lib;libssl.lib;network-uri.lib;libprotobuf.lib;imgui.lib;glfw3.lib;opengl32.lib;crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions> /ignore:4099 /NODEFAULTLIB:MSVCRTD /ignore:4217 %(AdditionalOptions)</AdditionalOptions>
       <Profile>false</Profile>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\addon.cc" />
+    <ClCompile Include="src\base64.cc" />
     <ClCompile Include="src\config.cc" />
+    <ClCompile Include="src\file.cc" />
+    <ClCompile Include="src\gui.cc" />
     <ClCompile Include="src\http_client.cc" />
     <ClCompile Include="src\main.cc" />
     <ClCompile Include="src\pch.cc">
@@ -192,11 +199,17 @@
     <ClCompile Include="src\products.cc" />
     <ClCompile Include="src\rapidjson_util.cc" />
     <ClCompile Include="src\string_util.cc" />
+    <ClCompile Include="src\texture.cc" />
+    <ClCompile Include="src\thumbnail_cache.cc" />
+    <ClCompile Include="src\toc_parser.cc" />
     <ClCompile Include="src\window.cc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\addon.h" />
+    <ClInclude Include="src\base64.h" />
     <ClInclude Include="src\config.h" />
+    <ClInclude Include="src\file.h" />
+    <ClInclude Include="src\gui.h" />
     <ClInclude Include="src\http_client.h" />
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\products.pb.h" />
@@ -204,6 +217,9 @@
     <ClInclude Include="src\singleton.h" />
     <ClInclude Include="src\products.h" />
     <ClInclude Include="src\string_util.h" />
+    <ClInclude Include="src\texture.h" />
+    <ClInclude Include="src\thumbnail_cache.h" />
+    <ClInclude Include="src\toc_parser.h" />
     <ClInclude Include="src\window.h" />
   </ItemGroup>
   <ItemGroup>

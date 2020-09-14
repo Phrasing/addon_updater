@@ -2,7 +2,7 @@
 #define PRODUCTS_H
 #pragma once
 
-namespace product_wrapper {
+namespace addon_updater {
 
 enum class ClientType {
   kClassic,
@@ -13,28 +13,17 @@ enum class ClientType {
 };
 
 struct WowInstallation {
-  std::string GetClassicAddonsPath();
-  std::string GetRetailAddonsPath();
-  std::string GetRetailPtrAddonsPath();
-  std::string GetClassicPtrAddonsPath();
-  std::string GetBetaAddonsPath();
-
+  ClientType client_type;
   std::string base_path;
+  std::string addons_path;
+  std::string wtf_path;
 };
 
-class ProductDbWrapper : public Singleton<ProductDbWrapper> {
- public:
-  ProductDbWrapper() = default;
-  ~ProductDbWrapper() = default;
+std::optional<ProductDb> GetProductDb(std::string_view product_db_path);
+void GetWowInstallations(const ProductDb& product_db,
+                         std::vector<WowInstallation>* installs);
 
 
-  bool LoadProtoDbFile(std::string_view file_path);
-  std::vector<WowInstallation> GetWowInstallations();
-
- private:
-  ProductDb product_db_;
-};
-
-}  // namespace product_wrapper
+}  // namespace addon_updater_products
 
 #endif  // !PRODUCTS_H

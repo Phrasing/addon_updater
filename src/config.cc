@@ -1,6 +1,7 @@
 // clang-format off
 #include "pch.h"
 #include "config.h"
+#include "file.h"
 // clang-format on
 
 namespace addon_updater {
@@ -27,16 +28,12 @@ bool UpdaterConfig::SerializeToFile() {
 }
 
 bool UpdaterConfig::DeserializeFromFile() {
-  auto config_file = std::make_unique<std::ifstream>(this->config_file_path_);
+  auto file_result = addon_updater::ReadFile(this->config_file_path_.c_str());
 
-  if (!config_file->good()) return false;
-
-  const auto contents =
-      std::string{std::istreambuf_iterator<char>((*config_file)),
-                  std::istreambuf_iterator<char>()};
+  if (!file_result.Ok()) return false;
 
   rj::Document document{};
-  document.Parse(contents.data());
+  document.Parse(file_result.content);
 
   if (document.HasParseError()) {
     return false;
@@ -68,7 +65,7 @@ bool UpdaterConfig::UninstallAddon(const InstalledAddon& installed_addon) {
 }
 
 bool UpdaterConfig::InstallAddon(const Addon& addon) {
- // installed_addons_.emplace_back(addon.Install());
+  installed_addons_.emplace_back(std::move(addon.Install()));
   return this->UpdateConfig();
 }
 

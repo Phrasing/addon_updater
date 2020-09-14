@@ -2,57 +2,81 @@
 #include "pch.h"
 #include "products.h"
 #include "string_util.h"
+#include "file.h"
 // clang-format on
-
-bool product_wrapper::ProductDbWrapper::LoadProtoDbFile(
-    std::string_view file_path) {
-  auto istream = std::make_unique<std::fstream>(
-      file_path.data(), std::ios::binary | std::ios::in);
-  if (!product_db_.ParseFromIstream(istream.get())) {
-    //@TODO: Error Handling
-    return false;
+namespace addon_updater {
+namespace {
+inline std::string_view ClientTypeToString(ClientType client_type) {
+  switch (client_type) {
+    case ClientType::kBeta:
+      return "_beta_";
+      break;
+    case ClientType::kRetail:
+      return "_retail_";
+      break;
+    case ClientType::kClassic:
+      return "_classic_";
+      break;
+    case ClientType::kClassicPtr:
+      return "_classic_ptr_";
+      break;
+    case ClientType::kRetailPtr:
+      return "_ptr_";
+      break;
+    default:
+      break;
   }
-  return true;
+  return std::string_view();
 }
 
-std::vector<product_wrapper::WowInstallation>
-product_wrapper::ProductDbWrapper::GetWowInstallations() {
-  std::vector<WowInstallation> wow_installations{};
+inline ClientType StringToClientType(std::string_view client_string) {
+  if (client_string == "_retail_") return ClientType::kRetail;
+  if (client_string == "_beta_") return ClientType::kBeta;
+  if (client_string == "_classic_") return ClientType::kClassic;
+  if (client_string == "_classic_ptr_") return ClientType::kClassicPtr;
+  if (client_string == "_ptr_") return ClientType::kRetailPtr;
+  return ClientType::kRetail;
+}
+}  // namespace
 
-  if (!product_db_.IsInitialized()) return wow_installations;
+std::optional<ProductDb> GetProductDb(std::string_view product_db_path) {
+  ProductDb product_db{};
 
-  for (auto& installs : product_db_.product_installs()) {
-    if (installs.product_code() == "wow") {
-      auto install_path = installs.settings().install_path();
-      string_util::ReplaceAll(&install_path, "/", R"(\)");
-      wow_installations.push_back({install_path});
+  auto result = addon_updater::ReadFile(product_db_path.data());
+
+  if (!result.Ok()) return std::nullopt;
+
+  if (!product_db.ParseFromString(result.content)) {
+    return std::nullopt;
+  }
+
+  return product_db;
+}
+
+void GetWowInstallations(const ProductDb& product_db,
+                         std::vector<WowInstallation>* detected_installations) {
+  for (auto& installs : product_db.product_installs()) {
+    const auto& settings = installs.settings();
+    if (installs.product_code().find("wow") != std::string::npos) {
+      const auto* reflect = settings.GetReflection();
+      if (!reflect->GetUnknownFields(settings).empty()) {
+        if (reflect->GetUnknownFields(settings).field_count() == 3) {
+          const auto product_flavor =
+              reflect->GetUnknownFields(settings).field(2);
+          if (product_flavor.type() ==
+                  google::protobuf::UnknownField::Type::TYPE_LENGTH_DELIMITED &&
+              product_flavor.number() == 13) {
+            const auto& flavor_string = product_flavor.length_delimited();
+
+            auto base_path = settings.install_path() + '/' + flavor_string;
+            string_util::ReplaceAll(&base_path, "/", R"(\)");
+            detected_installations->push_back(
+                {StringToClientType(flavor_string), base_path,
+                 base_path + R"(\Interface\Addons\)", base_path + R"(\WTF\)"});
+          }
+        }
+      }
     }
   }
-
-  return wow_installations;
 }
-
-std::string product_wrapper::WowInstallation::GetClassicAddonsPath() {
-  const auto path = base_path + R"(\_classic_)";
-  return std::filesystem::exists(path) ? path : std::string();
-}
-
-std::string product_wrapper::WowInstallation::GetRetailAddonsPath() {
-  const auto path = base_path + R"(\_retail_)";
-  return std::filesystem::exists(path) ? path : std::string();
-}
-
-std::string product_wrapper::WowInstallation::GetRetailPtrAddonsPath() {
-  const auto path = base_path + R"(\_ptr_)";
-  return std::filesystem::exists(path) ? path : std::string();
-}
-
-std::string product_wrapper::WowInstallation::GetClassicPtrAddonsPath() {
-  const auto path = base_path + R"(\_classic_ptr_)";
-  return std::filesystem::exists(path) ? path : std::string();
-}
-
-std::string product_wrapper::WowInstallation::GetBetaAddonsPath() {
-  const auto path = base_path + R"(\_beta_)";
-  return std::filesystem::exists(path) ? path : std::string();
 }

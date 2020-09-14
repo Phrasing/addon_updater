@@ -35,6 +35,15 @@ constexpr auto kField_DateReleased = "dateReleased";
 constexpr auto kField_IsAvailable = "isAvailable";
 constexpr auto kField_IsExperimental = "isExperimental";
 
+namespace attachments {
+constexpr auto kField_Id = "id";
+constexpr auto kField_ProjectId = "projectId";
+constexpr auto kField_ThumbnailUrl = "thumbnailUrl";
+constexpr auto kField_Url = "url";
+constexpr auto kField_Description = "description";
+constexpr auto kField_IsDefault = "isDefault";
+}  // namespace attachments
+
 struct CurseAuthor {
   std::string name;
   std::string url;
@@ -47,6 +56,7 @@ struct CurseAuthor {
 };
 
 struct CurseAttachment {
+  bool Deserialize(const rj::Value::ConstObject& object);
   std::string description;
   std::string thumbnail_url;
   std::string title;
@@ -80,10 +90,15 @@ enum class AddonType { kTukui, kCurse };
 enum class AddonFlavor { kRetail, kRetailPtr, kClassic, kClassicPtr, kBeta };
 
 struct AddonThumbnail {
-  void* pixels;
+  uint8_t* pixels;
+  size_t pixels_size;
   int32_t width;
   int32_t height;
   int32_t channels;
+
+  bool is_loaded = false;
+  bool in_progress = false;
+  bool is_uploaded = false;
 };
 
 struct InstalledAddon;
@@ -104,10 +119,14 @@ struct Addon {
   std::string description;
   std::string readable_version;
 
+  std::vector<curse_structs::CurseAttachment> attachments;
+
   AddonThumbnail thumbnail;
   AddonFlavor flavor;
   AddonType type;
 };
+
+using AddonVect = std::vector<Addon>;
 
 struct InstalledAddon : Addon {
   void Serialize(rj::PrettyWriter<rj::StringBuffer>* writer) const;
@@ -119,7 +138,8 @@ struct InstalledAddon : Addon {
   std::unordered_set<std::string> directories;
 };
 
-std::vector<Addon> DeserializeAddons(std::string_view json, AddonType addon_type);
+bool DeserializeAddons(std::string_view json, AddonType addon_type,
+                       AddonVect* addons);
 
 }  // namespace addon_updater
 

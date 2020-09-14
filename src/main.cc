@@ -5,9 +5,18 @@
 #include "config.h"
 #include "window.h"
 #include "addon.h"
+#include "texture.h"
+#include "thumbnail_cache.h"
+#include "gui.h"
+#include "base64.h"
+#include "file.h"
+#include "toc_parser.h"
 // clang-format on
 
-using namespace addon_updater;
+namespace {
+constexpr auto kWindowWidth = 640;
+constexpr auto kWindowHeight = 480;
+}  // namespace
 
 int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #ifdef _DEBUG
@@ -18,47 +27,49 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
   }
 #endif  // !DEBUG
 
-  auto& products = product_wrapper::ProductDbWrapper::GetInstance();
-  products.LoadProtoDbFile(R"(C:\ProgramData\Battle.net\Agent\product.db)");
+  std::vector<addon_updater::WowInstallation> wow_installs{};
+  auto products = addon_updater::GetProductDb(
+      R"(C:\ProgramData\Battle.net\Agent\product.db)");
 
-  auto installs = products.GetWowInstallations();
-  for (auto& install : installs) {
-    std::cout << install.GetRetailAddonsPath() << std::endl;
+  if (products != std::nullopt) {
+    GetWowInstallations((products.value()), &wow_installs);
   }
 
-  auto window = addon_updater_window::Window("Test", {1280, 720});
+  for (auto& install : wow_installs) {
+    auto toc_file = addon_updater::ParseTocFile(install.addons_path +
+                                                R"(BigWigs\BigWigs.toc)");
+    if (toc_file != std::nullopt) {
+      std::cout << toc_file.value().numeric_version << std::endl;
+    }
+  }
+
+  boost::asio::thread_pool thd_pool_(std::thread::hardware_concurrency());
+
+  auto window = addon_updater::Window("Test", {kWindowWidth, kWindowHeight});
+  auto gui = addon_updater::Gui(&thd_pool_);
 
   bool show_demo_window = true;
   bool show_another_window = false;
 
-  window.Render([&](const std::pair<int32_t, int32_t>& window_size) {
-    {
-      ImGui::SetNextWindowPos(ImVec2(0, 0));
-      ImGui::SetNextWindowSize(ImVec2(window_size.first, window_size.second));
-      ImGui::Begin("Test");
-      ImGui::Text("test");
-      ImGui::End();
-    }
-  });
+  auto client = addon_updater::ClientFactory::GetInstance().NewSyncClient();
 
-  /*auto config = UpdaterConfig{installs.front().GetRetailAddonsPath() +
-                              R"(\WTF\addon_updater.json)"};
+  const auto result = client->Get(
+      "https://addons-ecs.forgesvc.net/api/v2/addon/"
+      "search?gameId=1&searchFilter=&pageSize=500");
 
-  if (!config.DeserializeFromFile()) {
-    static_cast<void>(::MessageBoxA(
-        nullptr, "Failed to deserialize config file.\nGenerate a new one?",
-        nullptr, MB_ICONQUESTION));
+  addon_updater::AddonVect addons{};
+  if (!addon_updater::DeserializeAddons(
+          result.data, addon_updater::AddonType::kCurse, &addons)) {
+    std::fprintf(stderr, "Error: failed to deserialize curse addons.\n");
+  }
+  /*if (!addon_updater::DeserializeAddons(
+          result.data, addon_updater::AddonType::kTukui, &addons)) {
   }*/
 
-  /*  auto client = http_client::ClientFactory::GetInstance().NewSyncClient();
-    const auto result = client->Get(
-        "https://addons-ecs.forgesvc.net/api/v2/addon/"
-        "search?gameId=1&searchFilter=&pageSize=1000");
-
-    const auto addons = DeserializeAddons(result.data, AddonType::kCurse);
-    for (auto& addon : addons) {
-      std::cout << addon.name << std::endl;
-    }*/
+  window.Render([&](const std::pair<int32_t, int32_t>& window_size) {
+    { gui.DrawGui(addons, window_size); }
+  });
+  thd_pool_.join();
 
   // system("pause");
   return 0;

@@ -5,8 +5,8 @@
 template <typename T>
 class Singleton {
  public:
-  static T& GetInstance();
-  static T* GetInstancePtr();
+  static auto GetInstance() -> T&;
+  static auto GetInstancePtr() -> T*;
   static void Destroy();
 
  protected:
@@ -36,12 +36,12 @@ Singleton<T>::~Singleton() {
 }
 
 template <typename T>
-T& Singleton<T>::GetInstance() {
+auto Singleton<T>::GetInstance() -> T& {
   return *(GetInstancePtr());
 }
 
 template <typename T>
-T* Singleton<T>::GetInstancePtr() {
+auto Singleton<T>::GetInstancePtr() -> T* {
   if (!instance_) {
     Singleton<T>::instance_ = new T();
   }

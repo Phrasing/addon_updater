@@ -103,21 +103,21 @@ class UserSettings;
 class UserSettingsDefaultTypeInternal;
 extern UserSettingsDefaultTypeInternal _UserSettings_default_instance_;
 PROTOBUF_NAMESPACE_OPEN
-template<> ::ActiveProcess* Arena::CreateMaybeMessage<::ActiveProcess>(Arena*);
-template<> ::BackfillProgress* Arena::CreateMaybeMessage<::BackfillProgress>(Arena*);
-template<> ::BaseProductState* Arena::CreateMaybeMessage<::BaseProductState>(Arena*);
-template<> ::BuildConfig* Arena::CreateMaybeMessage<::BuildConfig>(Arena*);
-template<> ::CachedProductState* Arena::CreateMaybeMessage<::CachedProductState>(Arena*);
-template<> ::DownloadSettings* Arena::CreateMaybeMessage<::DownloadSettings>(Arena*);
-template<> ::InstallHandshake* Arena::CreateMaybeMessage<::InstallHandshake>(Arena*);
-template<> ::LanguageSetting* Arena::CreateMaybeMessage<::LanguageSetting>(Arena*);
-template<> ::ProductConfig* Arena::CreateMaybeMessage<::ProductConfig>(Arena*);
-template<> ::ProductDb* Arena::CreateMaybeMessage<::ProductDb>(Arena*);
-template<> ::ProductInstall* Arena::CreateMaybeMessage<::ProductInstall>(Arena*);
-template<> ::ProductOperations* Arena::CreateMaybeMessage<::ProductOperations>(Arena*);
-template<> ::RepairProgress* Arena::CreateMaybeMessage<::RepairProgress>(Arena*);
-template<> ::UpdateProgress* Arena::CreateMaybeMessage<::UpdateProgress>(Arena*);
-template<> ::UserSettings* Arena::CreateMaybeMessage<::UserSettings>(Arena*);
+template<> auto Arena::CreateMaybeMessage<::ActiveProcess>(Arena*) -> ::ActiveProcess*;
+template<> auto Arena::CreateMaybeMessage<::BackfillProgress>(Arena*) -> ::BackfillProgress*;
+template<> auto Arena::CreateMaybeMessage<::BaseProductState>(Arena*) -> ::BaseProductState*;
+template<> auto Arena::CreateMaybeMessage<::BuildConfig>(Arena*) -> ::BuildConfig*;
+template<> auto Arena::CreateMaybeMessage<::CachedProductState>(Arena*) -> ::CachedProductState*;
+template<> auto Arena::CreateMaybeMessage<::DownloadSettings>(Arena*) -> ::DownloadSettings*;
+template<> auto Arena::CreateMaybeMessage<::InstallHandshake>(Arena*) -> ::InstallHandshake*;
+template<> auto Arena::CreateMaybeMessage<::LanguageSetting>(Arena*) -> ::LanguageSetting*;
+template<> auto Arena::CreateMaybeMessage<::ProductConfig>(Arena*) -> ::ProductConfig*;
+template<> auto Arena::CreateMaybeMessage<::ProductDb>(Arena*) -> ::ProductDb*;
+template<> auto Arena::CreateMaybeMessage<::ProductInstall>(Arena*) -> ::ProductInstall*;
+template<> auto Arena::CreateMaybeMessage<::ProductOperations>(Arena*) -> ::ProductOperations*;
+template<> auto Arena::CreateMaybeMessage<::RepairProgress>(Arena*) -> ::RepairProgress*;
+template<> auto Arena::CreateMaybeMessage<::UpdateProgress>(Arena*) -> ::UpdateProgress*;
+template<> auto Arena::CreateMaybeMessage<::UserSettings>(Arena*) -> ::UserSettings*;
 PROTOBUF_NAMESPACE_CLOSE
 
 enum LanguageOption : int {
@@ -128,22 +128,22 @@ enum LanguageOption : int {
   LanguageOption_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
   LanguageOption_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
 };
-bool LanguageOption_IsValid(int value);
+auto LanguageOption_IsValid(int value) -> bool;
 constexpr LanguageOption LanguageOption_MIN = LANGOPTION_NONE;
 constexpr LanguageOption LanguageOption_MAX = LANGOPTION_TEXT_AND_SPEECH;
 constexpr int LanguageOption_ARRAYSIZE = LanguageOption_MAX + 1;
 
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* LanguageOption_descriptor();
+auto LanguageOption_descriptor() -> const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*;
 template<typename T>
-inline const std::string& LanguageOption_Name(T enum_t_value) {
+inline auto LanguageOption_Name(T enum_t_value) -> const std::string& {
   static_assert(::std::is_same<T, LanguageOption>::value ||
     ::std::is_integral<T>::value,
     "Incorrect type passed to function LanguageOption_Name.");
   return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
     LanguageOption_descriptor(), enum_t_value);
 }
-inline bool LanguageOption_Parse(
-    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, LanguageOption* value) {
+inline auto LanguageOption_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, LanguageOption* value) -> bool {
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<LanguageOption>(
     LanguageOption_descriptor(), name, value);
 }
@@ -155,22 +155,22 @@ enum LanguageSettingType : int {
   LanguageSettingType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
   LanguageSettingType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
 };
-bool LanguageSettingType_IsValid(int value);
+auto LanguageSettingType_IsValid(int value) -> bool;
 constexpr LanguageSettingType LanguageSettingType_MIN = LANGSETTING_NONE;
 constexpr LanguageSettingType LanguageSettingType_MAX = LANGSETTING_ADVANCED;
 constexpr int LanguageSettingType_ARRAYSIZE = LanguageSettingType_MAX + 1;
 
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* LanguageSettingType_descriptor();
+auto LanguageSettingType_descriptor() -> const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*;
 template<typename T>
-inline const std::string& LanguageSettingType_Name(T enum_t_value) {
+inline auto LanguageSettingType_Name(T enum_t_value) -> const std::string& {
   static_assert(::std::is_same<T, LanguageSettingType>::value ||
     ::std::is_integral<T>::value,
     "Incorrect type passed to function LanguageSettingType_Name.");
   return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
     LanguageSettingType_descriptor(), enum_t_value);
 }
-inline bool LanguageSettingType_Parse(
-    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, LanguageSettingType* value) {
+inline auto LanguageSettingType_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, LanguageSettingType* value) -> bool {
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<LanguageSettingType>(
     LanguageSettingType_descriptor(), name, value);
 }
@@ -181,22 +181,22 @@ enum ShortcutOption : int {
   ShortcutOption_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
   ShortcutOption_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
 };
-bool ShortcutOption_IsValid(int value);
+auto ShortcutOption_IsValid(int value) -> bool;
 constexpr ShortcutOption ShortcutOption_MIN = SHORTCUT_NONE;
 constexpr ShortcutOption ShortcutOption_MAX = SHORTCUT_ALL_USERS;
 constexpr int ShortcutOption_ARRAYSIZE = ShortcutOption_MAX + 1;
 
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ShortcutOption_descriptor();
+auto ShortcutOption_descriptor() -> const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*;
 template<typename T>
-inline const std::string& ShortcutOption_Name(T enum_t_value) {
+inline auto ShortcutOption_Name(T enum_t_value) -> const std::string& {
   static_assert(::std::is_same<T, ShortcutOption>::value ||
     ::std::is_integral<T>::value,
     "Incorrect type passed to function ShortcutOption_Name.");
   return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
     ShortcutOption_descriptor(), enum_t_value);
 }
-inline bool ShortcutOption_Parse(
-    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, ShortcutOption* value) {
+inline auto ShortcutOption_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, ShortcutOption* value) -> bool {
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ShortcutOption>(
     ShortcutOption_descriptor(), name, value);
 }
@@ -208,22 +208,22 @@ enum Operation : int {
   Operation_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
   Operation_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
 };
-bool Operation_IsValid(int value);
+auto Operation_IsValid(int value) -> bool;
 constexpr Operation Operation_MIN = OP_NONE;
 constexpr Operation Operation_MAX = OP_REPAIR;
 constexpr int Operation_ARRAYSIZE = Operation_MAX + 1;
 
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* Operation_descriptor();
+auto Operation_descriptor() -> const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*;
 template<typename T>
-inline const std::string& Operation_Name(T enum_t_value) {
+inline auto Operation_Name(T enum_t_value) -> const std::string& {
   static_assert(::std::is_same<T, Operation>::value ||
     ::std::is_integral<T>::value,
     "Incorrect type passed to function Operation_Name.");
   return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
     Operation_descriptor(), enum_t_value);
 }
-inline bool Operation_Parse(
-    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, Operation* value) {
+inline auto Operation_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, Operation* value) -> bool {
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<Operation>(
     Operation_descriptor(), name, value);
 }
@@ -233,7 +233,7 @@ class LanguageSetting PROTOBUF_FINAL :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:LanguageSetting) */ {
  public:
   inline LanguageSetting() : LanguageSetting(nullptr) {}
-  virtual ~LanguageSetting();
+  ~LanguageSetting() override;
 
   LanguageSetting(const LanguageSetting& from);
   LanguageSetting(LanguageSetting&& from) noexcept
@@ -241,32 +241,33 @@ class LanguageSetting PROTOBUF_FINAL :
     *this = ::std::move(from);
   }
 
-  inline LanguageSetting& operator=(const LanguageSetting& from) {
+  inline auto operator=(const LanguageSetting& from) -> LanguageSetting& {
     CopyFrom(from);
     return *this;
   }
-  inline LanguageSetting& operator=(LanguageSetting&& from) noexcept {
+  inline auto operator=(LanguageSetting&& from) noexcept -> LanguageSetting& {
     if (GetArena() == from.GetArena()) {
-      if (this != &from) InternalSwap(&from);
+      if (this != &from) { InternalSwap(&from);
+}
     } else {
       CopyFrom(from);
     }
     return *this;
   }
 
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+  static auto descriptor() -> const ::PROTOBUF_NAMESPACE_ID::Descriptor* {
     return GetDescriptor();
   }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+  static auto GetDescriptor() -> const ::PROTOBUF_NAMESPACE_ID::Descriptor* {
     return GetMetadataStatic().descriptor;
   }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+  static auto GetReflection() -> const ::PROTOBUF_NAMESPACE_ID::Reflection* {
     return GetMetadataStatic().reflection;
   }
-  static const LanguageSetting& default_instance();
+  static auto default_instance() -> const LanguageSetting&;
 
   static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const LanguageSetting* internal_default_instance() {
+  static inline auto internal_default_instance() -> const LanguageSetting* {
     return reinterpret_cast<const LanguageSetting*>(
                &_LanguageSetting_default_instance_);
   }
@@ -277,7 +278,8 @@ class LanguageSetting PROTOBUF_FINAL :
     a.Swap(&b);
   }
   inline void Swap(LanguageSetting* other) {
-    if (other == this) return;
+    if (other == this) { return;
+}
     if (GetArena() == other->GetArena()) {
       InternalSwap(other);
     } else {
@@ -285,18 +287,19 @@ class LanguageSetting PROTOBUF_FINAL :
     }
   }
   void UnsafeArenaSwap(LanguageSetting* other) {
-    if (other == this) return;
+    if (other == this) { return;
+}
     GOOGLE_DCHECK(GetArena() == other->GetArena());
     InternalSwap(other);
   }
 
   // implements Message ----------------------------------------------
 
-  inline LanguageSetting* New() const final {
+  inline auto New() const -> LanguageSetting* final {
     return CreateMaybeMessage<LanguageSetting>(nullptr);
   }
 
-  LanguageSetting* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+  auto New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const -> LanguageSetting* final {
     return CreateMaybeMessage<LanguageSetting>(arena);
   }
   void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
@@ -304,13 +307,13 @@ class LanguageSetting PROTOBUF_FINAL :
   void CopyFrom(const LanguageSetting& from);
   void MergeFrom(const LanguageSetting& from);
   PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
+  auto IsInitialized() const -> bool final;
 
-  size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
-      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _cached_size_.Get(); }
+  auto ByteSizeLong() const -> size_t final;
+  auto _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) -> const char* final;
+  auto _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const -> ::PROTOBUF_NAMESPACE_ID::uint8* final;
+  auto GetCachedSize() const -> int final { return _cached_size_.Get(); }
 
   private:
   inline void SharedCtor();
@@ -318,7 +321,7 @@ class LanguageSetting PROTOBUF_FINAL :
   void SetCachedSize(int size) const final;
   void InternalSwap(LanguageSetting* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+  static auto FullMessageName() -> ::PROTOBUF_NAMESPACE_ID::StringPiece {
     return "LanguageSetting";
   }
   protected:
@@ -328,9 +331,9 @@ class LanguageSetting PROTOBUF_FINAL :
   inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
   public:
 
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  auto GetMetadata() const -> ::PROTOBUF_NAMESPACE_ID::Metadata final;
   private:
-  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+  static auto GetMetadataStatic() -> ::PROTOBUF_NAMESPACE_ID::Metadata {
     ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_schema_2eproto);
     return ::descriptor_table_schema_2eproto.file_level_metadata[kIndexInFileMessages];
   }
@@ -347,26 +350,26 @@ class LanguageSetting PROTOBUF_FINAL :
   };
   // string language = 1;
   void clear_language();
-  const std::string& language() const;
+  auto language() const -> const std::string&;
   void set_language(const std::string& value);
   void set_language(std::string&& value);
   void set_language(const char* value);
   void set_language(const char* value, size_t size);
-  std::string* mutable_language();
-  std::string* release_language();
+  auto mutable_language() -> std::string*;
+  auto release_language() -> std::string*;
   void set_allocated_language(std::string* language);
   private:
-  const std::string& _internal_language() const;
+  auto _internal_language() const -> const std::string&;
   void _internal_set_language(const std::string& value);
-  std::string* _internal_mutable_language();
+  auto _internal_mutable_language() -> std::string*;
   public:
 
   // .LanguageOption option = 2;
   void clear_option();
-  ::LanguageOption option() const;
+  auto option() const -> ::LanguageOption;
   void set_option(::LanguageOption value);
   private:
-  ::LanguageOption _internal_option() const;
+  auto _internal_option() const -> ::LanguageOption;
   void _internal_set_option(::LanguageOption value);
   public:
 
@@ -376,7 +379,7 @@ class LanguageSetting PROTOBUF_FINAL :
 
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
+  using DestructorSkippable_ = void;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr language_;
   int option_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
@@ -388,7 +391,7 @@ class UserSettings PROTOBUF_FINAL :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:UserSettings) */ {
  public:
   inline UserSettings() : UserSettings(nullptr) {}
-  virtual ~UserSettings();
+  ~UserSettings() override;
 
   UserSettings(const UserSettings& from);
   UserSettings(UserSettings&& from) noexcept
@@ -396,32 +399,33 @@ class UserSettings PROTOBUF_FINAL :
     *this = ::std::move(from);
   }
 
-  inline UserSettings& operator=(const UserSettings& from) {
+  inline auto operator=(const UserSettings& from) -> UserSettings& {
     CopyFrom(from);
     return *this;
   }
-  inline UserSettings& operator=(UserSettings&& from) noexcept {
+  inline auto operator=(UserSettings&& from) noexcept -> UserSettings& {
     if (GetArena() == from.GetArena()) {
-      if (this != &from) InternalSwap(&from);
+      if (this != &from) { InternalSwap(&from);
+}
     } else {
       CopyFrom(from);
     }
     return *this;
   }
 
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+  static auto descriptor() -> const ::PROTOBUF_NAMESPACE_ID::Descriptor* {
     return GetDescriptor();
   }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+  static auto GetDescriptor() -> const ::PROTOBUF_NAMESPACE_ID::Descriptor* {
     return GetMetadataStatic().descriptor;
   }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+  static auto GetReflection() -> const ::PROTOBUF_NAMESPACE_ID::Reflection* {
     return GetMetadataStatic().reflection;
   }
-  static const UserSettings& default_instance();
+  static auto default_instance() -> const UserSettings&;
 
   static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const UserSettings* internal_default_instance() {
+  static inline auto internal_default_instance() -> const UserSettings* {
     return reinterpret_cast<const UserSettings*>(
                &_UserSettings_default_instance_);
   }
@@ -432,7 +436,8 @@ class UserSettings PROTOBUF_FINAL :
     a.Swap(&b);
   }
   inline void Swap(UserSettings* other) {
-    if (other == this) return;
+    if (other == this) { return;
+}
     if (GetArena() == other->GetArena()) {
       InternalSwap(other);
     } else {
@@ -440,18 +445,19 @@ class UserSettings PROTOBUF_FINAL :
     }
   }
   void UnsafeArenaSwap(UserSettings* other) {
-    if (other == this) return;
+    if (other == this) { return;
+}
     GOOGLE_DCHECK(GetArena() == other->GetArena());
     InternalSwap(other);
   }
 
   // implements Message ----------------------------------------------
 
-  inline UserSettings* New() const final {
+  inline auto New() const -> UserSettings* final {
     return CreateMaybeMessage<UserSettings>(nullptr);
   }
 
-  UserSettings* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+  auto New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const -> UserSettings* final {
     return CreateMaybeMessage<UserSettings>(arena);
   }
   void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
@@ -459,13 +465,13 @@ class UserSettings PROTOBUF_FINAL :
   void CopyFrom(const UserSettings& from);
   void MergeFrom(const UserSettings& from);
   PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
+  auto IsInitialized() const -> bool final;
 
-  size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
-      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _cached_size_.Get(); }
+  auto ByteSizeLong() const -> size_t final;
+  auto _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) -> const char* final;
+  auto _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const -> ::PROTOBUF_NAMESPACE_ID::uint8* final;
+  auto GetCachedSize() const -> int final { return _cached_size_.Get(); }
 
   private:
   inline void SharedCtor();
@@ -473,7 +479,7 @@ class UserSettings PROTOBUF_FINAL :
   void SetCachedSize(int size) const final;
   void InternalSwap(UserSettings* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+  static auto FullMessageName() -> ::PROTOBUF_NAMESPACE_ID::StringPiece {
     return "UserSettings";
   }
   protected:
@@ -483,9 +489,9 @@ class UserSettings PROTOBUF_FINAL :
   inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
   public:
 
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  auto GetMetadata() const -> ::PROTOBUF_NAMESPACE_ID::Metadata final;
   private:
-  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+  static auto GetMetadataStatic() -> ::PROTOBUF_NAMESPACE_ID::Metadata {
     ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_schema_2eproto);
     return ::descriptor_table_schema_2eproto.file_level_metadata[kIndexInFileMessages];
   }
@@ -509,143 +515,143 @@ class UserSettings PROTOBUF_FINAL :
     kLanguageSettingsFieldNumber = 5,
   };
   // repeated .LanguageSetting languages = 8;
-  int languages_size() const;
+  auto languages_size() const -> int;
   private:
-  int _internal_languages_size() const;
+  auto _internal_languages_size() const -> int;
   public:
   void clear_languages();
-  ::LanguageSetting* mutable_languages(int index);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::LanguageSetting >*
-      mutable_languages();
+  auto mutable_languages(int index) -> ::LanguageSetting*;
+  auto
+      mutable_languages() -> ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::LanguageSetting >*;
   private:
-  const ::LanguageSetting& _internal_languages(int index) const;
-  ::LanguageSetting* _internal_add_languages();
+  auto _internal_languages(int index) const -> const ::LanguageSetting&;
+  auto _internal_add_languages() -> ::LanguageSetting*;
   public:
-  const ::LanguageSetting& languages(int index) const;
-  ::LanguageSetting* add_languages();
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::LanguageSetting >&
-      languages() const;
+  auto languages(int index) const -> const ::LanguageSetting&;
+  auto add_languages() -> ::LanguageSetting*;
+  auto
+      languages() const -> const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::LanguageSetting >&;
 
   // string install_path = 1;
   void clear_install_path();
-  const std::string& install_path() const;
+  auto install_path() const -> const std::string&;
   void set_install_path(const std::string& value);
   void set_install_path(std::string&& value);
   void set_install_path(const char* value);
   void set_install_path(const char* value, size_t size);
-  std::string* mutable_install_path();
-  std::string* release_install_path();
+  auto mutable_install_path() -> std::string*;
+  auto release_install_path() -> std::string*;
   void set_allocated_install_path(std::string* install_path);
   private:
-  const std::string& _internal_install_path() const;
+  auto _internal_install_path() const -> const std::string&;
   void _internal_set_install_path(const std::string& value);
-  std::string* _internal_mutable_install_path();
+  auto _internal_mutable_install_path() -> std::string*;
   public:
 
   // string play_region = 2;
   void clear_play_region();
-  const std::string& play_region() const;
+  auto play_region() const -> const std::string&;
   void set_play_region(const std::string& value);
   void set_play_region(std::string&& value);
   void set_play_region(const char* value);
   void set_play_region(const char* value, size_t size);
-  std::string* mutable_play_region();
-  std::string* release_play_region();
+  auto mutable_play_region() -> std::string*;
+  auto release_play_region() -> std::string*;
   void set_allocated_play_region(std::string* play_region);
   private:
-  const std::string& _internal_play_region() const;
+  auto _internal_play_region() const -> const std::string&;
   void _internal_set_play_region(const std::string& value);
-  std::string* _internal_mutable_play_region();
+  auto _internal_mutable_play_region() -> std::string*;
   public:
 
   // string selected_text_language = 6;
   void clear_selected_text_language();
-  const std::string& selected_text_language() const;
+  auto selected_text_language() const -> const std::string&;
   void set_selected_text_language(const std::string& value);
   void set_selected_text_language(std::string&& value);
   void set_selected_text_language(const char* value);
   void set_selected_text_language(const char* value, size_t size);
-  std::string* mutable_selected_text_language();
-  std::string* release_selected_text_language();
+  auto mutable_selected_text_language() -> std::string*;
+  auto release_selected_text_language() -> std::string*;
   void set_allocated_selected_text_language(std::string* selected_text_language);
   private:
-  const std::string& _internal_selected_text_language() const;
+  auto _internal_selected_text_language() const -> const std::string&;
   void _internal_set_selected_text_language(const std::string& value);
-  std::string* _internal_mutable_selected_text_language();
+  auto _internal_mutable_selected_text_language() -> std::string*;
   public:
 
   // string selected_speech_language = 7;
   void clear_selected_speech_language();
-  const std::string& selected_speech_language() const;
+  auto selected_speech_language() const -> const std::string&;
   void set_selected_speech_language(const std::string& value);
   void set_selected_speech_language(std::string&& value);
   void set_selected_speech_language(const char* value);
   void set_selected_speech_language(const char* value, size_t size);
-  std::string* mutable_selected_speech_language();
-  std::string* release_selected_speech_language();
+  auto mutable_selected_speech_language() -> std::string*;
+  auto release_selected_speech_language() -> std::string*;
   void set_allocated_selected_speech_language(std::string* selected_speech_language);
   private:
-  const std::string& _internal_selected_speech_language() const;
+  auto _internal_selected_speech_language() const -> const std::string&;
   void _internal_set_selected_speech_language(const std::string& value);
-  std::string* _internal_mutable_selected_speech_language();
+  auto _internal_mutable_selected_speech_language() -> std::string*;
   public:
 
   // string gfx_override_tags = 9;
   void clear_gfx_override_tags();
-  const std::string& gfx_override_tags() const;
+  auto gfx_override_tags() const -> const std::string&;
   void set_gfx_override_tags(const std::string& value);
   void set_gfx_override_tags(std::string&& value);
   void set_gfx_override_tags(const char* value);
   void set_gfx_override_tags(const char* value, size_t size);
-  std::string* mutable_gfx_override_tags();
-  std::string* release_gfx_override_tags();
+  auto mutable_gfx_override_tags() -> std::string*;
+  auto release_gfx_override_tags() -> std::string*;
   void set_allocated_gfx_override_tags(std::string* gfx_override_tags);
   private:
-  const std::string& _internal_gfx_override_tags() const;
+  auto _internal_gfx_override_tags() const -> const std::string&;
   void _internal_set_gfx_override_tags(const std::string& value);
-  std::string* _internal_mutable_gfx_override_tags();
+  auto _internal_mutable_gfx_override_tags() -> std::string*;
   public:
 
   // string versionbranch = 10;
   void clear_versionbranch();
-  const std::string& versionbranch() const;
+  auto versionbranch() const -> const std::string&;
   void set_versionbranch(const std::string& value);
   void set_versionbranch(std::string&& value);
   void set_versionbranch(const char* value);
   void set_versionbranch(const char* value, size_t size);
-  std::string* mutable_versionbranch();
-  std::string* release_versionbranch();
+  auto mutable_versionbranch() -> std::string*;
+  auto release_versionbranch() -> std::string*;
   void set_allocated_versionbranch(std::string* versionbranch);
   private:
-  const std::string& _internal_versionbranch() const;
+  auto _internal_versionbranch() const -> const std::string&;
   void _internal_set_versionbranch(const std::string& value);
-  std::string* _internal_mutable_versionbranch();
+  auto _internal_mutable_versionbranch() -> std::string*;
   public:
 
   // .ShortcutOption desktop_shortcut = 3;
   void clear_desktop_shortcut();
-  ::ShortcutOption desktop_shortcut() const;
+  auto desktop_shortcut() const -> ::ShortcutOption;
   void set_desktop_shortcut(::ShortcutOption value);
   private:
-  ::ShortcutOption _internal_desktop_shortcut() const;
+  auto _internal_desktop_shortcut() const -> ::ShortcutOption;
   void _internal_set_desktop_shortcut(::ShortcutOption value);
   public:
 
   // .ShortcutOption startmenu_shortcut = 4;
   void clear_startmenu_shortcut();
-  ::ShortcutOption startmenu_shortcut() const;
+  auto startmenu_shortcut() const -> ::ShortcutOption;
   void set_startmenu_shortcut(::ShortcutOption value);
   private:
-  ::ShortcutOption _internal_startmenu_shortcut() const;
+  auto _internal_startmenu_shortcut() const -> ::ShortcutOption;
   void _internal_set_startmenu_shortcut(::ShortcutOption value);
   public:
 
   // .LanguageSettingType language_settings = 5;
   void clear_language_settings();
-  ::LanguageSettingType language_settings() const;
+  auto language_settings() const -> ::LanguageSettingType;
   void set_language_settings(::LanguageSettingType value);
   private:
-  ::LanguageSettingType _internal_language_settings() const;
+  auto _internal_language_settings() const -> ::LanguageSettingType;
   void _internal_set_language_settings(::LanguageSettingType value);
   public:
 
@@ -654,8 +660,8 @@ class UserSettings PROTOBUF_FINAL :
   class _Internal;
 
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::LanguageSetting > languages_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr install_path_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr play_region_;
@@ -675,7 +681,7 @@ class InstallHandshake PROTOBUF_FINAL :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:InstallHandshake) */ {
  public:
   inline InstallHandshake() : InstallHandshake(nullptr) {}
-  virtual ~InstallHandshake();
+  ~InstallHandshake() override;
 
   InstallHandshake(const InstallHandshake& from);
   InstallHandshake(InstallHandshake&& from) noexcept
@@ -683,32 +689,33 @@ class InstallHandshake PROTOBUF_FINAL :
     *this = ::std::move(from);
   }
 
-  inline InstallHandshake& operator=(const InstallHandshake& from) {
+  inline auto operator=(const InstallHandshake& from) -> InstallHandshake& {
     CopyFrom(from);
     return *this;
   }
-  inline InstallHandshake& operator=(InstallHandshake&& from) noexcept {
+  inline auto operator=(InstallHandshake&& from) noexcept -> InstallHandshake& {
     if (GetArena() == from.GetArena()) {
-      if (this != &from) InternalSwap(&from);
+      if (this != &from) { InternalSwap(&from);
+}
     } else {
       CopyFrom(from);
     }
     return *this;
   }
 
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+  static auto descriptor() -> const ::PROTOBUF_NAMESPACE_ID::Descriptor* {
     return GetDescriptor();
   }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+  static auto GetDescriptor() -> const ::PROTOBUF_NAMESPACE_ID::Descriptor* {
     return GetMetadataStatic().descriptor;
   }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+  static auto GetReflection() -> const ::PROTOBUF_NAMESPACE_ID::Reflection* {
     return GetMetadataStatic().reflection;
   }
-  static const InstallHandshake& default_instance();
+  static auto default_instance() -> const InstallHandshake&;
 
   static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const InstallHandshake* internal_default_instance() {
+  static inline auto internal_default_instance() -> const InstallHandshake* {
     return reinterpret_cast<const InstallHandshake*>(
                &_InstallHandshake_default_instance_);
   }
@@ -719,7 +726,8 @@ class InstallHandshake PROTOBUF_FINAL :
     a.Swap(&b);
   }
   inline void Swap(InstallHandshake* other) {
-    if (other == this) return;
+    if (other == this) { return;
+}
     if (GetArena() == other->GetArena()) {
       InternalSwap(other);
     } else {
@@ -727,18 +735,19 @@ class InstallHandshake PROTOBUF_FINAL :
     }
   }
   void UnsafeArenaSwap(InstallHandshake* other) {
-    if (other == this) return;
+    if (other == this) { return;
+}
     GOOGLE_DCHECK(GetArena() == other->GetArena());
     InternalSwap(other);
   }
 
   // implements Message ----------------------------------------------
 
-  inline InstallHandshake* New() const final {
+  inline auto New() const -> InstallHandshake* final {
     return CreateMaybeMessage<InstallHandshake>(nullptr);
   }
 
-  InstallHandshake* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+  auto New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const -> InstallHandshake* final {
     return CreateMaybeMessage<InstallHandshake>(arena);
   }
   void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
@@ -746,13 +755,13 @@ class InstallHandshake PROTOBUF_FINAL :
   void CopyFrom(const InstallHandshake& from);
   void MergeFrom(const InstallHandshake& from);
   PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
+  auto IsInitialized() const -> bool final;
 
-  size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
-      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _cached_size_.Get(); }
+  auto ByteSizeLong() const -> size_t final;
+  auto _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) -> const char* final;
+  auto _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const -> ::PROTOBUF_NAMESPACE_ID::uint8* final;
+  auto GetCachedSize() const -> int final { return _cached_size_.Get(); }
 
   private:
   inline void SharedCtor();
@@ -760,7 +769,7 @@ class InstallHandshake PROTOBUF_FINAL :
   void SetCachedSize(int size) const final;
   void InternalSwap(InstallHandshake* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+  static auto FullMessageName() -> ::PROTOBUF_NAMESPACE_ID::StringPiece {
     return "InstallHandshake";
   }
   protected:
@@ -770,9 +779,9 @@ class InstallHandshake PROTOBUF_FINAL :
   inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
   public:
 
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  auto GetMetadata() const -> ::PROTOBUF_NAMESPACE_ID::Metadata final;
   private:
-  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+  static auto GetMetadataStatic() -> ::PROTOBUF_NAMESPACE_ID::Metadata {
     ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_schema_2eproto);
     return ::descriptor_table_schema_2eproto.file_level_metadata[kIndexInFileMessages];
   }
@@ -790,61 +799,61 @@ class InstallHandshake PROTOBUF_FINAL :
   };
   // string product = 1;
   void clear_product();
-  const std::string& product() const;
+  auto product() const -> const std::string&;
   void set_product(const std::string& value);
   void set_product(std::string&& value);
   void set_product(const char* value);
   void set_product(const char* value, size_t size);
-  std::string* mutable_product();
-  std::string* release_product();
+  auto mutable_product() -> std::string*;
+  auto release_product() -> std::string*;
   void set_allocated_product(std::string* product);
   private:
-  const std::string& _internal_product() const;
+  auto _internal_product() const -> const std::string&;
   void _internal_set_product(const std::string& value);
-  std::string* _internal_mutable_product();
+  auto _internal_mutable_product() -> std::string*;
   public:
 
   // string uid = 2;
   void clear_uid();
-  const std::string& uid() const;
+  auto uid() const -> const std::string&;
   void set_uid(const std::string& value);
   void set_uid(std::string&& value);
   void set_uid(const char* value);
   void set_uid(const char* value, size_t size);
-  std::string* mutable_uid();
-  std::string* release_uid();
+  auto mutable_uid() -> std::string*;
+  auto release_uid() -> std::string*;
   void set_allocated_uid(std::string* uid);
   private:
-  const std::string& _internal_uid() const;
+  auto _internal_uid() const -> const std::string&;
   void _internal_set_uid(const std::string& value);
-  std::string* _internal_mutable_uid();
+  auto _internal_mutable_uid() -> std::string*;
   public:
 
   // .UserSettings settings = 3;
-  bool has_settings() const;
+  auto has_settings() const -> bool;
   private:
-  bool _internal_has_settings() const;
+  auto _internal_has_settings() const -> bool;
   public:
   void clear_settings();
-  const ::UserSettings& settings() const;
-  ::UserSettings* release_settings();
-  ::UserSettings* mutable_settings();
+  auto settings() const -> const ::UserSettings&;
+  auto release_settings() -> ::UserSettings*;
+  auto mutable_settings() -> ::UserSettings*;
   void set_allocated_settings(::UserSettings* settings);
   private:
-  const ::UserSettings& _internal_settings() const;
-  ::UserSettings* _internal_mutable_settings();
+  auto _internal_settings() const -> const ::UserSettings&;
+  auto _internal_mutable_settings() -> ::UserSettings*;
   public:
   void unsafe_arena_set_allocated_settings(
       ::UserSettings* settings);
-  ::UserSettings* unsafe_arena_release_settings();
+  auto unsafe_arena_release_settings() -> ::UserSettings*;
 
   // @@protoc_insertion_point(class_scope:InstallHandshake)
  private:
   class _Internal;
 
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr product_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr uid_;
   ::UserSettings* settings_;
@@ -857,7 +866,7 @@ class BuildConfig PROTOBUF_FINAL :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:BuildConfig) */ {
  public:
   inline BuildConfig() : BuildConfig(nullptr) {}
-  virtual ~BuildConfig();
+  ~BuildConfig() override;
 
   BuildConfig(const BuildConfig& from);
   BuildConfig(BuildConfig&& from) noexcept
@@ -865,32 +874,33 @@ class BuildConfig PROTOBUF_FINAL :
     *this = ::std::move(from);
   }
 
-  inline BuildConfig& operator=(const BuildConfig& from) {
+  inline auto operator=(const BuildConfig& from) -> BuildConfig& {
     CopyFrom(from);
     return *this;
   }
-  inline BuildConfig& operator=(BuildConfig&& from) noexcept {
+  inline auto operator=(BuildConfig&& from) noexcept -> BuildConfig& {
     if (GetArena() == from.GetArena()) {
-      if (this != &from) InternalSwap(&from);
+      if (this != &from) { InternalSwap(&from);
+}
     } else {
       CopyFrom(from);
     }
     return *this;
   }
 
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+  static auto descriptor() -> const ::PROTOBUF_NAMESPACE_ID::Descriptor* {
     return GetDescriptor();
   }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+  static auto GetDescriptor() -> const ::PROTOBUF_NAMESPACE_ID::Descriptor* {
     return GetMetadataStatic().descriptor;
   }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+  static auto GetReflection() -> const ::PROTOBUF_NAMESPACE_ID::Reflection* {
     return GetMetadataStatic().reflection;
   }
-  static const BuildConfig& default_instance();
+  static auto default_instance() -> const BuildConfig&;
 
   static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const BuildConfig* internal_default_instance() {
+  static inline auto internal_default_instance() -> const BuildConfig* {
     return reinterpret_cast<const BuildConfig*>(
                &_BuildConfig_default_instance_);
   }
@@ -901,7 +911,8 @@ class BuildConfig PROTOBUF_FINAL :
     a.Swap(&b);
   }
   inline void Swap(BuildConfig* other) {
-    if (other == this) return;
+    if (other == this) { return;
+}
     if (GetArena() == other->GetArena()) {
       InternalSwap(other);
     } else {
@@ -909,18 +920,19 @@ class BuildConfig PROTOBUF_FINAL :
     }
   }
   void UnsafeArenaSwap(BuildConfig* other) {
-    if (other == this) return;
+    if (other == this) { return;
+}
     GOOGLE_DCHECK(GetArena() == other->GetArena());
     InternalSwap(other);
   }
 
   // implements Message ----------------------------------------------
 
-  inline BuildConfig* New() const final {
+  inline auto New() const -> BuildConfig* final {
     return CreateMaybeMessage<BuildConfig>(nullptr);
   }
 
-  BuildConfig* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+  auto New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const -> BuildConfig* final {
     return CreateMaybeMessage<BuildConfig>(arena);
   }
   void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
@@ -928,13 +940,13 @@ class BuildConfig PROTOBUF_FINAL :
   void CopyFrom(const BuildConfig& from);
   void MergeFrom(const BuildConfig& from);
   PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
+  auto IsInitialized() const -> bool final;
 
-  size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
-      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _cached_size_.Get(); }
+  auto ByteSizeLong() const -> size_t final;
+  auto _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) -> const char* final;
+  auto _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const -> ::PROTOBUF_NAMESPACE_ID::uint8* final;
+  auto GetCachedSize() const -> int final { return _cached_size_.Get(); }
 
   private:
   inline void SharedCtor();
@@ -942,7 +954,7 @@ class BuildConfig PROTOBUF_FINAL :
   void SetCachedSize(int size) const final;
   void InternalSwap(BuildConfig* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+  static auto FullMessageName() -> ::PROTOBUF_NAMESPACE_ID::StringPiece {
     return "BuildConfig";
   }
   protected:
@@ -952,9 +964,9 @@ class BuildConfig PROTOBUF_FINAL :
   inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
   public:
 
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  auto GetMetadata() const -> ::PROTOBUF_NAMESPACE_ID::Metadata final;
   private:
-  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+  static auto GetMetadataStatic() -> ::PROTOBUF_NAMESPACE_ID::Metadata {
     ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_schema_2eproto);
     return ::descriptor_table_schema_2eproto.file_level_metadata[kIndexInFileMessages];
   }
@@ -971,34 +983,34 @@ class BuildConfig PROTOBUF_FINAL :
   };
   // string region = 1;
   void clear_region();
-  const std::string& region() const;
+  auto region() const -> const std::string&;
   void set_region(const std::string& value);
   void set_region(std::string&& value);
   void set_region(const char* value);
   void set_region(const char* value, size_t size);
-  std::string* mutable_region();
-  std::string* release_region();
+  auto mutable_region() -> std::string*;
+  auto release_region() -> std::string*;
   void set_allocated_region(std::string* region);
   private:
-  const std::string& _internal_region() const;
+  auto _internal_region() const -> const std::string&;
   void _internal_set_region(const std::string& value);
-  std::string* _internal_mutable_region();
+  auto _internal_mutable_region() -> std::string*;
   public:
 
   // string build_config = 2;
   void clear_build_config();
-  const std::string& build_config() const;
+  auto build_config() const -> const std::string&;
   void set_build_config(const std::string& value);
   void set_build_config(std::string&& value);
   void set_build_config(const char* value);
   void set_build_config(const char* value, size_t size);
-  std::string* mutable_build_config();
-  std::string* release_build_config();
+  auto mutable_build_config() -> std::string*;
+  auto release_build_config() -> std::string*;
   void set_allocated_build_config(std::string* build_config);
   private:
-  const std::string& _internal_build_config() const;
+  auto _internal_build_config() const -> const std::string&;
   void _internal_set_build_config(const std::string& value);
-  std::string* _internal_mutable_build_config();
+  auto _internal_mutable_build_config() -> std::string*;
   public:
 
   // @@protoc_insertion_point(class_scope:BuildConfig)
@@ -1006,8 +1018,8 @@ class BuildConfig PROTOBUF_FINAL :
   class _Internal;
 
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr region_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr build_config_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
@@ -1019,7 +1031,7 @@ class BaseProductState PROTOBUF_FINAL :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:BaseProductState) */ {
  public:
   inline BaseProductState() : BaseProductState(nullptr) {}
-  virtual ~BaseProductState();
+  ~BaseProductState() override;
 
   BaseProductState(const BaseProductState& from);
   BaseProductState(BaseProductState&& from) noexcept
@@ -1027,32 +1039,33 @@ class BaseProductState PROTOBUF_FINAL :
     *this = ::std::move(from);
   }
 
-  inline BaseProductState& operator=(const BaseProductState& from) {
+  inline auto operator=(const BaseProductState& from) -> BaseProductState& {
     CopyFrom(from);
     return *this;
   }
-  inline BaseProductState& operator=(BaseProductState&& from) noexcept {
+  inline auto operator=(BaseProductState&& from) noexcept -> BaseProductState& {
     if (GetArena() == from.GetArena()) {
-      if (this != &from) InternalSwap(&from);
+      if (this != &from) { InternalSwap(&from);
+}
     } else {
       CopyFrom(from);
     }
     return *this;
   }
 
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+  static auto descriptor() -> const ::PROTOBUF_NAMESPACE_ID::Descriptor* {
     return GetDescriptor();
   }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+  static auto GetDescriptor() -> const ::PROTOBUF_NAMESPACE_ID::Descriptor* {
     return GetMetadataStatic().descriptor;
   }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+  static auto GetReflection() -> const ::PROTOBUF_NAMESPACE_ID::Reflection* {
     return GetMetadataStatic().reflection;
   }
-  static const BaseProductState& default_instance();
+  static auto default_instance() -> const BaseProductState&;
 
   static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const BaseProductState* internal_default_instance() {
+  static inline auto internal_default_instance() -> const BaseProductState* {
     return reinterpret_cast<const BaseProductState*>(
                &_BaseProductState_default_instance_);
   }
@@ -1063,7 +1076,8 @@ class BaseProductState PROTOBUF_FINAL :
     a.Swap(&b);
   }
   inline void Swap(BaseProductState* other) {
-    if (other == this) return;
+    if (other == this) { return;
+}
     if (GetArena() == other->GetArena()) {
       InternalSwap(other);
     } else {
@@ -1071,18 +1085,19 @@ class BaseProductState PROTOBUF_FINAL :
     }
   }
   void UnsafeArenaSwap(BaseProductState* other) {
-    if (other == this) return;
+    if (other == this) { return;
+}
     GOOGLE_DCHECK(GetArena() == other->GetArena());
     InternalSwap(other);
   }
 
   // implements Message ----------------------------------------------
 
-  inline BaseProductState* New() const final {
+  inline auto New() const -> BaseProductState* final {
     return CreateMaybeMessage<BaseProductState>(nullptr);
   }
 
-  BaseProductState* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+  auto New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const -> BaseProductState* final {
     return CreateMaybeMessage<BaseProductState>(arena);
   }
   void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
@@ -1090,13 +1105,13 @@ class BaseProductState PROTOBUF_FINAL :
   void CopyFrom(const BaseProductState& from);
   void MergeFrom(const BaseProductState& from);
   PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
+  auto IsInitialized() const -> bool final;
 
-  size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
-      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _cached_size_.Get(); }
+  auto ByteSizeLong() const -> size_t final;
+  auto _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) -> const char* final;
+  auto _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const -> ::PROTOBUF_NAMESPACE_ID::uint8* final;
+  auto GetCachedSize() const -> int final { return _cached_size_.Get(); }
 
   private:
   inline void SharedCtor();
@@ -1104,7 +1119,7 @@ class BaseProductState PROTOBUF_FINAL :
   void SetCachedSize(int size) const final;
   void InternalSwap(BaseProductState* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+  static auto FullMessageName() -> ::PROTOBUF_NAMESPACE_ID::StringPiece {
     return "BaseProductState";
   }
   protected:
@@ -1114,9 +1129,9 @@ class BaseProductState PROTOBUF_FINAL :
   inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
   public:
 
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  auto GetMetadata() const -> ::PROTOBUF_NAMESPACE_ID::Metadata final;
   private:
-  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+  static auto GetMetadataStatic() -> ::PROTOBUF_NAMESPACE_ID::Metadata {
     ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_schema_2eproto);
     return ::descriptor_table_schema_2eproto.file_level_metadata[kIndexInFileMessages];
   }
@@ -1141,155 +1156,155 @@ class BaseProductState PROTOBUF_FINAL :
     kBackgroundDownloadCompleteFieldNumber = 5,
   };
   // repeated .BuildConfig installed_build_config = 8;
-  int installed_build_config_size() const;
+  auto installed_build_config_size() const -> int;
   private:
-  int _internal_installed_build_config_size() const;
+  auto _internal_installed_build_config_size() const -> int;
   public:
   void clear_installed_build_config();
-  ::BuildConfig* mutable_installed_build_config(int index);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::BuildConfig >*
-      mutable_installed_build_config();
+  auto mutable_installed_build_config(int index) -> ::BuildConfig*;
+  auto
+      mutable_installed_build_config() -> ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::BuildConfig >*;
   private:
-  const ::BuildConfig& _internal_installed_build_config(int index) const;
-  ::BuildConfig* _internal_add_installed_build_config();
+  auto _internal_installed_build_config(int index) const -> const ::BuildConfig&;
+  auto _internal_add_installed_build_config() -> ::BuildConfig*;
   public:
-  const ::BuildConfig& installed_build_config(int index) const;
-  ::BuildConfig* add_installed_build_config();
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::BuildConfig >&
-      installed_build_config() const;
+  auto installed_build_config(int index) const -> const ::BuildConfig&;
+  auto add_installed_build_config() -> ::BuildConfig*;
+  auto
+      installed_build_config() const -> const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::BuildConfig >&;
 
   // repeated .BuildConfig background_download_build_config = 9;
-  int background_download_build_config_size() const;
+  auto background_download_build_config_size() const -> int;
   private:
-  int _internal_background_download_build_config_size() const;
+  auto _internal_background_download_build_config_size() const -> int;
   public:
   void clear_background_download_build_config();
-  ::BuildConfig* mutable_background_download_build_config(int index);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::BuildConfig >*
-      mutable_background_download_build_config();
+  auto mutable_background_download_build_config(int index) -> ::BuildConfig*;
+  auto
+      mutable_background_download_build_config() -> ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::BuildConfig >*;
   private:
-  const ::BuildConfig& _internal_background_download_build_config(int index) const;
-  ::BuildConfig* _internal_add_background_download_build_config();
+  auto _internal_background_download_build_config(int index) const -> const ::BuildConfig&;
+  auto _internal_add_background_download_build_config() -> ::BuildConfig*;
   public:
-  const ::BuildConfig& background_download_build_config(int index) const;
-  ::BuildConfig* add_background_download_build_config();
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::BuildConfig >&
-      background_download_build_config() const;
+  auto background_download_build_config(int index) const -> const ::BuildConfig&;
+  auto add_background_download_build_config() -> ::BuildConfig*;
+  auto
+      background_download_build_config() const -> const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::BuildConfig >&;
 
   // repeated string completed_install_actions = 11;
-  int completed_install_actions_size() const;
+  auto completed_install_actions_size() const -> int;
   private:
-  int _internal_completed_install_actions_size() const;
+  auto _internal_completed_install_actions_size() const -> int;
   public:
   void clear_completed_install_actions();
-  const std::string& completed_install_actions(int index) const;
-  std::string* mutable_completed_install_actions(int index);
+  auto completed_install_actions(int index) const -> const std::string&;
+  auto mutable_completed_install_actions(int index) -> std::string*;
   void set_completed_install_actions(int index, const std::string& value);
   void set_completed_install_actions(int index, std::string&& value);
   void set_completed_install_actions(int index, const char* value);
   void set_completed_install_actions(int index, const char* value, size_t size);
-  std::string* add_completed_install_actions();
+  auto add_completed_install_actions() -> std::string*;
   void add_completed_install_actions(const std::string& value);
   void add_completed_install_actions(std::string&& value);
   void add_completed_install_actions(const char* value);
   void add_completed_install_actions(const char* value, size_t size);
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>& completed_install_actions() const;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* mutable_completed_install_actions();
+  auto completed_install_actions() const -> const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>&;
+  auto mutable_completed_install_actions() -> ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*;
   private:
-  const std::string& _internal_completed_install_actions(int index) const;
-  std::string* _internal_add_completed_install_actions();
+  auto _internal_completed_install_actions(int index) const -> const std::string&;
+  auto _internal_add_completed_install_actions() -> std::string*;
   public:
 
   // string current_version = 6;
   void clear_current_version();
-  const std::string& current_version() const;
+  auto current_version() const -> const std::string&;
   void set_current_version(const std::string& value);
   void set_current_version(std::string&& value);
   void set_current_version(const char* value);
   void set_current_version(const char* value, size_t size);
-  std::string* mutable_current_version();
-  std::string* release_current_version();
+  auto mutable_current_version() -> std::string*;
+  auto release_current_version() -> std::string*;
   void set_allocated_current_version(std::string* current_version);
   private:
-  const std::string& _internal_current_version() const;
+  auto _internal_current_version() const -> const std::string&;
   void _internal_set_current_version(const std::string& value);
-  std::string* _internal_mutable_current_version();
+  auto _internal_mutable_current_version() -> std::string*;
   public:
 
   // string current_version_str = 7;
   void clear_current_version_str();
-  const std::string& current_version_str() const;
+  auto current_version_str() const -> const std::string&;
   void set_current_version_str(const std::string& value);
   void set_current_version_str(std::string&& value);
   void set_current_version_str(const char* value);
   void set_current_version_str(const char* value, size_t size);
-  std::string* mutable_current_version_str();
-  std::string* release_current_version_str();
+  auto mutable_current_version_str() -> std::string*;
+  auto release_current_version_str() -> std::string*;
   void set_allocated_current_version_str(std::string* current_version_str);
   private:
-  const std::string& _internal_current_version_str() const;
+  auto _internal_current_version_str() const -> const std::string&;
   void _internal_set_current_version_str(const std::string& value);
-  std::string* _internal_mutable_current_version_str();
+  auto _internal_mutable_current_version_str() -> std::string*;
   public:
 
   // string decryption_key = 10;
   void clear_decryption_key();
-  const std::string& decryption_key() const;
+  auto decryption_key() const -> const std::string&;
   void set_decryption_key(const std::string& value);
   void set_decryption_key(std::string&& value);
   void set_decryption_key(const char* value);
   void set_decryption_key(const char* value, size_t size);
-  std::string* mutable_decryption_key();
-  std::string* release_decryption_key();
+  auto mutable_decryption_key() -> std::string*;
+  auto release_decryption_key() -> std::string*;
   void set_allocated_decryption_key(std::string* decryption_key);
   private:
-  const std::string& _internal_decryption_key() const;
+  auto _internal_decryption_key() const -> const std::string&;
   void _internal_set_decryption_key(const std::string& value);
-  std::string* _internal_mutable_decryption_key();
+  auto _internal_mutable_decryption_key() -> std::string*;
   public:
 
   // bool installed = 1;
   void clear_installed();
-  bool installed() const;
+  auto installed() const -> bool;
   void set_installed(bool value);
   private:
-  bool _internal_installed() const;
+  auto _internal_installed() const -> bool;
   void _internal_set_installed(bool value);
   public:
 
   // bool playable = 2;
   void clear_playable();
-  bool playable() const;
+  auto playable() const -> bool;
   void set_playable(bool value);
   private:
-  bool _internal_playable() const;
+  auto _internal_playable() const -> bool;
   void _internal_set_playable(bool value);
   public:
 
   // bool update_complete = 3;
   void clear_update_complete();
-  bool update_complete() const;
+  auto update_complete() const -> bool;
   void set_update_complete(bool value);
   private:
-  bool _internal_update_complete() const;
+  auto _internal_update_complete() const -> bool;
   void _internal_set_update_complete(bool value);
   public:
 
   // bool background_download_available = 4;
   void clear_background_download_available();
-  bool background_download_available() const;
+  auto background_download_available() const -> bool;
   void set_background_download_available(bool value);
   private:
-  bool _internal_background_download_available() const;
+  auto _internal_background_download_available() const -> bool;
   void _internal_set_background_download_available(bool value);
   public:
 
   // bool background_download_complete = 5;
   void clear_background_download_complete();
-  bool background_download_complete() const;
+  auto background_download_complete() const -> bool;
   void set_background_download_complete(bool value);
   private:
-  bool _internal_background_download_complete() const;
+  auto _internal_background_download_complete() const -> bool;
   void _internal_set_background_download_complete(bool value);
   public:
 
@@ -1298,8 +1313,8 @@ class BaseProductState PROTOBUF_FINAL :
   class _Internal;
 
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::BuildConfig > installed_build_config_;
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::BuildConfig > background_download_build_config_;
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string> completed_install_actions_;
@@ -1320,7 +1335,7 @@ class BackfillProgress PROTOBUF_FINAL :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:BackfillProgress) */ {
  public:
   inline BackfillProgress() : BackfillProgress(nullptr) {}
-  virtual ~BackfillProgress();
+  ~BackfillProgress() override;
 
   BackfillProgress(const BackfillProgress& from);
   BackfillProgress(BackfillProgress&& from) noexcept
@@ -1328,32 +1343,33 @@ class BackfillProgress PROTOBUF_FINAL :
     *this = ::std::move(from);
   }
 
-  inline BackfillProgress& operator=(const BackfillProgress& from) {
+  inline auto operator=(const BackfillProgress& from) -> BackfillProgress& {
     CopyFrom(from);
     return *this;
   }
-  inline BackfillProgress& operator=(BackfillProgress&& from) noexcept {
+  inline auto operator=(BackfillProgress&& from) noexcept -> BackfillProgress& {
     if (GetArena() == from.GetArena()) {
-      if (this != &from) InternalSwap(&from);
+      if (this != &from) { InternalSwap(&from);
+}
     } else {
       CopyFrom(from);
     }
     return *this;
   }
 
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+  static auto descriptor() -> const ::PROTOBUF_NAMESPACE_ID::Descriptor* {
     return GetDescriptor();
   }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+  static auto GetDescriptor() -> const ::PROTOBUF_NAMESPACE_ID::Descriptor* {
     return GetMetadataStatic().descriptor;
   }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+  static auto GetReflection() -> const ::PROTOBUF_NAMESPACE_ID::Reflection* {
     return GetMetadataStatic().reflection;
   }
-  static const BackfillProgress& default_instance();
+  static auto default_instance() -> const BackfillProgress&;
 
   static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const BackfillProgress* internal_default_instance() {
+  static inline auto internal_default_instance() -> const BackfillProgress* {
     return reinterpret_cast<const BackfillProgress*>(
                &_BackfillProgress_default_instance_);
   }
@@ -1364,7 +1380,8 @@ class BackfillProgress PROTOBUF_FINAL :
     a.Swap(&b);
   }
   inline void Swap(BackfillProgress* other) {
-    if (other == this) return;
+    if (other == this) { return;
+}
     if (GetArena() == other->GetArena()) {
       InternalSwap(other);
     } else {
@@ -1372,18 +1389,19 @@ class BackfillProgress PROTOBUF_FINAL :
     }
   }
   void UnsafeArenaSwap(BackfillProgress* other) {
-    if (other == this) return;
+    if (other == this) { return;
+}
     GOOGLE_DCHECK(GetArena() == other->GetArena());
     InternalSwap(other);
   }
 
   // implements Message ----------------------------------------------
 
-  inline BackfillProgress* New() const final {
+  inline auto New() const -> BackfillProgress* final {
     return CreateMaybeMessage<BackfillProgress>(nullptr);
   }
 
-  BackfillProgress* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+  auto New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const -> BackfillProgress* final {
     return CreateMaybeMessage<BackfillProgress>(arena);
   }
   void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
@@ -1391,13 +1409,13 @@ class BackfillProgress PROTOBUF_FINAL :
   void CopyFrom(const BackfillProgress& from);
   void MergeFrom(const BackfillProgress& from);
   PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
+  auto IsInitialized() const -> bool final;
 
-  size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
-      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _cached_size_.Get(); }
+  auto ByteSizeLong() const -> size_t final;
+  auto _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) -> const char* final;
+  auto _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const -> ::PROTOBUF_NAMESPACE_ID::uint8* final;
+  auto GetCachedSize() const -> int final { return _cached_size_.Get(); }
 
   private:
   inline void SharedCtor();
@@ -1405,7 +1423,7 @@ class BackfillProgress PROTOBUF_FINAL :
   void SetCachedSize(int size) const final;
   void InternalSwap(BackfillProgress* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+  static auto FullMessageName() -> ::PROTOBUF_NAMESPACE_ID::StringPiece {
     return "BackfillProgress";
   }
   protected:
@@ -1415,9 +1433,9 @@ class BackfillProgress PROTOBUF_FINAL :
   inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
   public:
 
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  auto GetMetadata() const -> ::PROTOBUF_NAMESPACE_ID::Metadata final;
   private:
-  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+  static auto GetMetadataStatic() -> ::PROTOBUF_NAMESPACE_ID::Metadata {
     ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_schema_2eproto);
     return ::descriptor_table_schema_2eproto.file_level_metadata[kIndexInFileMessages];
   }
@@ -1436,37 +1454,37 @@ class BackfillProgress PROTOBUF_FINAL :
   };
   // double progress = 1;
   void clear_progress();
-  double progress() const;
+  auto progress() const -> double;
   void set_progress(double value);
   private:
-  double _internal_progress() const;
+  auto _internal_progress() const -> double;
   void _internal_set_progress(double value);
   public:
 
   // uint64 download_limit = 4;
   void clear_download_limit();
-  ::PROTOBUF_NAMESPACE_ID::uint64 download_limit() const;
+  auto download_limit() const -> ::PROTOBUF_NAMESPACE_ID::uint64;
   void set_download_limit(::PROTOBUF_NAMESPACE_ID::uint64 value);
   private:
-  ::PROTOBUF_NAMESPACE_ID::uint64 _internal_download_limit() const;
+  auto _internal_download_limit() const -> ::PROTOBUF_NAMESPACE_ID::uint64;
   void _internal_set_download_limit(::PROTOBUF_NAMESPACE_ID::uint64 value);
   public:
 
   // bool backgrounddownload = 2;
   void clear_backgrounddownload();
-  bool backgrounddownload() const;
+  auto backgrounddownload() const -> bool;
   void set_backgrounddownload(bool value);
   private:
-  bool _internal_backgrounddownload() const;
+  auto _internal_backgrounddownload() const -> bool;
   void _internal_set_backgrounddownload(bool value);
   public:
 
   // bool paused = 3;
   void clear_paused();
-  bool paused() const;
+  auto paused() const -> bool;
   void set_paused(bool value);
   private:
-  bool _internal_paused() const;
+  auto _internal_paused() const -> bool;
   void _internal_set_paused(bool value);
   public:
 
@@ -1475,8 +1493,8 @@ class BackfillProgress PROTOBUF_FINAL :
   class _Internal;
 
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
   double progress_;
   ::PROTOBUF_NAMESPACE_ID::uint64 download_limit_;
   bool backgrounddownload_;
@@ -1490,7 +1508,7 @@ class RepairProgress PROTOBUF_FINAL :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:RepairProgress) */ {
  public:
   inline RepairProgress() : RepairProgress(nullptr) {}
-  virtual ~RepairProgress();
+  ~RepairProgress() override;
 
   RepairProgress(const RepairProgress& from);
   RepairProgress(RepairProgress&& from) noexcept
@@ -1498,32 +1516,33 @@ class RepairProgress PROTOBUF_FINAL :
     *this = ::std::move(from);
   }
 
-  inline RepairProgress& operator=(const RepairProgress& from) {
+  inline auto operator=(const RepairProgress& from) -> RepairProgress& {
     CopyFrom(from);
     return *this;
   }
-  inline RepairProgress& operator=(RepairProgress&& from) noexcept {
+  inline auto operator=(RepairProgress&& from) noexcept -> RepairProgress& {
     if (GetArena() == from.GetArena()) {
-      if (this != &from) InternalSwap(&from);
+      if (this != &from) { InternalSwap(&from);
+}
     } else {
       CopyFrom(from);
     }
     return *this;
   }
 
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+  static auto descriptor() -> const ::PROTOBUF_NAMESPACE_ID::Descriptor* {
     return GetDescriptor();
   }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+  static auto GetDescriptor() -> const ::PROTOBUF_NAMESPACE_ID::Descriptor* {
     return GetMetadataStatic().descriptor;
   }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+  static auto GetReflection() -> const ::PROTOBUF_NAMESPACE_ID::Reflection* {
     return GetMetadataStatic().reflection;
   }
-  static const RepairProgress& default_instance();
+  static auto default_instance() -> const RepairProgress&;
 
   static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const RepairProgress* internal_default_instance() {
+  static inline auto internal_default_instance() -> const RepairProgress* {
     return reinterpret_cast<const RepairProgress*>(
                &_RepairProgress_default_instance_);
   }
@@ -1534,7 +1553,8 @@ class RepairProgress PROTOBUF_FINAL :
     a.Swap(&b);
   }
   inline void Swap(RepairProgress* other) {
-    if (other == this) return;
+    if (other == this) { return;
+}
     if (GetArena() == other->GetArena()) {
       InternalSwap(other);
     } else {
@@ -1542,18 +1562,19 @@ class RepairProgress PROTOBUF_FINAL :
     }
   }
   void UnsafeArenaSwap(RepairProgress* other) {
-    if (other == this) return;
+    if (other == this) { return;
+}
     GOOGLE_DCHECK(GetArena() == other->GetArena());
     InternalSwap(other);
   }
 
   // implements Message ----------------------------------------------
 
-  inline RepairProgress* New() const final {
+  inline auto New() const -> RepairProgress* final {
     return CreateMaybeMessage<RepairProgress>(nullptr);
   }
 
-  RepairProgress* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+  auto New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const -> RepairProgress* final {
     return CreateMaybeMessage<RepairProgress>(arena);
   }
   void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
@@ -1561,13 +1582,13 @@ class RepairProgress PROTOBUF_FINAL :
   void CopyFrom(const RepairProgress& from);
   void MergeFrom(const RepairProgress& from);
   PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
+  auto IsInitialized() const -> bool final;
 
-  size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
-      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _cached_size_.Get(); }
+  auto ByteSizeLong() const -> size_t final;
+  auto _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) -> const char* final;
+  auto _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const -> ::PROTOBUF_NAMESPACE_ID::uint8* final;
+  auto GetCachedSize() const -> int final { return _cached_size_.Get(); }
 
   private:
   inline void SharedCtor();
@@ -1575,7 +1596,7 @@ class RepairProgress PROTOBUF_FINAL :
   void SetCachedSize(int size) const final;
   void InternalSwap(RepairProgress* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+  static auto FullMessageName() -> ::PROTOBUF_NAMESPACE_ID::StringPiece {
     return "RepairProgress";
   }
   protected:
@@ -1585,9 +1606,9 @@ class RepairProgress PROTOBUF_FINAL :
   inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
   public:
 
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  auto GetMetadata() const -> ::PROTOBUF_NAMESPACE_ID::Metadata final;
   private:
-  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+  static auto GetMetadataStatic() -> ::PROTOBUF_NAMESPACE_ID::Metadata {
     ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_schema_2eproto);
     return ::descriptor_table_schema_2eproto.file_level_metadata[kIndexInFileMessages];
   }
@@ -1603,10 +1624,10 @@ class RepairProgress PROTOBUF_FINAL :
   };
   // double progress = 1;
   void clear_progress();
-  double progress() const;
+  auto progress() const -> double;
   void set_progress(double value);
   private:
-  double _internal_progress() const;
+  auto _internal_progress() const -> double;
   void _internal_set_progress(double value);
   public:
 
@@ -1615,8 +1636,8 @@ class RepairProgress PROTOBUF_FINAL :
   class _Internal;
 
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
   double progress_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_schema_2eproto;
@@ -1627,7 +1648,7 @@ class UpdateProgress PROTOBUF_FINAL :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:UpdateProgress) */ {
  public:
   inline UpdateProgress() : UpdateProgress(nullptr) {}
-  virtual ~UpdateProgress();
+  ~UpdateProgress() override;
 
   UpdateProgress(const UpdateProgress& from);
   UpdateProgress(UpdateProgress&& from) noexcept
@@ -1635,32 +1656,33 @@ class UpdateProgress PROTOBUF_FINAL :
     *this = ::std::move(from);
   }
 
-  inline UpdateProgress& operator=(const UpdateProgress& from) {
+  inline auto operator=(const UpdateProgress& from) -> UpdateProgress& {
     CopyFrom(from);
     return *this;
   }
-  inline UpdateProgress& operator=(UpdateProgress&& from) noexcept {
+  inline auto operator=(UpdateProgress&& from) noexcept -> UpdateProgress& {
     if (GetArena() == from.GetArena()) {
-      if (this != &from) InternalSwap(&from);
+      if (this != &from) { InternalSwap(&from);
+}
     } else {
       CopyFrom(from);
     }
     return *this;
   }
 
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+  static auto descriptor() -> const ::PROTOBUF_NAMESPACE_ID::Descriptor* {
     return GetDescriptor();
   }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+  static auto GetDescriptor() -> const ::PROTOBUF_NAMESPACE_ID::Descriptor* {
     return GetMetadataStatic().descriptor;
   }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+  static auto GetReflection() -> const ::PROTOBUF_NAMESPACE_ID::Reflection* {
     return GetMetadataStatic().reflection;
   }
-  static const UpdateProgress& default_instance();
+  static auto default_instance() -> const UpdateProgress&;
 
   static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const UpdateProgress* internal_default_instance() {
+  static inline auto internal_default_instance() -> const UpdateProgress* {
     return reinterpret_cast<const UpdateProgress*>(
                &_UpdateProgress_default_instance_);
   }
@@ -1671,7 +1693,8 @@ class UpdateProgress PROTOBUF_FINAL :
     a.Swap(&b);
   }
   inline void Swap(UpdateProgress* other) {
-    if (other == this) return;
+    if (other == this) { return;
+}
     if (GetArena() == other->GetArena()) {
       InternalSwap(other);
     } else {
@@ -1679,18 +1702,19 @@ class UpdateProgress PROTOBUF_FINAL :
     }
   }
   void UnsafeArenaSwap(UpdateProgress* other) {
-    if (other == this) return;
+    if (other == this) { return;
+}
     GOOGLE_DCHECK(GetArena() == other->GetArena());
     InternalSwap(other);
   }
 
   // implements Message ----------------------------------------------
 
-  inline UpdateProgress* New() const final {
+  inline auto New() const -> UpdateProgress* final {
     return CreateMaybeMessage<UpdateProgress>(nullptr);
   }
 
-  UpdateProgress* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+  auto New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const -> UpdateProgress* final {
     return CreateMaybeMessage<UpdateProgress>(arena);
   }
   void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
@@ -1698,13 +1722,13 @@ class UpdateProgress PROTOBUF_FINAL :
   void CopyFrom(const UpdateProgress& from);
   void MergeFrom(const UpdateProgress& from);
   PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
+  auto IsInitialized() const -> bool final;
 
-  size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
-      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _cached_size_.Get(); }
+  auto ByteSizeLong() const -> size_t final;
+  auto _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) -> const char* final;
+  auto _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const -> ::PROTOBUF_NAMESPACE_ID::uint8* final;
+  auto GetCachedSize() const -> int final { return _cached_size_.Get(); }
 
   private:
   inline void SharedCtor();
@@ -1712,7 +1736,7 @@ class UpdateProgress PROTOBUF_FINAL :
   void SetCachedSize(int size) const final;
   void InternalSwap(UpdateProgress* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+  static auto FullMessageName() -> ::PROTOBUF_NAMESPACE_ID::StringPiece {
     return "UpdateProgress";
   }
   protected:
@@ -1722,9 +1746,9 @@ class UpdateProgress PROTOBUF_FINAL :
   inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
   public:
 
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  auto GetMetadata() const -> ::PROTOBUF_NAMESPACE_ID::Metadata final;
   private:
-  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+  static auto GetMetadataStatic() -> ::PROTOBUF_NAMESPACE_ID::Metadata {
     ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_schema_2eproto);
     return ::descriptor_table_schema_2eproto.file_level_metadata[kIndexInFileMessages];
   }
@@ -1744,53 +1768,53 @@ class UpdateProgress PROTOBUF_FINAL :
   };
   // string last_disc_set_used = 1;
   void clear_last_disc_set_used();
-  const std::string& last_disc_set_used() const;
+  auto last_disc_set_used() const -> const std::string&;
   void set_last_disc_set_used(const std::string& value);
   void set_last_disc_set_used(std::string&& value);
   void set_last_disc_set_used(const char* value);
   void set_last_disc_set_used(const char* value, size_t size);
-  std::string* mutable_last_disc_set_used();
-  std::string* release_last_disc_set_used();
+  auto mutable_last_disc_set_used() -> std::string*;
+  auto release_last_disc_set_used() -> std::string*;
   void set_allocated_last_disc_set_used(std::string* last_disc_set_used);
   private:
-  const std::string& _internal_last_disc_set_used() const;
+  auto _internal_last_disc_set_used() const -> const std::string&;
   void _internal_set_last_disc_set_used(const std::string& value);
-  std::string* _internal_mutable_last_disc_set_used();
+  auto _internal_mutable_last_disc_set_used() -> std::string*;
   public:
 
   // double progress = 2;
   void clear_progress();
-  double progress() const;
+  auto progress() const -> double;
   void set_progress(double value);
   private:
-  double _internal_progress() const;
+  auto _internal_progress() const -> double;
   void _internal_set_progress(double value);
   public:
 
   // uint64 total_to_download = 4;
   void clear_total_to_download();
-  ::PROTOBUF_NAMESPACE_ID::uint64 total_to_download() const;
+  auto total_to_download() const -> ::PROTOBUF_NAMESPACE_ID::uint64;
   void set_total_to_download(::PROTOBUF_NAMESPACE_ID::uint64 value);
   private:
-  ::PROTOBUF_NAMESPACE_ID::uint64 _internal_total_to_download() const;
+  auto _internal_total_to_download() const -> ::PROTOBUF_NAMESPACE_ID::uint64;
   void _internal_set_total_to_download(::PROTOBUF_NAMESPACE_ID::uint64 value);
   public:
 
   // uint64 download_remaining = 5;
   void clear_download_remaining();
-  ::PROTOBUF_NAMESPACE_ID::uint64 download_remaining() const;
+  auto download_remaining() const -> ::PROTOBUF_NAMESPACE_ID::uint64;
   void set_download_remaining(::PROTOBUF_NAMESPACE_ID::uint64 value);
   private:
-  ::PROTOBUF_NAMESPACE_ID::uint64 _internal_download_remaining() const;
+  auto _internal_download_remaining() const -> ::PROTOBUF_NAMESPACE_ID::uint64;
   void _internal_set_download_remaining(::PROTOBUF_NAMESPACE_ID::uint64 value);
   public:
 
   // bool disc_ignored = 3;
   void clear_disc_ignored();
-  bool disc_ignored() const;
+  auto disc_ignored() const -> bool;
   void set_disc_ignored(bool value);
   private:
-  bool _internal_disc_ignored() const;
+  auto _internal_disc_ignored() const -> bool;
   void _internal_set_disc_ignored(bool value);
   public:
 
@@ -1799,8 +1823,8 @@ class UpdateProgress PROTOBUF_FINAL :
   class _Internal;
 
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr last_disc_set_used_;
   double progress_;
   ::PROTOBUF_NAMESPACE_ID::uint64 total_to_download_;
@@ -1815,7 +1839,7 @@ class CachedProductState PROTOBUF_FINAL :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:CachedProductState) */ {
  public:
   inline CachedProductState() : CachedProductState(nullptr) {}
-  virtual ~CachedProductState();
+  ~CachedProductState() override;
 
   CachedProductState(const CachedProductState& from);
   CachedProductState(CachedProductState&& from) noexcept
@@ -1823,32 +1847,33 @@ class CachedProductState PROTOBUF_FINAL :
     *this = ::std::move(from);
   }
 
-  inline CachedProductState& operator=(const CachedProductState& from) {
+  inline auto operator=(const CachedProductState& from) -> CachedProductState& {
     CopyFrom(from);
     return *this;
   }
-  inline CachedProductState& operator=(CachedProductState&& from) noexcept {
+  inline auto operator=(CachedProductState&& from) noexcept -> CachedProductState& {
     if (GetArena() == from.GetArena()) {
-      if (this != &from) InternalSwap(&from);
+      if (this != &from) { InternalSwap(&from);
+}
     } else {
       CopyFrom(from);
     }
     return *this;
   }
 
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+  static auto descriptor() -> const ::PROTOBUF_NAMESPACE_ID::Descriptor* {
     return GetDescriptor();
   }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+  static auto GetDescriptor() -> const ::PROTOBUF_NAMESPACE_ID::Descriptor* {
     return GetMetadataStatic().descriptor;
   }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+  static auto GetReflection() -> const ::PROTOBUF_NAMESPACE_ID::Reflection* {
     return GetMetadataStatic().reflection;
   }
-  static const CachedProductState& default_instance();
+  static auto default_instance() -> const CachedProductState&;
 
   static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const CachedProductState* internal_default_instance() {
+  static inline auto internal_default_instance() -> const CachedProductState* {
     return reinterpret_cast<const CachedProductState*>(
                &_CachedProductState_default_instance_);
   }
@@ -1859,7 +1884,8 @@ class CachedProductState PROTOBUF_FINAL :
     a.Swap(&b);
   }
   inline void Swap(CachedProductState* other) {
-    if (other == this) return;
+    if (other == this) { return;
+}
     if (GetArena() == other->GetArena()) {
       InternalSwap(other);
     } else {
@@ -1867,18 +1893,19 @@ class CachedProductState PROTOBUF_FINAL :
     }
   }
   void UnsafeArenaSwap(CachedProductState* other) {
-    if (other == this) return;
+    if (other == this) { return;
+}
     GOOGLE_DCHECK(GetArena() == other->GetArena());
     InternalSwap(other);
   }
 
   // implements Message ----------------------------------------------
 
-  inline CachedProductState* New() const final {
+  inline auto New() const -> CachedProductState* final {
     return CreateMaybeMessage<CachedProductState>(nullptr);
   }
 
-  CachedProductState* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+  auto New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const -> CachedProductState* final {
     return CreateMaybeMessage<CachedProductState>(arena);
   }
   void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
@@ -1886,13 +1913,13 @@ class CachedProductState PROTOBUF_FINAL :
   void CopyFrom(const CachedProductState& from);
   void MergeFrom(const CachedProductState& from);
   PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
+  auto IsInitialized() const -> bool final;
 
-  size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
-      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _cached_size_.Get(); }
+  auto ByteSizeLong() const -> size_t final;
+  auto _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) -> const char* final;
+  auto _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const -> ::PROTOBUF_NAMESPACE_ID::uint8* final;
+  auto GetCachedSize() const -> int final { return _cached_size_.Get(); }
 
   private:
   inline void SharedCtor();
@@ -1900,7 +1927,7 @@ class CachedProductState PROTOBUF_FINAL :
   void SetCachedSize(int size) const final;
   void InternalSwap(CachedProductState* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+  static auto FullMessageName() -> ::PROTOBUF_NAMESPACE_ID::StringPiece {
     return "CachedProductState";
   }
   protected:
@@ -1910,9 +1937,9 @@ class CachedProductState PROTOBUF_FINAL :
   inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
   public:
 
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  auto GetMetadata() const -> ::PROTOBUF_NAMESPACE_ID::Metadata final;
   private:
-  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+  static auto GetMetadataStatic() -> ::PROTOBUF_NAMESPACE_ID::Metadata {
     ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_schema_2eproto);
     return ::descriptor_table_schema_2eproto.file_level_metadata[kIndexInFileMessages];
   }
@@ -1930,84 +1957,84 @@ class CachedProductState PROTOBUF_FINAL :
     kUpdateProgressFieldNumber = 4,
   };
   // .BaseProductState base_product_state = 1;
-  bool has_base_product_state() const;
+  auto has_base_product_state() const -> bool;
   private:
-  bool _internal_has_base_product_state() const;
+  auto _internal_has_base_product_state() const -> bool;
   public:
   void clear_base_product_state();
-  const ::BaseProductState& base_product_state() const;
-  ::BaseProductState* release_base_product_state();
-  ::BaseProductState* mutable_base_product_state();
+  auto base_product_state() const -> const ::BaseProductState&;
+  auto release_base_product_state() -> ::BaseProductState*;
+  auto mutable_base_product_state() -> ::BaseProductState*;
   void set_allocated_base_product_state(::BaseProductState* base_product_state);
   private:
-  const ::BaseProductState& _internal_base_product_state() const;
-  ::BaseProductState* _internal_mutable_base_product_state();
+  auto _internal_base_product_state() const -> const ::BaseProductState&;
+  auto _internal_mutable_base_product_state() -> ::BaseProductState*;
   public:
   void unsafe_arena_set_allocated_base_product_state(
       ::BaseProductState* base_product_state);
-  ::BaseProductState* unsafe_arena_release_base_product_state();
+  auto unsafe_arena_release_base_product_state() -> ::BaseProductState*;
 
   // .BackfillProgress backfill_progress = 2;
-  bool has_backfill_progress() const;
+  auto has_backfill_progress() const -> bool;
   private:
-  bool _internal_has_backfill_progress() const;
+  auto _internal_has_backfill_progress() const -> bool;
   public:
   void clear_backfill_progress();
-  const ::BackfillProgress& backfill_progress() const;
-  ::BackfillProgress* release_backfill_progress();
-  ::BackfillProgress* mutable_backfill_progress();
+  auto backfill_progress() const -> const ::BackfillProgress&;
+  auto release_backfill_progress() -> ::BackfillProgress*;
+  auto mutable_backfill_progress() -> ::BackfillProgress*;
   void set_allocated_backfill_progress(::BackfillProgress* backfill_progress);
   private:
-  const ::BackfillProgress& _internal_backfill_progress() const;
-  ::BackfillProgress* _internal_mutable_backfill_progress();
+  auto _internal_backfill_progress() const -> const ::BackfillProgress&;
+  auto _internal_mutable_backfill_progress() -> ::BackfillProgress*;
   public:
   void unsafe_arena_set_allocated_backfill_progress(
       ::BackfillProgress* backfill_progress);
-  ::BackfillProgress* unsafe_arena_release_backfill_progress();
+  auto unsafe_arena_release_backfill_progress() -> ::BackfillProgress*;
 
   // .RepairProgress repair_progress = 3;
-  bool has_repair_progress() const;
+  auto has_repair_progress() const -> bool;
   private:
-  bool _internal_has_repair_progress() const;
+  auto _internal_has_repair_progress() const -> bool;
   public:
   void clear_repair_progress();
-  const ::RepairProgress& repair_progress() const;
-  ::RepairProgress* release_repair_progress();
-  ::RepairProgress* mutable_repair_progress();
+  auto repair_progress() const -> const ::RepairProgress&;
+  auto release_repair_progress() -> ::RepairProgress*;
+  auto mutable_repair_progress() -> ::RepairProgress*;
   void set_allocated_repair_progress(::RepairProgress* repair_progress);
   private:
-  const ::RepairProgress& _internal_repair_progress() const;
-  ::RepairProgress* _internal_mutable_repair_progress();
+  auto _internal_repair_progress() const -> const ::RepairProgress&;
+  auto _internal_mutable_repair_progress() -> ::RepairProgress*;
   public:
   void unsafe_arena_set_allocated_repair_progress(
       ::RepairProgress* repair_progress);
-  ::RepairProgress* unsafe_arena_release_repair_progress();
+  auto unsafe_arena_release_repair_progress() -> ::RepairProgress*;
 
   // .UpdateProgress update_progress = 4;
-  bool has_update_progress() const;
+  auto has_update_progress() const -> bool;
   private:
-  bool _internal_has_update_progress() const;
+  auto _internal_has_update_progress() const -> bool;
   public:
   void clear_update_progress();
-  const ::UpdateProgress& update_progress() const;
-  ::UpdateProgress* release_update_progress();
-  ::UpdateProgress* mutable_update_progress();
+  auto update_progress() const -> const ::UpdateProgress&;
+  auto release_update_progress() -> ::UpdateProgress*;
+  auto mutable_update_progress() -> ::UpdateProgress*;
   void set_allocated_update_progress(::UpdateProgress* update_progress);
   private:
-  const ::UpdateProgress& _internal_update_progress() const;
-  ::UpdateProgress* _internal_mutable_update_progress();
+  auto _internal_update_progress() const -> const ::UpdateProgress&;
+  auto _internal_mutable_update_progress() -> ::UpdateProgress*;
   public:
   void unsafe_arena_set_allocated_update_progress(
       ::UpdateProgress* update_progress);
-  ::UpdateProgress* unsafe_arena_release_update_progress();
+  auto unsafe_arena_release_update_progress() -> ::UpdateProgress*;
 
   // @@protoc_insertion_point(class_scope:CachedProductState)
  private:
   class _Internal;
 
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
   ::BaseProductState* base_product_state_;
   ::BackfillProgress* backfill_progress_;
   ::RepairProgress* repair_progress_;
@@ -2021,7 +2048,7 @@ class ProductOperations PROTOBUF_FINAL :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:ProductOperations) */ {
  public:
   inline ProductOperations() : ProductOperations(nullptr) {}
-  virtual ~ProductOperations();
+  ~ProductOperations() override;
 
   ProductOperations(const ProductOperations& from);
   ProductOperations(ProductOperations&& from) noexcept
@@ -2029,32 +2056,33 @@ class ProductOperations PROTOBUF_FINAL :
     *this = ::std::move(from);
   }
 
-  inline ProductOperations& operator=(const ProductOperations& from) {
+  inline auto operator=(const ProductOperations& from) -> ProductOperations& {
     CopyFrom(from);
     return *this;
   }
-  inline ProductOperations& operator=(ProductOperations&& from) noexcept {
+  inline auto operator=(ProductOperations&& from) noexcept -> ProductOperations& {
     if (GetArena() == from.GetArena()) {
-      if (this != &from) InternalSwap(&from);
+      if (this != &from) { InternalSwap(&from);
+}
     } else {
       CopyFrom(from);
     }
     return *this;
   }
 
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+  static auto descriptor() -> const ::PROTOBUF_NAMESPACE_ID::Descriptor* {
     return GetDescriptor();
   }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+  static auto GetDescriptor() -> const ::PROTOBUF_NAMESPACE_ID::Descriptor* {
     return GetMetadataStatic().descriptor;
   }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+  static auto GetReflection() -> const ::PROTOBUF_NAMESPACE_ID::Reflection* {
     return GetMetadataStatic().reflection;
   }
-  static const ProductOperations& default_instance();
+  static auto default_instance() -> const ProductOperations&;
 
   static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const ProductOperations* internal_default_instance() {
+  static inline auto internal_default_instance() -> const ProductOperations* {
     return reinterpret_cast<const ProductOperations*>(
                &_ProductOperations_default_instance_);
   }
@@ -2065,7 +2093,8 @@ class ProductOperations PROTOBUF_FINAL :
     a.Swap(&b);
   }
   inline void Swap(ProductOperations* other) {
-    if (other == this) return;
+    if (other == this) { return;
+}
     if (GetArena() == other->GetArena()) {
       InternalSwap(other);
     } else {
@@ -2073,18 +2102,19 @@ class ProductOperations PROTOBUF_FINAL :
     }
   }
   void UnsafeArenaSwap(ProductOperations* other) {
-    if (other == this) return;
+    if (other == this) { return;
+}
     GOOGLE_DCHECK(GetArena() == other->GetArena());
     InternalSwap(other);
   }
 
   // implements Message ----------------------------------------------
 
-  inline ProductOperations* New() const final {
+  inline auto New() const -> ProductOperations* final {
     return CreateMaybeMessage<ProductOperations>(nullptr);
   }
 
-  ProductOperations* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+  auto New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const -> ProductOperations* final {
     return CreateMaybeMessage<ProductOperations>(arena);
   }
   void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
@@ -2092,13 +2122,13 @@ class ProductOperations PROTOBUF_FINAL :
   void CopyFrom(const ProductOperations& from);
   void MergeFrom(const ProductOperations& from);
   PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
+  auto IsInitialized() const -> bool final;
 
-  size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
-      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _cached_size_.Get(); }
+  auto ByteSizeLong() const -> size_t final;
+  auto _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) -> const char* final;
+  auto _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const -> ::PROTOBUF_NAMESPACE_ID::uint8* final;
+  auto GetCachedSize() const -> int final { return _cached_size_.Get(); }
 
   private:
   inline void SharedCtor();
@@ -2106,7 +2136,7 @@ class ProductOperations PROTOBUF_FINAL :
   void SetCachedSize(int size) const final;
   void InternalSwap(ProductOperations* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+  static auto FullMessageName() -> ::PROTOBUF_NAMESPACE_ID::StringPiece {
     return "ProductOperations";
   }
   protected:
@@ -2116,9 +2146,9 @@ class ProductOperations PROTOBUF_FINAL :
   inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
   public:
 
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  auto GetMetadata() const -> ::PROTOBUF_NAMESPACE_ID::Metadata final;
   private:
-  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+  static auto GetMetadataStatic() -> ::PROTOBUF_NAMESPACE_ID::Metadata {
     ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_schema_2eproto);
     return ::descriptor_table_schema_2eproto.file_level_metadata[kIndexInFileMessages];
   }
@@ -2135,19 +2165,19 @@ class ProductOperations PROTOBUF_FINAL :
   };
   // uint64 priority = 2;
   void clear_priority();
-  ::PROTOBUF_NAMESPACE_ID::uint64 priority() const;
+  auto priority() const -> ::PROTOBUF_NAMESPACE_ID::uint64;
   void set_priority(::PROTOBUF_NAMESPACE_ID::uint64 value);
   private:
-  ::PROTOBUF_NAMESPACE_ID::uint64 _internal_priority() const;
+  auto _internal_priority() const -> ::PROTOBUF_NAMESPACE_ID::uint64;
   void _internal_set_priority(::PROTOBUF_NAMESPACE_ID::uint64 value);
   public:
 
   // .Operation active_operation = 1;
   void clear_active_operation();
-  ::Operation active_operation() const;
+  auto active_operation() const -> ::Operation;
   void set_active_operation(::Operation value);
   private:
-  ::Operation _internal_active_operation() const;
+  auto _internal_active_operation() const -> ::Operation;
   void _internal_set_active_operation(::Operation value);
   public:
 
@@ -2156,8 +2186,8 @@ class ProductOperations PROTOBUF_FINAL :
   class _Internal;
 
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
   ::PROTOBUF_NAMESPACE_ID::uint64 priority_;
   int active_operation_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
@@ -2169,7 +2199,7 @@ class ProductInstall PROTOBUF_FINAL :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:ProductInstall) */ {
  public:
   inline ProductInstall() : ProductInstall(nullptr) {}
-  virtual ~ProductInstall();
+  ~ProductInstall() override;
 
   ProductInstall(const ProductInstall& from);
   ProductInstall(ProductInstall&& from) noexcept
@@ -2177,32 +2207,33 @@ class ProductInstall PROTOBUF_FINAL :
     *this = ::std::move(from);
   }
 
-  inline ProductInstall& operator=(const ProductInstall& from) {
+  inline auto operator=(const ProductInstall& from) -> ProductInstall& {
     CopyFrom(from);
     return *this;
   }
-  inline ProductInstall& operator=(ProductInstall&& from) noexcept {
+  inline auto operator=(ProductInstall&& from) noexcept -> ProductInstall& {
     if (GetArena() == from.GetArena()) {
-      if (this != &from) InternalSwap(&from);
+      if (this != &from) { InternalSwap(&from);
+}
     } else {
       CopyFrom(from);
     }
     return *this;
   }
 
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+  static auto descriptor() -> const ::PROTOBUF_NAMESPACE_ID::Descriptor* {
     return GetDescriptor();
   }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+  static auto GetDescriptor() -> const ::PROTOBUF_NAMESPACE_ID::Descriptor* {
     return GetMetadataStatic().descriptor;
   }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+  static auto GetReflection() -> const ::PROTOBUF_NAMESPACE_ID::Reflection* {
     return GetMetadataStatic().reflection;
   }
-  static const ProductInstall& default_instance();
+  static auto default_instance() -> const ProductInstall&;
 
   static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const ProductInstall* internal_default_instance() {
+  static inline auto internal_default_instance() -> const ProductInstall* {
     return reinterpret_cast<const ProductInstall*>(
                &_ProductInstall_default_instance_);
   }
@@ -2213,7 +2244,8 @@ class ProductInstall PROTOBUF_FINAL :
     a.Swap(&b);
   }
   inline void Swap(ProductInstall* other) {
-    if (other == this) return;
+    if (other == this) { return;
+}
     if (GetArena() == other->GetArena()) {
       InternalSwap(other);
     } else {
@@ -2221,18 +2253,19 @@ class ProductInstall PROTOBUF_FINAL :
     }
   }
   void UnsafeArenaSwap(ProductInstall* other) {
-    if (other == this) return;
+    if (other == this) { return;
+}
     GOOGLE_DCHECK(GetArena() == other->GetArena());
     InternalSwap(other);
   }
 
   // implements Message ----------------------------------------------
 
-  inline ProductInstall* New() const final {
+  inline auto New() const -> ProductInstall* final {
     return CreateMaybeMessage<ProductInstall>(nullptr);
   }
 
-  ProductInstall* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+  auto New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const -> ProductInstall* final {
     return CreateMaybeMessage<ProductInstall>(arena);
   }
   void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
@@ -2240,13 +2273,13 @@ class ProductInstall PROTOBUF_FINAL :
   void CopyFrom(const ProductInstall& from);
   void MergeFrom(const ProductInstall& from);
   PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
+  auto IsInitialized() const -> bool final;
 
-  size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
-      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _cached_size_.Get(); }
+  auto ByteSizeLong() const -> size_t final;
+  auto _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) -> const char* final;
+  auto _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const -> ::PROTOBUF_NAMESPACE_ID::uint8* final;
+  auto GetCachedSize() const -> int final { return _cached_size_.Get(); }
 
   private:
   inline void SharedCtor();
@@ -2254,7 +2287,7 @@ class ProductInstall PROTOBUF_FINAL :
   void SetCachedSize(int size) const final;
   void InternalSwap(ProductInstall* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+  static auto FullMessageName() -> ::PROTOBUF_NAMESPACE_ID::StringPiece {
     return "ProductInstall";
   }
   protected:
@@ -2264,9 +2297,9 @@ class ProductInstall PROTOBUF_FINAL :
   inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
   public:
 
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  auto GetMetadata() const -> ::PROTOBUF_NAMESPACE_ID::Metadata final;
   private:
-  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+  static auto GetMetadataStatic() -> ::PROTOBUF_NAMESPACE_ID::Metadata {
     ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_schema_2eproto);
     return ::descriptor_table_schema_2eproto.file_level_metadata[kIndexInFileMessages];
   }
@@ -2286,97 +2319,97 @@ class ProductInstall PROTOBUF_FINAL :
   };
   // string uid = 1;
   void clear_uid();
-  const std::string& uid() const;
+  auto uid() const -> const std::string&;
   void set_uid(const std::string& value);
   void set_uid(std::string&& value);
   void set_uid(const char* value);
   void set_uid(const char* value, size_t size);
-  std::string* mutable_uid();
-  std::string* release_uid();
+  auto mutable_uid() -> std::string*;
+  auto release_uid() -> std::string*;
   void set_allocated_uid(std::string* uid);
   private:
-  const std::string& _internal_uid() const;
+  auto _internal_uid() const -> const std::string&;
   void _internal_set_uid(const std::string& value);
-  std::string* _internal_mutable_uid();
+  auto _internal_mutable_uid() -> std::string*;
   public:
 
   // string product_code = 2;
   void clear_product_code();
-  const std::string& product_code() const;
+  auto product_code() const -> const std::string&;
   void set_product_code(const std::string& value);
   void set_product_code(std::string&& value);
   void set_product_code(const char* value);
   void set_product_code(const char* value, size_t size);
-  std::string* mutable_product_code();
-  std::string* release_product_code();
+  auto mutable_product_code() -> std::string*;
+  auto release_product_code() -> std::string*;
   void set_allocated_product_code(std::string* product_code);
   private:
-  const std::string& _internal_product_code() const;
+  auto _internal_product_code() const -> const std::string&;
   void _internal_set_product_code(const std::string& value);
-  std::string* _internal_mutable_product_code();
+  auto _internal_mutable_product_code() -> std::string*;
   public:
 
   // .UserSettings settings = 3;
-  bool has_settings() const;
+  auto has_settings() const -> bool;
   private:
-  bool _internal_has_settings() const;
+  auto _internal_has_settings() const -> bool;
   public:
   void clear_settings();
-  const ::UserSettings& settings() const;
-  ::UserSettings* release_settings();
-  ::UserSettings* mutable_settings();
+  auto settings() const -> const ::UserSettings&;
+  auto release_settings() -> ::UserSettings*;
+  auto mutable_settings() -> ::UserSettings*;
   void set_allocated_settings(::UserSettings* settings);
   private:
-  const ::UserSettings& _internal_settings() const;
-  ::UserSettings* _internal_mutable_settings();
+  auto _internal_settings() const -> const ::UserSettings&;
+  auto _internal_mutable_settings() -> ::UserSettings*;
   public:
   void unsafe_arena_set_allocated_settings(
       ::UserSettings* settings);
-  ::UserSettings* unsafe_arena_release_settings();
+  auto unsafe_arena_release_settings() -> ::UserSettings*;
 
   // .CachedProductState cached_product_state = 4;
-  bool has_cached_product_state() const;
+  auto has_cached_product_state() const -> bool;
   private:
-  bool _internal_has_cached_product_state() const;
+  auto _internal_has_cached_product_state() const -> bool;
   public:
   void clear_cached_product_state();
-  const ::CachedProductState& cached_product_state() const;
-  ::CachedProductState* release_cached_product_state();
-  ::CachedProductState* mutable_cached_product_state();
+  auto cached_product_state() const -> const ::CachedProductState&;
+  auto release_cached_product_state() -> ::CachedProductState*;
+  auto mutable_cached_product_state() -> ::CachedProductState*;
   void set_allocated_cached_product_state(::CachedProductState* cached_product_state);
   private:
-  const ::CachedProductState& _internal_cached_product_state() const;
-  ::CachedProductState* _internal_mutable_cached_product_state();
+  auto _internal_cached_product_state() const -> const ::CachedProductState&;
+  auto _internal_mutable_cached_product_state() -> ::CachedProductState*;
   public:
   void unsafe_arena_set_allocated_cached_product_state(
       ::CachedProductState* cached_product_state);
-  ::CachedProductState* unsafe_arena_release_cached_product_state();
+  auto unsafe_arena_release_cached_product_state() -> ::CachedProductState*;
 
   // .ProductOperations product_operations = 5;
-  bool has_product_operations() const;
+  auto has_product_operations() const -> bool;
   private:
-  bool _internal_has_product_operations() const;
+  auto _internal_has_product_operations() const -> bool;
   public:
   void clear_product_operations();
-  const ::ProductOperations& product_operations() const;
-  ::ProductOperations* release_product_operations();
-  ::ProductOperations* mutable_product_operations();
+  auto product_operations() const -> const ::ProductOperations&;
+  auto release_product_operations() -> ::ProductOperations*;
+  auto mutable_product_operations() -> ::ProductOperations*;
   void set_allocated_product_operations(::ProductOperations* product_operations);
   private:
-  const ::ProductOperations& _internal_product_operations() const;
-  ::ProductOperations* _internal_mutable_product_operations();
+  auto _internal_product_operations() const -> const ::ProductOperations&;
+  auto _internal_mutable_product_operations() -> ::ProductOperations*;
   public:
   void unsafe_arena_set_allocated_product_operations(
       ::ProductOperations* product_operations);
-  ::ProductOperations* unsafe_arena_release_product_operations();
+  auto unsafe_arena_release_product_operations() -> ::ProductOperations*;
 
   // @@protoc_insertion_point(class_scope:ProductInstall)
  private:
   class _Internal;
 
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr uid_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr product_code_;
   ::UserSettings* settings_;
@@ -2391,7 +2424,7 @@ class ProductConfig PROTOBUF_FINAL :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:ProductConfig) */ {
  public:
   inline ProductConfig() : ProductConfig(nullptr) {}
-  virtual ~ProductConfig();
+  ~ProductConfig() override;
 
   ProductConfig(const ProductConfig& from);
   ProductConfig(ProductConfig&& from) noexcept
@@ -2399,32 +2432,33 @@ class ProductConfig PROTOBUF_FINAL :
     *this = ::std::move(from);
   }
 
-  inline ProductConfig& operator=(const ProductConfig& from) {
+  inline auto operator=(const ProductConfig& from) -> ProductConfig& {
     CopyFrom(from);
     return *this;
   }
-  inline ProductConfig& operator=(ProductConfig&& from) noexcept {
+  inline auto operator=(ProductConfig&& from) noexcept -> ProductConfig& {
     if (GetArena() == from.GetArena()) {
-      if (this != &from) InternalSwap(&from);
+      if (this != &from) { InternalSwap(&from);
+}
     } else {
       CopyFrom(from);
     }
     return *this;
   }
 
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+  static auto descriptor() -> const ::PROTOBUF_NAMESPACE_ID::Descriptor* {
     return GetDescriptor();
   }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+  static auto GetDescriptor() -> const ::PROTOBUF_NAMESPACE_ID::Descriptor* {
     return GetMetadataStatic().descriptor;
   }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+  static auto GetReflection() -> const ::PROTOBUF_NAMESPACE_ID::Reflection* {
     return GetMetadataStatic().reflection;
   }
-  static const ProductConfig& default_instance();
+  static auto default_instance() -> const ProductConfig&;
 
   static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const ProductConfig* internal_default_instance() {
+  static inline auto internal_default_instance() -> const ProductConfig* {
     return reinterpret_cast<const ProductConfig*>(
                &_ProductConfig_default_instance_);
   }
@@ -2435,7 +2469,8 @@ class ProductConfig PROTOBUF_FINAL :
     a.Swap(&b);
   }
   inline void Swap(ProductConfig* other) {
-    if (other == this) return;
+    if (other == this) { return;
+}
     if (GetArena() == other->GetArena()) {
       InternalSwap(other);
     } else {
@@ -2443,18 +2478,19 @@ class ProductConfig PROTOBUF_FINAL :
     }
   }
   void UnsafeArenaSwap(ProductConfig* other) {
-    if (other == this) return;
+    if (other == this) { return;
+}
     GOOGLE_DCHECK(GetArena() == other->GetArena());
     InternalSwap(other);
   }
 
   // implements Message ----------------------------------------------
 
-  inline ProductConfig* New() const final {
+  inline auto New() const -> ProductConfig* final {
     return CreateMaybeMessage<ProductConfig>(nullptr);
   }
 
-  ProductConfig* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+  auto New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const -> ProductConfig* final {
     return CreateMaybeMessage<ProductConfig>(arena);
   }
   void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
@@ -2462,13 +2498,13 @@ class ProductConfig PROTOBUF_FINAL :
   void CopyFrom(const ProductConfig& from);
   void MergeFrom(const ProductConfig& from);
   PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
+  auto IsInitialized() const -> bool final;
 
-  size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
-      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _cached_size_.Get(); }
+  auto ByteSizeLong() const -> size_t final;
+  auto _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) -> const char* final;
+  auto _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const -> ::PROTOBUF_NAMESPACE_ID::uint8* final;
+  auto GetCachedSize() const -> int final { return _cached_size_.Get(); }
 
   private:
   inline void SharedCtor();
@@ -2476,7 +2512,7 @@ class ProductConfig PROTOBUF_FINAL :
   void SetCachedSize(int size) const final;
   void InternalSwap(ProductConfig* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+  static auto FullMessageName() -> ::PROTOBUF_NAMESPACE_ID::StringPiece {
     return "ProductConfig";
   }
   protected:
@@ -2486,9 +2522,9 @@ class ProductConfig PROTOBUF_FINAL :
   inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
   public:
 
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  auto GetMetadata() const -> ::PROTOBUF_NAMESPACE_ID::Metadata final;
   private:
-  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+  static auto GetMetadataStatic() -> ::PROTOBUF_NAMESPACE_ID::Metadata {
     ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_schema_2eproto);
     return ::descriptor_table_schema_2eproto.file_level_metadata[kIndexInFileMessages];
   }
@@ -2506,50 +2542,50 @@ class ProductConfig PROTOBUF_FINAL :
   };
   // string product_code = 1;
   void clear_product_code();
-  const std::string& product_code() const;
+  auto product_code() const -> const std::string&;
   void set_product_code(const std::string& value);
   void set_product_code(std::string&& value);
   void set_product_code(const char* value);
   void set_product_code(const char* value, size_t size);
-  std::string* mutable_product_code();
-  std::string* release_product_code();
+  auto mutable_product_code() -> std::string*;
+  auto release_product_code() -> std::string*;
   void set_allocated_product_code(std::string* product_code);
   private:
-  const std::string& _internal_product_code() const;
+  auto _internal_product_code() const -> const std::string&;
   void _internal_set_product_code(const std::string& value);
-  std::string* _internal_mutable_product_code();
+  auto _internal_mutable_product_code() -> std::string*;
   public:
 
   // string metadata_hash = 2;
   void clear_metadata_hash();
-  const std::string& metadata_hash() const;
+  auto metadata_hash() const -> const std::string&;
   void set_metadata_hash(const std::string& value);
   void set_metadata_hash(std::string&& value);
   void set_metadata_hash(const char* value);
   void set_metadata_hash(const char* value, size_t size);
-  std::string* mutable_metadata_hash();
-  std::string* release_metadata_hash();
+  auto mutable_metadata_hash() -> std::string*;
+  auto release_metadata_hash() -> std::string*;
   void set_allocated_metadata_hash(std::string* metadata_hash);
   private:
-  const std::string& _internal_metadata_hash() const;
+  auto _internal_metadata_hash() const -> const std::string&;
   void _internal_set_metadata_hash(const std::string& value);
-  std::string* _internal_mutable_metadata_hash();
+  auto _internal_mutable_metadata_hash() -> std::string*;
   public:
 
   // string timestamp = 3;
   void clear_timestamp();
-  const std::string& timestamp() const;
+  auto timestamp() const -> const std::string&;
   void set_timestamp(const std::string& value);
   void set_timestamp(std::string&& value);
   void set_timestamp(const char* value);
   void set_timestamp(const char* value, size_t size);
-  std::string* mutable_timestamp();
-  std::string* release_timestamp();
+  auto mutable_timestamp() -> std::string*;
+  auto release_timestamp() -> std::string*;
   void set_allocated_timestamp(std::string* timestamp);
   private:
-  const std::string& _internal_timestamp() const;
+  auto _internal_timestamp() const -> const std::string&;
   void _internal_set_timestamp(const std::string& value);
-  std::string* _internal_mutable_timestamp();
+  auto _internal_mutable_timestamp() -> std::string*;
   public:
 
   // @@protoc_insertion_point(class_scope:ProductConfig)
@@ -2557,8 +2593,8 @@ class ProductConfig PROTOBUF_FINAL :
   class _Internal;
 
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr product_code_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr metadata_hash_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr timestamp_;
@@ -2571,7 +2607,7 @@ class ActiveProcess PROTOBUF_FINAL :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:ActiveProcess) */ {
  public:
   inline ActiveProcess() : ActiveProcess(nullptr) {}
-  virtual ~ActiveProcess();
+  ~ActiveProcess() override;
 
   ActiveProcess(const ActiveProcess& from);
   ActiveProcess(ActiveProcess&& from) noexcept
@@ -2579,32 +2615,33 @@ class ActiveProcess PROTOBUF_FINAL :
     *this = ::std::move(from);
   }
 
-  inline ActiveProcess& operator=(const ActiveProcess& from) {
+  inline auto operator=(const ActiveProcess& from) -> ActiveProcess& {
     CopyFrom(from);
     return *this;
   }
-  inline ActiveProcess& operator=(ActiveProcess&& from) noexcept {
+  inline auto operator=(ActiveProcess&& from) noexcept -> ActiveProcess& {
     if (GetArena() == from.GetArena()) {
-      if (this != &from) InternalSwap(&from);
+      if (this != &from) { InternalSwap(&from);
+}
     } else {
       CopyFrom(from);
     }
     return *this;
   }
 
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+  static auto descriptor() -> const ::PROTOBUF_NAMESPACE_ID::Descriptor* {
     return GetDescriptor();
   }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+  static auto GetDescriptor() -> const ::PROTOBUF_NAMESPACE_ID::Descriptor* {
     return GetMetadataStatic().descriptor;
   }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+  static auto GetReflection() -> const ::PROTOBUF_NAMESPACE_ID::Reflection* {
     return GetMetadataStatic().reflection;
   }
-  static const ActiveProcess& default_instance();
+  static auto default_instance() -> const ActiveProcess&;
 
   static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const ActiveProcess* internal_default_instance() {
+  static inline auto internal_default_instance() -> const ActiveProcess* {
     return reinterpret_cast<const ActiveProcess*>(
                &_ActiveProcess_default_instance_);
   }
@@ -2615,7 +2652,8 @@ class ActiveProcess PROTOBUF_FINAL :
     a.Swap(&b);
   }
   inline void Swap(ActiveProcess* other) {
-    if (other == this) return;
+    if (other == this) { return;
+}
     if (GetArena() == other->GetArena()) {
       InternalSwap(other);
     } else {
@@ -2623,18 +2661,19 @@ class ActiveProcess PROTOBUF_FINAL :
     }
   }
   void UnsafeArenaSwap(ActiveProcess* other) {
-    if (other == this) return;
+    if (other == this) { return;
+}
     GOOGLE_DCHECK(GetArena() == other->GetArena());
     InternalSwap(other);
   }
 
   // implements Message ----------------------------------------------
 
-  inline ActiveProcess* New() const final {
+  inline auto New() const -> ActiveProcess* final {
     return CreateMaybeMessage<ActiveProcess>(nullptr);
   }
 
-  ActiveProcess* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+  auto New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const -> ActiveProcess* final {
     return CreateMaybeMessage<ActiveProcess>(arena);
   }
   void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
@@ -2642,13 +2681,13 @@ class ActiveProcess PROTOBUF_FINAL :
   void CopyFrom(const ActiveProcess& from);
   void MergeFrom(const ActiveProcess& from);
   PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
+  auto IsInitialized() const -> bool final;
 
-  size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
-      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _cached_size_.Get(); }
+  auto ByteSizeLong() const -> size_t final;
+  auto _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) -> const char* final;
+  auto _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const -> ::PROTOBUF_NAMESPACE_ID::uint8* final;
+  auto GetCachedSize() const -> int final { return _cached_size_.Get(); }
 
   private:
   inline void SharedCtor();
@@ -2656,7 +2695,7 @@ class ActiveProcess PROTOBUF_FINAL :
   void SetCachedSize(int size) const final;
   void InternalSwap(ActiveProcess* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+  static auto FullMessageName() -> ::PROTOBUF_NAMESPACE_ID::StringPiece {
     return "ActiveProcess";
   }
   protected:
@@ -2666,9 +2705,9 @@ class ActiveProcess PROTOBUF_FINAL :
   inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
   public:
 
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  auto GetMetadata() const -> ::PROTOBUF_NAMESPACE_ID::Metadata final;
   private:
-  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+  static auto GetMetadataStatic() -> ::PROTOBUF_NAMESPACE_ID::Metadata {
     ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_schema_2eproto);
     return ::descriptor_table_schema_2eproto.file_level_metadata[kIndexInFileMessages];
   }
@@ -2685,51 +2724,51 @@ class ActiveProcess PROTOBUF_FINAL :
     kPidFieldNumber = 2,
   };
   // repeated string uri = 3;
-  int uri_size() const;
+  auto uri_size() const -> int;
   private:
-  int _internal_uri_size() const;
+  auto _internal_uri_size() const -> int;
   public:
   void clear_uri();
-  const std::string& uri(int index) const;
-  std::string* mutable_uri(int index);
+  auto uri(int index) const -> const std::string&;
+  auto mutable_uri(int index) -> std::string*;
   void set_uri(int index, const std::string& value);
   void set_uri(int index, std::string&& value);
   void set_uri(int index, const char* value);
   void set_uri(int index, const char* value, size_t size);
-  std::string* add_uri();
+  auto add_uri() -> std::string*;
   void add_uri(const std::string& value);
   void add_uri(std::string&& value);
   void add_uri(const char* value);
   void add_uri(const char* value, size_t size);
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>& uri() const;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* mutable_uri();
+  auto uri() const -> const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>&;
+  auto mutable_uri() -> ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*;
   private:
-  const std::string& _internal_uri(int index) const;
-  std::string* _internal_add_uri();
+  auto _internal_uri(int index) const -> const std::string&;
+  auto _internal_add_uri() -> std::string*;
   public:
 
   // string process_name = 1;
   void clear_process_name();
-  const std::string& process_name() const;
+  auto process_name() const -> const std::string&;
   void set_process_name(const std::string& value);
   void set_process_name(std::string&& value);
   void set_process_name(const char* value);
   void set_process_name(const char* value, size_t size);
-  std::string* mutable_process_name();
-  std::string* release_process_name();
+  auto mutable_process_name() -> std::string*;
+  auto release_process_name() -> std::string*;
   void set_allocated_process_name(std::string* process_name);
   private:
-  const std::string& _internal_process_name() const;
+  auto _internal_process_name() const -> const std::string&;
   void _internal_set_process_name(const std::string& value);
-  std::string* _internal_mutable_process_name();
+  auto _internal_mutable_process_name() -> std::string*;
   public:
 
   // int32 pid = 2;
   void clear_pid();
-  ::PROTOBUF_NAMESPACE_ID::int32 pid() const;
+  auto pid() const -> ::PROTOBUF_NAMESPACE_ID::int32;
   void set_pid(::PROTOBUF_NAMESPACE_ID::int32 value);
   private:
-  ::PROTOBUF_NAMESPACE_ID::int32 _internal_pid() const;
+  auto _internal_pid() const -> ::PROTOBUF_NAMESPACE_ID::int32;
   void _internal_set_pid(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
@@ -2738,8 +2777,8 @@ class ActiveProcess PROTOBUF_FINAL :
   class _Internal;
 
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string> uri_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr process_name_;
   ::PROTOBUF_NAMESPACE_ID::int32 pid_;
@@ -2752,7 +2791,7 @@ class DownloadSettings PROTOBUF_FINAL :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:DownloadSettings) */ {
  public:
   inline DownloadSettings() : DownloadSettings(nullptr) {}
-  virtual ~DownloadSettings();
+  ~DownloadSettings() override;
 
   DownloadSettings(const DownloadSettings& from);
   DownloadSettings(DownloadSettings&& from) noexcept
@@ -2760,32 +2799,33 @@ class DownloadSettings PROTOBUF_FINAL :
     *this = ::std::move(from);
   }
 
-  inline DownloadSettings& operator=(const DownloadSettings& from) {
+  inline auto operator=(const DownloadSettings& from) -> DownloadSettings& {
     CopyFrom(from);
     return *this;
   }
-  inline DownloadSettings& operator=(DownloadSettings&& from) noexcept {
+  inline auto operator=(DownloadSettings&& from) noexcept -> DownloadSettings& {
     if (GetArena() == from.GetArena()) {
-      if (this != &from) InternalSwap(&from);
+      if (this != &from) { InternalSwap(&from);
+}
     } else {
       CopyFrom(from);
     }
     return *this;
   }
 
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+  static auto descriptor() -> const ::PROTOBUF_NAMESPACE_ID::Descriptor* {
     return GetDescriptor();
   }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+  static auto GetDescriptor() -> const ::PROTOBUF_NAMESPACE_ID::Descriptor* {
     return GetMetadataStatic().descriptor;
   }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+  static auto GetReflection() -> const ::PROTOBUF_NAMESPACE_ID::Reflection* {
     return GetMetadataStatic().reflection;
   }
-  static const DownloadSettings& default_instance();
+  static auto default_instance() -> const DownloadSettings&;
 
   static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const DownloadSettings* internal_default_instance() {
+  static inline auto internal_default_instance() -> const DownloadSettings* {
     return reinterpret_cast<const DownloadSettings*>(
                &_DownloadSettings_default_instance_);
   }
@@ -2796,7 +2836,8 @@ class DownloadSettings PROTOBUF_FINAL :
     a.Swap(&b);
   }
   inline void Swap(DownloadSettings* other) {
-    if (other == this) return;
+    if (other == this) { return;
+}
     if (GetArena() == other->GetArena()) {
       InternalSwap(other);
     } else {
@@ -2804,18 +2845,19 @@ class DownloadSettings PROTOBUF_FINAL :
     }
   }
   void UnsafeArenaSwap(DownloadSettings* other) {
-    if (other == this) return;
+    if (other == this) { return;
+}
     GOOGLE_DCHECK(GetArena() == other->GetArena());
     InternalSwap(other);
   }
 
   // implements Message ----------------------------------------------
 
-  inline DownloadSettings* New() const final {
+  inline auto New() const -> DownloadSettings* final {
     return CreateMaybeMessage<DownloadSettings>(nullptr);
   }
 
-  DownloadSettings* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+  auto New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const -> DownloadSettings* final {
     return CreateMaybeMessage<DownloadSettings>(arena);
   }
   void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
@@ -2823,13 +2865,13 @@ class DownloadSettings PROTOBUF_FINAL :
   void CopyFrom(const DownloadSettings& from);
   void MergeFrom(const DownloadSettings& from);
   PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
+  auto IsInitialized() const -> bool final;
 
-  size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
-      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _cached_size_.Get(); }
+  auto ByteSizeLong() const -> size_t final;
+  auto _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) -> const char* final;
+  auto _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const -> ::PROTOBUF_NAMESPACE_ID::uint8* final;
+  auto GetCachedSize() const -> int final { return _cached_size_.Get(); }
 
   private:
   inline void SharedCtor();
@@ -2837,7 +2879,7 @@ class DownloadSettings PROTOBUF_FINAL :
   void SetCachedSize(int size) const final;
   void InternalSwap(DownloadSettings* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+  static auto FullMessageName() -> ::PROTOBUF_NAMESPACE_ID::StringPiece {
     return "DownloadSettings";
   }
   protected:
@@ -2847,9 +2889,9 @@ class DownloadSettings PROTOBUF_FINAL :
   inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
   public:
 
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  auto GetMetadata() const -> ::PROTOBUF_NAMESPACE_ID::Metadata final;
   private:
-  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+  static auto GetMetadataStatic() -> ::PROTOBUF_NAMESPACE_ID::Metadata {
     ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_schema_2eproto);
     return ::descriptor_table_schema_2eproto.file_level_metadata[kIndexInFileMessages];
   }
@@ -2866,19 +2908,19 @@ class DownloadSettings PROTOBUF_FINAL :
   };
   // int32 download_limit = 1;
   void clear_download_limit();
-  ::PROTOBUF_NAMESPACE_ID::int32 download_limit() const;
+  auto download_limit() const -> ::PROTOBUF_NAMESPACE_ID::int32;
   void set_download_limit(::PROTOBUF_NAMESPACE_ID::int32 value);
   private:
-  ::PROTOBUF_NAMESPACE_ID::int32 _internal_download_limit() const;
+  auto _internal_download_limit() const -> ::PROTOBUF_NAMESPACE_ID::int32;
   void _internal_set_download_limit(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
   // int32 backfill_limit = 2;
   void clear_backfill_limit();
-  ::PROTOBUF_NAMESPACE_ID::int32 backfill_limit() const;
+  auto backfill_limit() const -> ::PROTOBUF_NAMESPACE_ID::int32;
   void set_backfill_limit(::PROTOBUF_NAMESPACE_ID::int32 value);
   private:
-  ::PROTOBUF_NAMESPACE_ID::int32 _internal_backfill_limit() const;
+  auto _internal_backfill_limit() const -> ::PROTOBUF_NAMESPACE_ID::int32;
   void _internal_set_backfill_limit(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
@@ -2887,8 +2929,8 @@ class DownloadSettings PROTOBUF_FINAL :
   class _Internal;
 
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
   ::PROTOBUF_NAMESPACE_ID::int32 download_limit_;
   ::PROTOBUF_NAMESPACE_ID::int32 backfill_limit_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
@@ -2900,7 +2942,7 @@ class ProductDb PROTOBUF_FINAL :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:ProductDb) */ {
  public:
   inline ProductDb() : ProductDb(nullptr) {}
-  virtual ~ProductDb();
+  ~ProductDb() override;
 
   ProductDb(const ProductDb& from);
   ProductDb(ProductDb&& from) noexcept
@@ -2908,32 +2950,33 @@ class ProductDb PROTOBUF_FINAL :
     *this = ::std::move(from);
   }
 
-  inline ProductDb& operator=(const ProductDb& from) {
+  inline auto operator=(const ProductDb& from) -> ProductDb& {
     CopyFrom(from);
     return *this;
   }
-  inline ProductDb& operator=(ProductDb&& from) noexcept {
+  inline auto operator=(ProductDb&& from) noexcept -> ProductDb& {
     if (GetArena() == from.GetArena()) {
-      if (this != &from) InternalSwap(&from);
+      if (this != &from) { InternalSwap(&from);
+}
     } else {
       CopyFrom(from);
     }
     return *this;
   }
 
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+  static auto descriptor() -> const ::PROTOBUF_NAMESPACE_ID::Descriptor* {
     return GetDescriptor();
   }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+  static auto GetDescriptor() -> const ::PROTOBUF_NAMESPACE_ID::Descriptor* {
     return GetMetadataStatic().descriptor;
   }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+  static auto GetReflection() -> const ::PROTOBUF_NAMESPACE_ID::Reflection* {
     return GetMetadataStatic().reflection;
   }
-  static const ProductDb& default_instance();
+  static auto default_instance() -> const ProductDb&;
 
   static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const ProductDb* internal_default_instance() {
+  static inline auto internal_default_instance() -> const ProductDb* {
     return reinterpret_cast<const ProductDb*>(
                &_ProductDb_default_instance_);
   }
@@ -2944,7 +2987,8 @@ class ProductDb PROTOBUF_FINAL :
     a.Swap(&b);
   }
   inline void Swap(ProductDb* other) {
-    if (other == this) return;
+    if (other == this) { return;
+}
     if (GetArena() == other->GetArena()) {
       InternalSwap(other);
     } else {
@@ -2952,18 +2996,19 @@ class ProductDb PROTOBUF_FINAL :
     }
   }
   void UnsafeArenaSwap(ProductDb* other) {
-    if (other == this) return;
+    if (other == this) { return;
+}
     GOOGLE_DCHECK(GetArena() == other->GetArena());
     InternalSwap(other);
   }
 
   // implements Message ----------------------------------------------
 
-  inline ProductDb* New() const final {
+  inline auto New() const -> ProductDb* final {
     return CreateMaybeMessage<ProductDb>(nullptr);
   }
 
-  ProductDb* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+  auto New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const -> ProductDb* final {
     return CreateMaybeMessage<ProductDb>(arena);
   }
   void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
@@ -2971,13 +3016,13 @@ class ProductDb PROTOBUF_FINAL :
   void CopyFrom(const ProductDb& from);
   void MergeFrom(const ProductDb& from);
   PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
+  auto IsInitialized() const -> bool final;
 
-  size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
-      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _cached_size_.Get(); }
+  auto ByteSizeLong() const -> size_t final;
+  auto _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) -> const char* final;
+  auto _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const -> ::PROTOBUF_NAMESPACE_ID::uint8* final;
+  auto GetCachedSize() const -> int final { return _cached_size_.Get(); }
 
   private:
   inline void SharedCtor();
@@ -2985,7 +3030,7 @@ class ProductDb PROTOBUF_FINAL :
   void SetCachedSize(int size) const final;
   void InternalSwap(ProductDb* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+  static auto FullMessageName() -> ::PROTOBUF_NAMESPACE_ID::StringPiece {
     return "ProductDb";
   }
   protected:
@@ -2995,9 +3040,9 @@ class ProductDb PROTOBUF_FINAL :
   inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
   public:
 
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  auto GetMetadata() const -> ::PROTOBUF_NAMESPACE_ID::Metadata final;
   private:
-  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+  static auto GetMetadataStatic() -> ::PROTOBUF_NAMESPACE_ID::Metadata {
     ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_schema_2eproto);
     return ::descriptor_table_schema_2eproto.file_level_metadata[kIndexInFileMessages];
   }
@@ -3016,102 +3061,102 @@ class ProductDb PROTOBUF_FINAL :
     kDownloadSettingsFieldNumber = 5,
   };
   // repeated .ProductInstall product_installs = 1;
-  int product_installs_size() const;
+  auto product_installs_size() const -> int;
   private:
-  int _internal_product_installs_size() const;
+  auto _internal_product_installs_size() const -> int;
   public:
   void clear_product_installs();
-  ::ProductInstall* mutable_product_installs(int index);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ProductInstall >*
-      mutable_product_installs();
+  auto mutable_product_installs(int index) -> ::ProductInstall*;
+  auto
+      mutable_product_installs() -> ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ProductInstall >*;
   private:
-  const ::ProductInstall& _internal_product_installs(int index) const;
-  ::ProductInstall* _internal_add_product_installs();
+  auto _internal_product_installs(int index) const -> const ::ProductInstall&;
+  auto _internal_add_product_installs() -> ::ProductInstall*;
   public:
-  const ::ProductInstall& product_installs(int index) const;
-  ::ProductInstall* add_product_installs();
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ProductInstall >&
-      product_installs() const;
+  auto product_installs(int index) const -> const ::ProductInstall&;
+  auto add_product_installs() -> ::ProductInstall*;
+  auto
+      product_installs() const -> const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ProductInstall >&;
 
   // repeated .InstallHandshake active_installs = 2;
-  int active_installs_size() const;
+  auto active_installs_size() const -> int;
   private:
-  int _internal_active_installs_size() const;
+  auto _internal_active_installs_size() const -> int;
   public:
   void clear_active_installs();
-  ::InstallHandshake* mutable_active_installs(int index);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::InstallHandshake >*
-      mutable_active_installs();
+  auto mutable_active_installs(int index) -> ::InstallHandshake*;
+  auto
+      mutable_active_installs() -> ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::InstallHandshake >*;
   private:
-  const ::InstallHandshake& _internal_active_installs(int index) const;
-  ::InstallHandshake* _internal_add_active_installs();
+  auto _internal_active_installs(int index) const -> const ::InstallHandshake&;
+  auto _internal_add_active_installs() -> ::InstallHandshake*;
   public:
-  const ::InstallHandshake& active_installs(int index) const;
-  ::InstallHandshake* add_active_installs();
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::InstallHandshake >&
-      active_installs() const;
+  auto active_installs(int index) const -> const ::InstallHandshake&;
+  auto add_active_installs() -> ::InstallHandshake*;
+  auto
+      active_installs() const -> const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::InstallHandshake >&;
 
   // repeated .ActiveProcess active_processes = 3;
-  int active_processes_size() const;
+  auto active_processes_size() const -> int;
   private:
-  int _internal_active_processes_size() const;
+  auto _internal_active_processes_size() const -> int;
   public:
   void clear_active_processes();
-  ::ActiveProcess* mutable_active_processes(int index);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ActiveProcess >*
-      mutable_active_processes();
+  auto mutable_active_processes(int index) -> ::ActiveProcess*;
+  auto
+      mutable_active_processes() -> ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ActiveProcess >*;
   private:
-  const ::ActiveProcess& _internal_active_processes(int index) const;
-  ::ActiveProcess* _internal_add_active_processes();
+  auto _internal_active_processes(int index) const -> const ::ActiveProcess&;
+  auto _internal_add_active_processes() -> ::ActiveProcess*;
   public:
-  const ::ActiveProcess& active_processes(int index) const;
-  ::ActiveProcess* add_active_processes();
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ActiveProcess >&
-      active_processes() const;
+  auto active_processes(int index) const -> const ::ActiveProcess&;
+  auto add_active_processes() -> ::ActiveProcess*;
+  auto
+      active_processes() const -> const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ActiveProcess >&;
 
   // repeated .ProductConfig product_configs = 4;
-  int product_configs_size() const;
+  auto product_configs_size() const -> int;
   private:
-  int _internal_product_configs_size() const;
+  auto _internal_product_configs_size() const -> int;
   public:
   void clear_product_configs();
-  ::ProductConfig* mutable_product_configs(int index);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ProductConfig >*
-      mutable_product_configs();
+  auto mutable_product_configs(int index) -> ::ProductConfig*;
+  auto
+      mutable_product_configs() -> ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ProductConfig >*;
   private:
-  const ::ProductConfig& _internal_product_configs(int index) const;
-  ::ProductConfig* _internal_add_product_configs();
+  auto _internal_product_configs(int index) const -> const ::ProductConfig&;
+  auto _internal_add_product_configs() -> ::ProductConfig*;
   public:
-  const ::ProductConfig& product_configs(int index) const;
-  ::ProductConfig* add_product_configs();
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ProductConfig >&
-      product_configs() const;
+  auto product_configs(int index) const -> const ::ProductConfig&;
+  auto add_product_configs() -> ::ProductConfig*;
+  auto
+      product_configs() const -> const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ProductConfig >&;
 
   // .DownloadSettings download_settings = 5;
-  bool has_download_settings() const;
+  auto has_download_settings() const -> bool;
   private:
-  bool _internal_has_download_settings() const;
+  auto _internal_has_download_settings() const -> bool;
   public:
   void clear_download_settings();
-  const ::DownloadSettings& download_settings() const;
-  ::DownloadSettings* release_download_settings();
-  ::DownloadSettings* mutable_download_settings();
+  auto download_settings() const -> const ::DownloadSettings&;
+  auto release_download_settings() -> ::DownloadSettings*;
+  auto mutable_download_settings() -> ::DownloadSettings*;
   void set_allocated_download_settings(::DownloadSettings* download_settings);
   private:
-  const ::DownloadSettings& _internal_download_settings() const;
-  ::DownloadSettings* _internal_mutable_download_settings();
+  auto _internal_download_settings() const -> const ::DownloadSettings&;
+  auto _internal_mutable_download_settings() -> ::DownloadSettings*;
   public:
   void unsafe_arena_set_allocated_download_settings(
       ::DownloadSettings* download_settings);
-  ::DownloadSettings* unsafe_arena_release_download_settings();
+  auto unsafe_arena_release_download_settings() -> ::DownloadSettings*;
 
   // @@protoc_insertion_point(class_scope:ProductDb)
  private:
   class _Internal;
 
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ProductInstall > product_installs_;
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::InstallHandshake > active_installs_;
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ActiveProcess > active_processes_;
@@ -3135,7 +3180,7 @@ class ProductDb PROTOBUF_FINAL :
 inline void LanguageSetting::clear_language() {
   language_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline const std::string& LanguageSetting::language() const {
+inline auto LanguageSetting::language() const -> const std::string& {
   // @@protoc_insertion_point(field_get:LanguageSetting.language)
   return _internal_language();
 }
@@ -3143,11 +3188,11 @@ inline void LanguageSetting::set_language(const std::string& value) {
   _internal_set_language(value);
   // @@protoc_insertion_point(field_set:LanguageSetting.language)
 }
-inline std::string* LanguageSetting::mutable_language() {
+inline auto LanguageSetting::mutable_language() -> std::string* {
   // @@protoc_insertion_point(field_mutable:LanguageSetting.language)
   return _internal_mutable_language();
 }
-inline const std::string& LanguageSetting::_internal_language() const {
+inline auto LanguageSetting::_internal_language() const -> const std::string& {
   return language_.Get();
 }
 inline void LanguageSetting::_internal_set_language(const std::string& value) {
@@ -3174,11 +3219,11 @@ inline void LanguageSetting::set_language(const char* value,
       reinterpret_cast<const char*>(value), size), GetArena());
   // @@protoc_insertion_point(field_set_pointer:LanguageSetting.language)
 }
-inline std::string* LanguageSetting::_internal_mutable_language() {
+inline auto LanguageSetting::_internal_mutable_language() -> std::string* {
   
   return language_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline std::string* LanguageSetting::release_language() {
+inline auto LanguageSetting::release_language() -> std::string* {
   // @@protoc_insertion_point(field_release:LanguageSetting.language)
   return language_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
@@ -3197,10 +3242,10 @@ inline void LanguageSetting::set_allocated_language(std::string* language) {
 inline void LanguageSetting::clear_option() {
   option_ = 0;
 }
-inline ::LanguageOption LanguageSetting::_internal_option() const {
+inline auto LanguageSetting::_internal_option() const -> ::LanguageOption {
   return static_cast< ::LanguageOption >(option_);
 }
-inline ::LanguageOption LanguageSetting::option() const {
+inline auto LanguageSetting::option() const -> ::LanguageOption {
   // @@protoc_insertion_point(field_get:LanguageSetting.option)
   return _internal_option();
 }
@@ -3221,7 +3266,7 @@ inline void LanguageSetting::set_option(::LanguageOption value) {
 inline void UserSettings::clear_install_path() {
   install_path_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline const std::string& UserSettings::install_path() const {
+inline auto UserSettings::install_path() const -> const std::string& {
   // @@protoc_insertion_point(field_get:UserSettings.install_path)
   return _internal_install_path();
 }
@@ -3229,11 +3274,11 @@ inline void UserSettings::set_install_path(const std::string& value) {
   _internal_set_install_path(value);
   // @@protoc_insertion_point(field_set:UserSettings.install_path)
 }
-inline std::string* UserSettings::mutable_install_path() {
+inline auto UserSettings::mutable_install_path() -> std::string* {
   // @@protoc_insertion_point(field_mutable:UserSettings.install_path)
   return _internal_mutable_install_path();
 }
-inline const std::string& UserSettings::_internal_install_path() const {
+inline auto UserSettings::_internal_install_path() const -> const std::string& {
   return install_path_.Get();
 }
 inline void UserSettings::_internal_set_install_path(const std::string& value) {
@@ -3260,11 +3305,11 @@ inline void UserSettings::set_install_path(const char* value,
       reinterpret_cast<const char*>(value), size), GetArena());
   // @@protoc_insertion_point(field_set_pointer:UserSettings.install_path)
 }
-inline std::string* UserSettings::_internal_mutable_install_path() {
+inline auto UserSettings::_internal_mutable_install_path() -> std::string* {
   
   return install_path_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline std::string* UserSettings::release_install_path() {
+inline auto UserSettings::release_install_path() -> std::string* {
   // @@protoc_insertion_point(field_release:UserSettings.install_path)
   return install_path_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
@@ -3283,7 +3328,7 @@ inline void UserSettings::set_allocated_install_path(std::string* install_path) 
 inline void UserSettings::clear_play_region() {
   play_region_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline const std::string& UserSettings::play_region() const {
+inline auto UserSettings::play_region() const -> const std::string& {
   // @@protoc_insertion_point(field_get:UserSettings.play_region)
   return _internal_play_region();
 }
@@ -3291,11 +3336,11 @@ inline void UserSettings::set_play_region(const std::string& value) {
   _internal_set_play_region(value);
   // @@protoc_insertion_point(field_set:UserSettings.play_region)
 }
-inline std::string* UserSettings::mutable_play_region() {
+inline auto UserSettings::mutable_play_region() -> std::string* {
   // @@protoc_insertion_point(field_mutable:UserSettings.play_region)
   return _internal_mutable_play_region();
 }
-inline const std::string& UserSettings::_internal_play_region() const {
+inline auto UserSettings::_internal_play_region() const -> const std::string& {
   return play_region_.Get();
 }
 inline void UserSettings::_internal_set_play_region(const std::string& value) {
@@ -3322,11 +3367,11 @@ inline void UserSettings::set_play_region(const char* value,
       reinterpret_cast<const char*>(value), size), GetArena());
   // @@protoc_insertion_point(field_set_pointer:UserSettings.play_region)
 }
-inline std::string* UserSettings::_internal_mutable_play_region() {
+inline auto UserSettings::_internal_mutable_play_region() -> std::string* {
   
   return play_region_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline std::string* UserSettings::release_play_region() {
+inline auto UserSettings::release_play_region() -> std::string* {
   // @@protoc_insertion_point(field_release:UserSettings.play_region)
   return play_region_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
@@ -3345,10 +3390,10 @@ inline void UserSettings::set_allocated_play_region(std::string* play_region) {
 inline void UserSettings::clear_desktop_shortcut() {
   desktop_shortcut_ = 0;
 }
-inline ::ShortcutOption UserSettings::_internal_desktop_shortcut() const {
+inline auto UserSettings::_internal_desktop_shortcut() const -> ::ShortcutOption {
   return static_cast< ::ShortcutOption >(desktop_shortcut_);
 }
-inline ::ShortcutOption UserSettings::desktop_shortcut() const {
+inline auto UserSettings::desktop_shortcut() const -> ::ShortcutOption {
   // @@protoc_insertion_point(field_get:UserSettings.desktop_shortcut)
   return _internal_desktop_shortcut();
 }
@@ -3365,10 +3410,10 @@ inline void UserSettings::set_desktop_shortcut(::ShortcutOption value) {
 inline void UserSettings::clear_startmenu_shortcut() {
   startmenu_shortcut_ = 0;
 }
-inline ::ShortcutOption UserSettings::_internal_startmenu_shortcut() const {
+inline auto UserSettings::_internal_startmenu_shortcut() const -> ::ShortcutOption {
   return static_cast< ::ShortcutOption >(startmenu_shortcut_);
 }
-inline ::ShortcutOption UserSettings::startmenu_shortcut() const {
+inline auto UserSettings::startmenu_shortcut() const -> ::ShortcutOption {
   // @@protoc_insertion_point(field_get:UserSettings.startmenu_shortcut)
   return _internal_startmenu_shortcut();
 }
@@ -3385,10 +3430,10 @@ inline void UserSettings::set_startmenu_shortcut(::ShortcutOption value) {
 inline void UserSettings::clear_language_settings() {
   language_settings_ = 0;
 }
-inline ::LanguageSettingType UserSettings::_internal_language_settings() const {
+inline auto UserSettings::_internal_language_settings() const -> ::LanguageSettingType {
   return static_cast< ::LanguageSettingType >(language_settings_);
 }
-inline ::LanguageSettingType UserSettings::language_settings() const {
+inline auto UserSettings::language_settings() const -> ::LanguageSettingType {
   // @@protoc_insertion_point(field_get:UserSettings.language_settings)
   return _internal_language_settings();
 }
@@ -3405,7 +3450,7 @@ inline void UserSettings::set_language_settings(::LanguageSettingType value) {
 inline void UserSettings::clear_selected_text_language() {
   selected_text_language_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline const std::string& UserSettings::selected_text_language() const {
+inline auto UserSettings::selected_text_language() const -> const std::string& {
   // @@protoc_insertion_point(field_get:UserSettings.selected_text_language)
   return _internal_selected_text_language();
 }
@@ -3413,11 +3458,11 @@ inline void UserSettings::set_selected_text_language(const std::string& value) {
   _internal_set_selected_text_language(value);
   // @@protoc_insertion_point(field_set:UserSettings.selected_text_language)
 }
-inline std::string* UserSettings::mutable_selected_text_language() {
+inline auto UserSettings::mutable_selected_text_language() -> std::string* {
   // @@protoc_insertion_point(field_mutable:UserSettings.selected_text_language)
   return _internal_mutable_selected_text_language();
 }
-inline const std::string& UserSettings::_internal_selected_text_language() const {
+inline auto UserSettings::_internal_selected_text_language() const -> const std::string& {
   return selected_text_language_.Get();
 }
 inline void UserSettings::_internal_set_selected_text_language(const std::string& value) {
@@ -3444,11 +3489,11 @@ inline void UserSettings::set_selected_text_language(const char* value,
       reinterpret_cast<const char*>(value), size), GetArena());
   // @@protoc_insertion_point(field_set_pointer:UserSettings.selected_text_language)
 }
-inline std::string* UserSettings::_internal_mutable_selected_text_language() {
+inline auto UserSettings::_internal_mutable_selected_text_language() -> std::string* {
   
   return selected_text_language_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline std::string* UserSettings::release_selected_text_language() {
+inline auto UserSettings::release_selected_text_language() -> std::string* {
   // @@protoc_insertion_point(field_release:UserSettings.selected_text_language)
   return selected_text_language_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
@@ -3467,7 +3512,7 @@ inline void UserSettings::set_allocated_selected_text_language(std::string* sele
 inline void UserSettings::clear_selected_speech_language() {
   selected_speech_language_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline const std::string& UserSettings::selected_speech_language() const {
+inline auto UserSettings::selected_speech_language() const -> const std::string& {
   // @@protoc_insertion_point(field_get:UserSettings.selected_speech_language)
   return _internal_selected_speech_language();
 }
@@ -3475,11 +3520,11 @@ inline void UserSettings::set_selected_speech_language(const std::string& value)
   _internal_set_selected_speech_language(value);
   // @@protoc_insertion_point(field_set:UserSettings.selected_speech_language)
 }
-inline std::string* UserSettings::mutable_selected_speech_language() {
+inline auto UserSettings::mutable_selected_speech_language() -> std::string* {
   // @@protoc_insertion_point(field_mutable:UserSettings.selected_speech_language)
   return _internal_mutable_selected_speech_language();
 }
-inline const std::string& UserSettings::_internal_selected_speech_language() const {
+inline auto UserSettings::_internal_selected_speech_language() const -> const std::string& {
   return selected_speech_language_.Get();
 }
 inline void UserSettings::_internal_set_selected_speech_language(const std::string& value) {
@@ -3506,11 +3551,11 @@ inline void UserSettings::set_selected_speech_language(const char* value,
       reinterpret_cast<const char*>(value), size), GetArena());
   // @@protoc_insertion_point(field_set_pointer:UserSettings.selected_speech_language)
 }
-inline std::string* UserSettings::_internal_mutable_selected_speech_language() {
+inline auto UserSettings::_internal_mutable_selected_speech_language() -> std::string* {
   
   return selected_speech_language_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline std::string* UserSettings::release_selected_speech_language() {
+inline auto UserSettings::release_selected_speech_language() -> std::string* {
   // @@protoc_insertion_point(field_release:UserSettings.selected_speech_language)
   return selected_speech_language_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
@@ -3526,40 +3571,40 @@ inline void UserSettings::set_allocated_selected_speech_language(std::string* se
 }
 
 // repeated .LanguageSetting languages = 8;
-inline int UserSettings::_internal_languages_size() const {
+inline auto UserSettings::_internal_languages_size() const -> int {
   return languages_.size();
 }
-inline int UserSettings::languages_size() const {
+inline auto UserSettings::languages_size() const -> int {
   return _internal_languages_size();
 }
 inline void UserSettings::clear_languages() {
   languages_.Clear();
 }
-inline ::LanguageSetting* UserSettings::mutable_languages(int index) {
+inline auto UserSettings::mutable_languages(int index) -> ::LanguageSetting* {
   // @@protoc_insertion_point(field_mutable:UserSettings.languages)
   return languages_.Mutable(index);
 }
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::LanguageSetting >*
-UserSettings::mutable_languages() {
+inline auto
+UserSettings::mutable_languages() -> ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::LanguageSetting >* {
   // @@protoc_insertion_point(field_mutable_list:UserSettings.languages)
   return &languages_;
 }
-inline const ::LanguageSetting& UserSettings::_internal_languages(int index) const {
+inline auto UserSettings::_internal_languages(int index) const -> const ::LanguageSetting& {
   return languages_.Get(index);
 }
-inline const ::LanguageSetting& UserSettings::languages(int index) const {
+inline auto UserSettings::languages(int index) const -> const ::LanguageSetting& {
   // @@protoc_insertion_point(field_get:UserSettings.languages)
   return _internal_languages(index);
 }
-inline ::LanguageSetting* UserSettings::_internal_add_languages() {
+inline auto UserSettings::_internal_add_languages() -> ::LanguageSetting* {
   return languages_.Add();
 }
-inline ::LanguageSetting* UserSettings::add_languages() {
+inline auto UserSettings::add_languages() -> ::LanguageSetting* {
   // @@protoc_insertion_point(field_add:UserSettings.languages)
   return _internal_add_languages();
 }
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::LanguageSetting >&
-UserSettings::languages() const {
+inline auto
+UserSettings::languages() const -> const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::LanguageSetting >& {
   // @@protoc_insertion_point(field_list:UserSettings.languages)
   return languages_;
 }
@@ -3568,7 +3613,7 @@ UserSettings::languages() const {
 inline void UserSettings::clear_gfx_override_tags() {
   gfx_override_tags_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline const std::string& UserSettings::gfx_override_tags() const {
+inline auto UserSettings::gfx_override_tags() const -> const std::string& {
   // @@protoc_insertion_point(field_get:UserSettings.gfx_override_tags)
   return _internal_gfx_override_tags();
 }
@@ -3576,11 +3621,11 @@ inline void UserSettings::set_gfx_override_tags(const std::string& value) {
   _internal_set_gfx_override_tags(value);
   // @@protoc_insertion_point(field_set:UserSettings.gfx_override_tags)
 }
-inline std::string* UserSettings::mutable_gfx_override_tags() {
+inline auto UserSettings::mutable_gfx_override_tags() -> std::string* {
   // @@protoc_insertion_point(field_mutable:UserSettings.gfx_override_tags)
   return _internal_mutable_gfx_override_tags();
 }
-inline const std::string& UserSettings::_internal_gfx_override_tags() const {
+inline auto UserSettings::_internal_gfx_override_tags() const -> const std::string& {
   return gfx_override_tags_.Get();
 }
 inline void UserSettings::_internal_set_gfx_override_tags(const std::string& value) {
@@ -3607,11 +3652,11 @@ inline void UserSettings::set_gfx_override_tags(const char* value,
       reinterpret_cast<const char*>(value), size), GetArena());
   // @@protoc_insertion_point(field_set_pointer:UserSettings.gfx_override_tags)
 }
-inline std::string* UserSettings::_internal_mutable_gfx_override_tags() {
+inline auto UserSettings::_internal_mutable_gfx_override_tags() -> std::string* {
   
   return gfx_override_tags_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline std::string* UserSettings::release_gfx_override_tags() {
+inline auto UserSettings::release_gfx_override_tags() -> std::string* {
   // @@protoc_insertion_point(field_release:UserSettings.gfx_override_tags)
   return gfx_override_tags_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
@@ -3630,7 +3675,7 @@ inline void UserSettings::set_allocated_gfx_override_tags(std::string* gfx_overr
 inline void UserSettings::clear_versionbranch() {
   versionbranch_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline const std::string& UserSettings::versionbranch() const {
+inline auto UserSettings::versionbranch() const -> const std::string& {
   // @@protoc_insertion_point(field_get:UserSettings.versionbranch)
   return _internal_versionbranch();
 }
@@ -3638,11 +3683,11 @@ inline void UserSettings::set_versionbranch(const std::string& value) {
   _internal_set_versionbranch(value);
   // @@protoc_insertion_point(field_set:UserSettings.versionbranch)
 }
-inline std::string* UserSettings::mutable_versionbranch() {
+inline auto UserSettings::mutable_versionbranch() -> std::string* {
   // @@protoc_insertion_point(field_mutable:UserSettings.versionbranch)
   return _internal_mutable_versionbranch();
 }
-inline const std::string& UserSettings::_internal_versionbranch() const {
+inline auto UserSettings::_internal_versionbranch() const -> const std::string& {
   return versionbranch_.Get();
 }
 inline void UserSettings::_internal_set_versionbranch(const std::string& value) {
@@ -3669,11 +3714,11 @@ inline void UserSettings::set_versionbranch(const char* value,
       reinterpret_cast<const char*>(value), size), GetArena());
   // @@protoc_insertion_point(field_set_pointer:UserSettings.versionbranch)
 }
-inline std::string* UserSettings::_internal_mutable_versionbranch() {
+inline auto UserSettings::_internal_mutable_versionbranch() -> std::string* {
   
   return versionbranch_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline std::string* UserSettings::release_versionbranch() {
+inline auto UserSettings::release_versionbranch() -> std::string* {
   // @@protoc_insertion_point(field_release:UserSettings.versionbranch)
   return versionbranch_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
@@ -3696,7 +3741,7 @@ inline void UserSettings::set_allocated_versionbranch(std::string* versionbranch
 inline void InstallHandshake::clear_product() {
   product_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline const std::string& InstallHandshake::product() const {
+inline auto InstallHandshake::product() const -> const std::string& {
   // @@protoc_insertion_point(field_get:InstallHandshake.product)
   return _internal_product();
 }
@@ -3704,11 +3749,11 @@ inline void InstallHandshake::set_product(const std::string& value) {
   _internal_set_product(value);
   // @@protoc_insertion_point(field_set:InstallHandshake.product)
 }
-inline std::string* InstallHandshake::mutable_product() {
+inline auto InstallHandshake::mutable_product() -> std::string* {
   // @@protoc_insertion_point(field_mutable:InstallHandshake.product)
   return _internal_mutable_product();
 }
-inline const std::string& InstallHandshake::_internal_product() const {
+inline auto InstallHandshake::_internal_product() const -> const std::string& {
   return product_.Get();
 }
 inline void InstallHandshake::_internal_set_product(const std::string& value) {
@@ -3735,11 +3780,11 @@ inline void InstallHandshake::set_product(const char* value,
       reinterpret_cast<const char*>(value), size), GetArena());
   // @@protoc_insertion_point(field_set_pointer:InstallHandshake.product)
 }
-inline std::string* InstallHandshake::_internal_mutable_product() {
+inline auto InstallHandshake::_internal_mutable_product() -> std::string* {
   
   return product_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline std::string* InstallHandshake::release_product() {
+inline auto InstallHandshake::release_product() -> std::string* {
   // @@protoc_insertion_point(field_release:InstallHandshake.product)
   return product_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
@@ -3758,7 +3803,7 @@ inline void InstallHandshake::set_allocated_product(std::string* product) {
 inline void InstallHandshake::clear_uid() {
   uid_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline const std::string& InstallHandshake::uid() const {
+inline auto InstallHandshake::uid() const -> const std::string& {
   // @@protoc_insertion_point(field_get:InstallHandshake.uid)
   return _internal_uid();
 }
@@ -3766,11 +3811,11 @@ inline void InstallHandshake::set_uid(const std::string& value) {
   _internal_set_uid(value);
   // @@protoc_insertion_point(field_set:InstallHandshake.uid)
 }
-inline std::string* InstallHandshake::mutable_uid() {
+inline auto InstallHandshake::mutable_uid() -> std::string* {
   // @@protoc_insertion_point(field_mutable:InstallHandshake.uid)
   return _internal_mutable_uid();
 }
-inline const std::string& InstallHandshake::_internal_uid() const {
+inline auto InstallHandshake::_internal_uid() const -> const std::string& {
   return uid_.Get();
 }
 inline void InstallHandshake::_internal_set_uid(const std::string& value) {
@@ -3797,11 +3842,11 @@ inline void InstallHandshake::set_uid(const char* value,
       reinterpret_cast<const char*>(value), size), GetArena());
   // @@protoc_insertion_point(field_set_pointer:InstallHandshake.uid)
 }
-inline std::string* InstallHandshake::_internal_mutable_uid() {
+inline auto InstallHandshake::_internal_mutable_uid() -> std::string* {
   
   return uid_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline std::string* InstallHandshake::release_uid() {
+inline auto InstallHandshake::release_uid() -> std::string* {
   // @@protoc_insertion_point(field_release:InstallHandshake.uid)
   return uid_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
@@ -3817,10 +3862,10 @@ inline void InstallHandshake::set_allocated_uid(std::string* uid) {
 }
 
 // .UserSettings settings = 3;
-inline bool InstallHandshake::_internal_has_settings() const {
+inline auto InstallHandshake::_internal_has_settings() const -> bool {
   return this != internal_default_instance() && settings_ != nullptr;
 }
-inline bool InstallHandshake::has_settings() const {
+inline auto InstallHandshake::has_settings() const -> bool {
   return _internal_has_settings();
 }
 inline void InstallHandshake::clear_settings() {
@@ -3829,12 +3874,12 @@ inline void InstallHandshake::clear_settings() {
   }
   settings_ = nullptr;
 }
-inline const ::UserSettings& InstallHandshake::_internal_settings() const {
+inline auto InstallHandshake::_internal_settings() const -> const ::UserSettings& {
   const ::UserSettings* p = settings_;
   return p != nullptr ? *p : *reinterpret_cast<const ::UserSettings*>(
       &::_UserSettings_default_instance_);
 }
-inline const ::UserSettings& InstallHandshake::settings() const {
+inline auto InstallHandshake::settings() const -> const ::UserSettings& {
   // @@protoc_insertion_point(field_get:InstallHandshake.settings)
   return _internal_settings();
 }
@@ -3844,14 +3889,14 @@ inline void InstallHandshake::unsafe_arena_set_allocated_settings(
     delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(settings_);
   }
   settings_ = settings;
-  if (settings) {
+  if (settings != nullptr) {
     
   } else {
     
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:InstallHandshake.settings)
 }
-inline ::UserSettings* InstallHandshake::release_settings() {
+inline auto InstallHandshake::release_settings() -> ::UserSettings* {
   
   ::UserSettings* temp = settings_;
   settings_ = nullptr;
@@ -3860,14 +3905,14 @@ inline ::UserSettings* InstallHandshake::release_settings() {
   }
   return temp;
 }
-inline ::UserSettings* InstallHandshake::unsafe_arena_release_settings() {
+inline auto InstallHandshake::unsafe_arena_release_settings() -> ::UserSettings* {
   // @@protoc_insertion_point(field_release:InstallHandshake.settings)
   
   ::UserSettings* temp = settings_;
   settings_ = nullptr;
   return temp;
 }
-inline ::UserSettings* InstallHandshake::_internal_mutable_settings() {
+inline auto InstallHandshake::_internal_mutable_settings() -> ::UserSettings* {
   
   if (settings_ == nullptr) {
     auto* p = CreateMaybeMessage<::UserSettings>(GetArena());
@@ -3875,7 +3920,7 @@ inline ::UserSettings* InstallHandshake::_internal_mutable_settings() {
   }
   return settings_;
 }
-inline ::UserSettings* InstallHandshake::mutable_settings() {
+inline auto InstallHandshake::mutable_settings() -> ::UserSettings* {
   // @@protoc_insertion_point(field_mutable:InstallHandshake.settings)
   return _internal_mutable_settings();
 }
@@ -3884,7 +3929,7 @@ inline void InstallHandshake::set_allocated_settings(::UserSettings* settings) {
   if (message_arena == nullptr) {
     delete settings_;
   }
-  if (settings) {
+  if (settings != nullptr) {
     ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
       ::PROTOBUF_NAMESPACE_ID::Arena::GetArena(settings);
     if (message_arena != submessage_arena) {
@@ -3907,7 +3952,7 @@ inline void InstallHandshake::set_allocated_settings(::UserSettings* settings) {
 inline void BuildConfig::clear_region() {
   region_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline const std::string& BuildConfig::region() const {
+inline auto BuildConfig::region() const -> const std::string& {
   // @@protoc_insertion_point(field_get:BuildConfig.region)
   return _internal_region();
 }
@@ -3915,11 +3960,11 @@ inline void BuildConfig::set_region(const std::string& value) {
   _internal_set_region(value);
   // @@protoc_insertion_point(field_set:BuildConfig.region)
 }
-inline std::string* BuildConfig::mutable_region() {
+inline auto BuildConfig::mutable_region() -> std::string* {
   // @@protoc_insertion_point(field_mutable:BuildConfig.region)
   return _internal_mutable_region();
 }
-inline const std::string& BuildConfig::_internal_region() const {
+inline auto BuildConfig::_internal_region() const -> const std::string& {
   return region_.Get();
 }
 inline void BuildConfig::_internal_set_region(const std::string& value) {
@@ -3946,11 +3991,11 @@ inline void BuildConfig::set_region(const char* value,
       reinterpret_cast<const char*>(value), size), GetArena());
   // @@protoc_insertion_point(field_set_pointer:BuildConfig.region)
 }
-inline std::string* BuildConfig::_internal_mutable_region() {
+inline auto BuildConfig::_internal_mutable_region() -> std::string* {
   
   return region_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline std::string* BuildConfig::release_region() {
+inline auto BuildConfig::release_region() -> std::string* {
   // @@protoc_insertion_point(field_release:BuildConfig.region)
   return region_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
@@ -3969,7 +4014,7 @@ inline void BuildConfig::set_allocated_region(std::string* region) {
 inline void BuildConfig::clear_build_config() {
   build_config_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline const std::string& BuildConfig::build_config() const {
+inline auto BuildConfig::build_config() const -> const std::string& {
   // @@protoc_insertion_point(field_get:BuildConfig.build_config)
   return _internal_build_config();
 }
@@ -3977,11 +4022,11 @@ inline void BuildConfig::set_build_config(const std::string& value) {
   _internal_set_build_config(value);
   // @@protoc_insertion_point(field_set:BuildConfig.build_config)
 }
-inline std::string* BuildConfig::mutable_build_config() {
+inline auto BuildConfig::mutable_build_config() -> std::string* {
   // @@protoc_insertion_point(field_mutable:BuildConfig.build_config)
   return _internal_mutable_build_config();
 }
-inline const std::string& BuildConfig::_internal_build_config() const {
+inline auto BuildConfig::_internal_build_config() const -> const std::string& {
   return build_config_.Get();
 }
 inline void BuildConfig::_internal_set_build_config(const std::string& value) {
@@ -4008,11 +4053,11 @@ inline void BuildConfig::set_build_config(const char* value,
       reinterpret_cast<const char*>(value), size), GetArena());
   // @@protoc_insertion_point(field_set_pointer:BuildConfig.build_config)
 }
-inline std::string* BuildConfig::_internal_mutable_build_config() {
+inline auto BuildConfig::_internal_mutable_build_config() -> std::string* {
   
   return build_config_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline std::string* BuildConfig::release_build_config() {
+inline auto BuildConfig::release_build_config() -> std::string* {
   // @@protoc_insertion_point(field_release:BuildConfig.build_config)
   return build_config_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
@@ -4035,10 +4080,10 @@ inline void BuildConfig::set_allocated_build_config(std::string* build_config) {
 inline void BaseProductState::clear_installed() {
   installed_ = false;
 }
-inline bool BaseProductState::_internal_installed() const {
+inline auto BaseProductState::_internal_installed() const -> bool {
   return installed_;
 }
-inline bool BaseProductState::installed() const {
+inline auto BaseProductState::installed() const -> bool {
   // @@protoc_insertion_point(field_get:BaseProductState.installed)
   return _internal_installed();
 }
@@ -4055,10 +4100,10 @@ inline void BaseProductState::set_installed(bool value) {
 inline void BaseProductState::clear_playable() {
   playable_ = false;
 }
-inline bool BaseProductState::_internal_playable() const {
+inline auto BaseProductState::_internal_playable() const -> bool {
   return playable_;
 }
-inline bool BaseProductState::playable() const {
+inline auto BaseProductState::playable() const -> bool {
   // @@protoc_insertion_point(field_get:BaseProductState.playable)
   return _internal_playable();
 }
@@ -4075,10 +4120,10 @@ inline void BaseProductState::set_playable(bool value) {
 inline void BaseProductState::clear_update_complete() {
   update_complete_ = false;
 }
-inline bool BaseProductState::_internal_update_complete() const {
+inline auto BaseProductState::_internal_update_complete() const -> bool {
   return update_complete_;
 }
-inline bool BaseProductState::update_complete() const {
+inline auto BaseProductState::update_complete() const -> bool {
   // @@protoc_insertion_point(field_get:BaseProductState.update_complete)
   return _internal_update_complete();
 }
@@ -4095,10 +4140,10 @@ inline void BaseProductState::set_update_complete(bool value) {
 inline void BaseProductState::clear_background_download_available() {
   background_download_available_ = false;
 }
-inline bool BaseProductState::_internal_background_download_available() const {
+inline auto BaseProductState::_internal_background_download_available() const -> bool {
   return background_download_available_;
 }
-inline bool BaseProductState::background_download_available() const {
+inline auto BaseProductState::background_download_available() const -> bool {
   // @@protoc_insertion_point(field_get:BaseProductState.background_download_available)
   return _internal_background_download_available();
 }
@@ -4115,10 +4160,10 @@ inline void BaseProductState::set_background_download_available(bool value) {
 inline void BaseProductState::clear_background_download_complete() {
   background_download_complete_ = false;
 }
-inline bool BaseProductState::_internal_background_download_complete() const {
+inline auto BaseProductState::_internal_background_download_complete() const -> bool {
   return background_download_complete_;
 }
-inline bool BaseProductState::background_download_complete() const {
+inline auto BaseProductState::background_download_complete() const -> bool {
   // @@protoc_insertion_point(field_get:BaseProductState.background_download_complete)
   return _internal_background_download_complete();
 }
@@ -4135,7 +4180,7 @@ inline void BaseProductState::set_background_download_complete(bool value) {
 inline void BaseProductState::clear_current_version() {
   current_version_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline const std::string& BaseProductState::current_version() const {
+inline auto BaseProductState::current_version() const -> const std::string& {
   // @@protoc_insertion_point(field_get:BaseProductState.current_version)
   return _internal_current_version();
 }
@@ -4143,11 +4188,11 @@ inline void BaseProductState::set_current_version(const std::string& value) {
   _internal_set_current_version(value);
   // @@protoc_insertion_point(field_set:BaseProductState.current_version)
 }
-inline std::string* BaseProductState::mutable_current_version() {
+inline auto BaseProductState::mutable_current_version() -> std::string* {
   // @@protoc_insertion_point(field_mutable:BaseProductState.current_version)
   return _internal_mutable_current_version();
 }
-inline const std::string& BaseProductState::_internal_current_version() const {
+inline auto BaseProductState::_internal_current_version() const -> const std::string& {
   return current_version_.Get();
 }
 inline void BaseProductState::_internal_set_current_version(const std::string& value) {
@@ -4174,11 +4219,11 @@ inline void BaseProductState::set_current_version(const char* value,
       reinterpret_cast<const char*>(value), size), GetArena());
   // @@protoc_insertion_point(field_set_pointer:BaseProductState.current_version)
 }
-inline std::string* BaseProductState::_internal_mutable_current_version() {
+inline auto BaseProductState::_internal_mutable_current_version() -> std::string* {
   
   return current_version_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline std::string* BaseProductState::release_current_version() {
+inline auto BaseProductState::release_current_version() -> std::string* {
   // @@protoc_insertion_point(field_release:BaseProductState.current_version)
   return current_version_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
@@ -4197,7 +4242,7 @@ inline void BaseProductState::set_allocated_current_version(std::string* current
 inline void BaseProductState::clear_current_version_str() {
   current_version_str_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline const std::string& BaseProductState::current_version_str() const {
+inline auto BaseProductState::current_version_str() const -> const std::string& {
   // @@protoc_insertion_point(field_get:BaseProductState.current_version_str)
   return _internal_current_version_str();
 }
@@ -4205,11 +4250,11 @@ inline void BaseProductState::set_current_version_str(const std::string& value) 
   _internal_set_current_version_str(value);
   // @@protoc_insertion_point(field_set:BaseProductState.current_version_str)
 }
-inline std::string* BaseProductState::mutable_current_version_str() {
+inline auto BaseProductState::mutable_current_version_str() -> std::string* {
   // @@protoc_insertion_point(field_mutable:BaseProductState.current_version_str)
   return _internal_mutable_current_version_str();
 }
-inline const std::string& BaseProductState::_internal_current_version_str() const {
+inline auto BaseProductState::_internal_current_version_str() const -> const std::string& {
   return current_version_str_.Get();
 }
 inline void BaseProductState::_internal_set_current_version_str(const std::string& value) {
@@ -4236,11 +4281,11 @@ inline void BaseProductState::set_current_version_str(const char* value,
       reinterpret_cast<const char*>(value), size), GetArena());
   // @@protoc_insertion_point(field_set_pointer:BaseProductState.current_version_str)
 }
-inline std::string* BaseProductState::_internal_mutable_current_version_str() {
+inline auto BaseProductState::_internal_mutable_current_version_str() -> std::string* {
   
   return current_version_str_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline std::string* BaseProductState::release_current_version_str() {
+inline auto BaseProductState::release_current_version_str() -> std::string* {
   // @@protoc_insertion_point(field_release:BaseProductState.current_version_str)
   return current_version_str_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
@@ -4256,79 +4301,79 @@ inline void BaseProductState::set_allocated_current_version_str(std::string* cur
 }
 
 // repeated .BuildConfig installed_build_config = 8;
-inline int BaseProductState::_internal_installed_build_config_size() const {
+inline auto BaseProductState::_internal_installed_build_config_size() const -> int {
   return installed_build_config_.size();
 }
-inline int BaseProductState::installed_build_config_size() const {
+inline auto BaseProductState::installed_build_config_size() const -> int {
   return _internal_installed_build_config_size();
 }
 inline void BaseProductState::clear_installed_build_config() {
   installed_build_config_.Clear();
 }
-inline ::BuildConfig* BaseProductState::mutable_installed_build_config(int index) {
+inline auto BaseProductState::mutable_installed_build_config(int index) -> ::BuildConfig* {
   // @@protoc_insertion_point(field_mutable:BaseProductState.installed_build_config)
   return installed_build_config_.Mutable(index);
 }
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::BuildConfig >*
-BaseProductState::mutable_installed_build_config() {
+inline auto
+BaseProductState::mutable_installed_build_config() -> ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::BuildConfig >* {
   // @@protoc_insertion_point(field_mutable_list:BaseProductState.installed_build_config)
   return &installed_build_config_;
 }
-inline const ::BuildConfig& BaseProductState::_internal_installed_build_config(int index) const {
+inline auto BaseProductState::_internal_installed_build_config(int index) const -> const ::BuildConfig& {
   return installed_build_config_.Get(index);
 }
-inline const ::BuildConfig& BaseProductState::installed_build_config(int index) const {
+inline auto BaseProductState::installed_build_config(int index) const -> const ::BuildConfig& {
   // @@protoc_insertion_point(field_get:BaseProductState.installed_build_config)
   return _internal_installed_build_config(index);
 }
-inline ::BuildConfig* BaseProductState::_internal_add_installed_build_config() {
+inline auto BaseProductState::_internal_add_installed_build_config() -> ::BuildConfig* {
   return installed_build_config_.Add();
 }
-inline ::BuildConfig* BaseProductState::add_installed_build_config() {
+inline auto BaseProductState::add_installed_build_config() -> ::BuildConfig* {
   // @@protoc_insertion_point(field_add:BaseProductState.installed_build_config)
   return _internal_add_installed_build_config();
 }
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::BuildConfig >&
-BaseProductState::installed_build_config() const {
+inline auto
+BaseProductState::installed_build_config() const -> const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::BuildConfig >& {
   // @@protoc_insertion_point(field_list:BaseProductState.installed_build_config)
   return installed_build_config_;
 }
 
 // repeated .BuildConfig background_download_build_config = 9;
-inline int BaseProductState::_internal_background_download_build_config_size() const {
+inline auto BaseProductState::_internal_background_download_build_config_size() const -> int {
   return background_download_build_config_.size();
 }
-inline int BaseProductState::background_download_build_config_size() const {
+inline auto BaseProductState::background_download_build_config_size() const -> int {
   return _internal_background_download_build_config_size();
 }
 inline void BaseProductState::clear_background_download_build_config() {
   background_download_build_config_.Clear();
 }
-inline ::BuildConfig* BaseProductState::mutable_background_download_build_config(int index) {
+inline auto BaseProductState::mutable_background_download_build_config(int index) -> ::BuildConfig* {
   // @@protoc_insertion_point(field_mutable:BaseProductState.background_download_build_config)
   return background_download_build_config_.Mutable(index);
 }
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::BuildConfig >*
-BaseProductState::mutable_background_download_build_config() {
+inline auto
+BaseProductState::mutable_background_download_build_config() -> ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::BuildConfig >* {
   // @@protoc_insertion_point(field_mutable_list:BaseProductState.background_download_build_config)
   return &background_download_build_config_;
 }
-inline const ::BuildConfig& BaseProductState::_internal_background_download_build_config(int index) const {
+inline auto BaseProductState::_internal_background_download_build_config(int index) const -> const ::BuildConfig& {
   return background_download_build_config_.Get(index);
 }
-inline const ::BuildConfig& BaseProductState::background_download_build_config(int index) const {
+inline auto BaseProductState::background_download_build_config(int index) const -> const ::BuildConfig& {
   // @@protoc_insertion_point(field_get:BaseProductState.background_download_build_config)
   return _internal_background_download_build_config(index);
 }
-inline ::BuildConfig* BaseProductState::_internal_add_background_download_build_config() {
+inline auto BaseProductState::_internal_add_background_download_build_config() -> ::BuildConfig* {
   return background_download_build_config_.Add();
 }
-inline ::BuildConfig* BaseProductState::add_background_download_build_config() {
+inline auto BaseProductState::add_background_download_build_config() -> ::BuildConfig* {
   // @@protoc_insertion_point(field_add:BaseProductState.background_download_build_config)
   return _internal_add_background_download_build_config();
 }
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::BuildConfig >&
-BaseProductState::background_download_build_config() const {
+inline auto
+BaseProductState::background_download_build_config() const -> const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::BuildConfig >& {
   // @@protoc_insertion_point(field_list:BaseProductState.background_download_build_config)
   return background_download_build_config_;
 }
@@ -4337,7 +4382,7 @@ BaseProductState::background_download_build_config() const {
 inline void BaseProductState::clear_decryption_key() {
   decryption_key_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline const std::string& BaseProductState::decryption_key() const {
+inline auto BaseProductState::decryption_key() const -> const std::string& {
   // @@protoc_insertion_point(field_get:BaseProductState.decryption_key)
   return _internal_decryption_key();
 }
@@ -4345,11 +4390,11 @@ inline void BaseProductState::set_decryption_key(const std::string& value) {
   _internal_set_decryption_key(value);
   // @@protoc_insertion_point(field_set:BaseProductState.decryption_key)
 }
-inline std::string* BaseProductState::mutable_decryption_key() {
+inline auto BaseProductState::mutable_decryption_key() -> std::string* {
   // @@protoc_insertion_point(field_mutable:BaseProductState.decryption_key)
   return _internal_mutable_decryption_key();
 }
-inline const std::string& BaseProductState::_internal_decryption_key() const {
+inline auto BaseProductState::_internal_decryption_key() const -> const std::string& {
   return decryption_key_.Get();
 }
 inline void BaseProductState::_internal_set_decryption_key(const std::string& value) {
@@ -4376,11 +4421,11 @@ inline void BaseProductState::set_decryption_key(const char* value,
       reinterpret_cast<const char*>(value), size), GetArena());
   // @@protoc_insertion_point(field_set_pointer:BaseProductState.decryption_key)
 }
-inline std::string* BaseProductState::_internal_mutable_decryption_key() {
+inline auto BaseProductState::_internal_mutable_decryption_key() -> std::string* {
   
   return decryption_key_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline std::string* BaseProductState::release_decryption_key() {
+inline auto BaseProductState::release_decryption_key() -> std::string* {
   // @@protoc_insertion_point(field_release:BaseProductState.decryption_key)
   return decryption_key_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
@@ -4396,27 +4441,27 @@ inline void BaseProductState::set_allocated_decryption_key(std::string* decrypti
 }
 
 // repeated string completed_install_actions = 11;
-inline int BaseProductState::_internal_completed_install_actions_size() const {
+inline auto BaseProductState::_internal_completed_install_actions_size() const -> int {
   return completed_install_actions_.size();
 }
-inline int BaseProductState::completed_install_actions_size() const {
+inline auto BaseProductState::completed_install_actions_size() const -> int {
   return _internal_completed_install_actions_size();
 }
 inline void BaseProductState::clear_completed_install_actions() {
   completed_install_actions_.Clear();
 }
-inline std::string* BaseProductState::add_completed_install_actions() {
+inline auto BaseProductState::add_completed_install_actions() -> std::string* {
   // @@protoc_insertion_point(field_add_mutable:BaseProductState.completed_install_actions)
   return _internal_add_completed_install_actions();
 }
-inline const std::string& BaseProductState::_internal_completed_install_actions(int index) const {
+inline auto BaseProductState::_internal_completed_install_actions(int index) const -> const std::string& {
   return completed_install_actions_.Get(index);
 }
-inline const std::string& BaseProductState::completed_install_actions(int index) const {
+inline auto BaseProductState::completed_install_actions(int index) const -> const std::string& {
   // @@protoc_insertion_point(field_get:BaseProductState.completed_install_actions)
   return _internal_completed_install_actions(index);
 }
-inline std::string* BaseProductState::mutable_completed_install_actions(int index) {
+inline auto BaseProductState::mutable_completed_install_actions(int index) -> std::string* {
   // @@protoc_insertion_point(field_mutable:BaseProductState.completed_install_actions)
   return completed_install_actions_.Mutable(index);
 }
@@ -4438,7 +4483,7 @@ inline void BaseProductState::set_completed_install_actions(int index, const cha
     reinterpret_cast<const char*>(value), size);
   // @@protoc_insertion_point(field_set_pointer:BaseProductState.completed_install_actions)
 }
-inline std::string* BaseProductState::_internal_add_completed_install_actions() {
+inline auto BaseProductState::_internal_add_completed_install_actions() -> std::string* {
   return completed_install_actions_.Add();
 }
 inline void BaseProductState::add_completed_install_actions(const std::string& value) {
@@ -4458,13 +4503,13 @@ inline void BaseProductState::add_completed_install_actions(const char* value, s
   completed_install_actions_.Add()->assign(reinterpret_cast<const char*>(value), size);
   // @@protoc_insertion_point(field_add_pointer:BaseProductState.completed_install_actions)
 }
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>&
-BaseProductState::completed_install_actions() const {
+inline auto
+BaseProductState::completed_install_actions() const -> const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>& {
   // @@protoc_insertion_point(field_list:BaseProductState.completed_install_actions)
   return completed_install_actions_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*
-BaseProductState::mutable_completed_install_actions() {
+inline auto
+BaseProductState::mutable_completed_install_actions() -> ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* {
   // @@protoc_insertion_point(field_mutable_list:BaseProductState.completed_install_actions)
   return &completed_install_actions_;
 }
@@ -4477,10 +4522,10 @@ BaseProductState::mutable_completed_install_actions() {
 inline void BackfillProgress::clear_progress() {
   progress_ = 0;
 }
-inline double BackfillProgress::_internal_progress() const {
+inline auto BackfillProgress::_internal_progress() const -> double {
   return progress_;
 }
-inline double BackfillProgress::progress() const {
+inline auto BackfillProgress::progress() const -> double {
   // @@protoc_insertion_point(field_get:BackfillProgress.progress)
   return _internal_progress();
 }
@@ -4497,10 +4542,10 @@ inline void BackfillProgress::set_progress(double value) {
 inline void BackfillProgress::clear_backgrounddownload() {
   backgrounddownload_ = false;
 }
-inline bool BackfillProgress::_internal_backgrounddownload() const {
+inline auto BackfillProgress::_internal_backgrounddownload() const -> bool {
   return backgrounddownload_;
 }
-inline bool BackfillProgress::backgrounddownload() const {
+inline auto BackfillProgress::backgrounddownload() const -> bool {
   // @@protoc_insertion_point(field_get:BackfillProgress.backgrounddownload)
   return _internal_backgrounddownload();
 }
@@ -4517,10 +4562,10 @@ inline void BackfillProgress::set_backgrounddownload(bool value) {
 inline void BackfillProgress::clear_paused() {
   paused_ = false;
 }
-inline bool BackfillProgress::_internal_paused() const {
+inline auto BackfillProgress::_internal_paused() const -> bool {
   return paused_;
 }
-inline bool BackfillProgress::paused() const {
+inline auto BackfillProgress::paused() const -> bool {
   // @@protoc_insertion_point(field_get:BackfillProgress.paused)
   return _internal_paused();
 }
@@ -4537,10 +4582,10 @@ inline void BackfillProgress::set_paused(bool value) {
 inline void BackfillProgress::clear_download_limit() {
   download_limit_ = PROTOBUF_ULONGLONG(0);
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint64 BackfillProgress::_internal_download_limit() const {
+inline auto BackfillProgress::_internal_download_limit() const -> ::PROTOBUF_NAMESPACE_ID::uint64 {
   return download_limit_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint64 BackfillProgress::download_limit() const {
+inline auto BackfillProgress::download_limit() const -> ::PROTOBUF_NAMESPACE_ID::uint64 {
   // @@protoc_insertion_point(field_get:BackfillProgress.download_limit)
   return _internal_download_limit();
 }
@@ -4561,10 +4606,10 @@ inline void BackfillProgress::set_download_limit(::PROTOBUF_NAMESPACE_ID::uint64
 inline void RepairProgress::clear_progress() {
   progress_ = 0;
 }
-inline double RepairProgress::_internal_progress() const {
+inline auto RepairProgress::_internal_progress() const -> double {
   return progress_;
 }
-inline double RepairProgress::progress() const {
+inline auto RepairProgress::progress() const -> double {
   // @@protoc_insertion_point(field_get:RepairProgress.progress)
   return _internal_progress();
 }
@@ -4585,7 +4630,7 @@ inline void RepairProgress::set_progress(double value) {
 inline void UpdateProgress::clear_last_disc_set_used() {
   last_disc_set_used_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline const std::string& UpdateProgress::last_disc_set_used() const {
+inline auto UpdateProgress::last_disc_set_used() const -> const std::string& {
   // @@protoc_insertion_point(field_get:UpdateProgress.last_disc_set_used)
   return _internal_last_disc_set_used();
 }
@@ -4593,11 +4638,11 @@ inline void UpdateProgress::set_last_disc_set_used(const std::string& value) {
   _internal_set_last_disc_set_used(value);
   // @@protoc_insertion_point(field_set:UpdateProgress.last_disc_set_used)
 }
-inline std::string* UpdateProgress::mutable_last_disc_set_used() {
+inline auto UpdateProgress::mutable_last_disc_set_used() -> std::string* {
   // @@protoc_insertion_point(field_mutable:UpdateProgress.last_disc_set_used)
   return _internal_mutable_last_disc_set_used();
 }
-inline const std::string& UpdateProgress::_internal_last_disc_set_used() const {
+inline auto UpdateProgress::_internal_last_disc_set_used() const -> const std::string& {
   return last_disc_set_used_.Get();
 }
 inline void UpdateProgress::_internal_set_last_disc_set_used(const std::string& value) {
@@ -4624,11 +4669,11 @@ inline void UpdateProgress::set_last_disc_set_used(const char* value,
       reinterpret_cast<const char*>(value), size), GetArena());
   // @@protoc_insertion_point(field_set_pointer:UpdateProgress.last_disc_set_used)
 }
-inline std::string* UpdateProgress::_internal_mutable_last_disc_set_used() {
+inline auto UpdateProgress::_internal_mutable_last_disc_set_used() -> std::string* {
   
   return last_disc_set_used_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline std::string* UpdateProgress::release_last_disc_set_used() {
+inline auto UpdateProgress::release_last_disc_set_used() -> std::string* {
   // @@protoc_insertion_point(field_release:UpdateProgress.last_disc_set_used)
   return last_disc_set_used_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
@@ -4647,10 +4692,10 @@ inline void UpdateProgress::set_allocated_last_disc_set_used(std::string* last_d
 inline void UpdateProgress::clear_progress() {
   progress_ = 0;
 }
-inline double UpdateProgress::_internal_progress() const {
+inline auto UpdateProgress::_internal_progress() const -> double {
   return progress_;
 }
-inline double UpdateProgress::progress() const {
+inline auto UpdateProgress::progress() const -> double {
   // @@protoc_insertion_point(field_get:UpdateProgress.progress)
   return _internal_progress();
 }
@@ -4667,10 +4712,10 @@ inline void UpdateProgress::set_progress(double value) {
 inline void UpdateProgress::clear_disc_ignored() {
   disc_ignored_ = false;
 }
-inline bool UpdateProgress::_internal_disc_ignored() const {
+inline auto UpdateProgress::_internal_disc_ignored() const -> bool {
   return disc_ignored_;
 }
-inline bool UpdateProgress::disc_ignored() const {
+inline auto UpdateProgress::disc_ignored() const -> bool {
   // @@protoc_insertion_point(field_get:UpdateProgress.disc_ignored)
   return _internal_disc_ignored();
 }
@@ -4687,10 +4732,10 @@ inline void UpdateProgress::set_disc_ignored(bool value) {
 inline void UpdateProgress::clear_total_to_download() {
   total_to_download_ = PROTOBUF_ULONGLONG(0);
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint64 UpdateProgress::_internal_total_to_download() const {
+inline auto UpdateProgress::_internal_total_to_download() const -> ::PROTOBUF_NAMESPACE_ID::uint64 {
   return total_to_download_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint64 UpdateProgress::total_to_download() const {
+inline auto UpdateProgress::total_to_download() const -> ::PROTOBUF_NAMESPACE_ID::uint64 {
   // @@protoc_insertion_point(field_get:UpdateProgress.total_to_download)
   return _internal_total_to_download();
 }
@@ -4707,10 +4752,10 @@ inline void UpdateProgress::set_total_to_download(::PROTOBUF_NAMESPACE_ID::uint6
 inline void UpdateProgress::clear_download_remaining() {
   download_remaining_ = PROTOBUF_ULONGLONG(0);
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint64 UpdateProgress::_internal_download_remaining() const {
+inline auto UpdateProgress::_internal_download_remaining() const -> ::PROTOBUF_NAMESPACE_ID::uint64 {
   return download_remaining_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint64 UpdateProgress::download_remaining() const {
+inline auto UpdateProgress::download_remaining() const -> ::PROTOBUF_NAMESPACE_ID::uint64 {
   // @@protoc_insertion_point(field_get:UpdateProgress.download_remaining)
   return _internal_download_remaining();
 }
@@ -4728,10 +4773,10 @@ inline void UpdateProgress::set_download_remaining(::PROTOBUF_NAMESPACE_ID::uint
 // CachedProductState
 
 // .BaseProductState base_product_state = 1;
-inline bool CachedProductState::_internal_has_base_product_state() const {
+inline auto CachedProductState::_internal_has_base_product_state() const -> bool {
   return this != internal_default_instance() && base_product_state_ != nullptr;
 }
-inline bool CachedProductState::has_base_product_state() const {
+inline auto CachedProductState::has_base_product_state() const -> bool {
   return _internal_has_base_product_state();
 }
 inline void CachedProductState::clear_base_product_state() {
@@ -4740,12 +4785,12 @@ inline void CachedProductState::clear_base_product_state() {
   }
   base_product_state_ = nullptr;
 }
-inline const ::BaseProductState& CachedProductState::_internal_base_product_state() const {
+inline auto CachedProductState::_internal_base_product_state() const -> const ::BaseProductState& {
   const ::BaseProductState* p = base_product_state_;
   return p != nullptr ? *p : *reinterpret_cast<const ::BaseProductState*>(
       &::_BaseProductState_default_instance_);
 }
-inline const ::BaseProductState& CachedProductState::base_product_state() const {
+inline auto CachedProductState::base_product_state() const -> const ::BaseProductState& {
   // @@protoc_insertion_point(field_get:CachedProductState.base_product_state)
   return _internal_base_product_state();
 }
@@ -4755,14 +4800,14 @@ inline void CachedProductState::unsafe_arena_set_allocated_base_product_state(
     delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(base_product_state_);
   }
   base_product_state_ = base_product_state;
-  if (base_product_state) {
+  if (base_product_state != nullptr) {
     
   } else {
     
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:CachedProductState.base_product_state)
 }
-inline ::BaseProductState* CachedProductState::release_base_product_state() {
+inline auto CachedProductState::release_base_product_state() -> ::BaseProductState* {
   
   ::BaseProductState* temp = base_product_state_;
   base_product_state_ = nullptr;
@@ -4771,14 +4816,14 @@ inline ::BaseProductState* CachedProductState::release_base_product_state() {
   }
   return temp;
 }
-inline ::BaseProductState* CachedProductState::unsafe_arena_release_base_product_state() {
+inline auto CachedProductState::unsafe_arena_release_base_product_state() -> ::BaseProductState* {
   // @@protoc_insertion_point(field_release:CachedProductState.base_product_state)
   
   ::BaseProductState* temp = base_product_state_;
   base_product_state_ = nullptr;
   return temp;
 }
-inline ::BaseProductState* CachedProductState::_internal_mutable_base_product_state() {
+inline auto CachedProductState::_internal_mutable_base_product_state() -> ::BaseProductState* {
   
   if (base_product_state_ == nullptr) {
     auto* p = CreateMaybeMessage<::BaseProductState>(GetArena());
@@ -4786,7 +4831,7 @@ inline ::BaseProductState* CachedProductState::_internal_mutable_base_product_st
   }
   return base_product_state_;
 }
-inline ::BaseProductState* CachedProductState::mutable_base_product_state() {
+inline auto CachedProductState::mutable_base_product_state() -> ::BaseProductState* {
   // @@protoc_insertion_point(field_mutable:CachedProductState.base_product_state)
   return _internal_mutable_base_product_state();
 }
@@ -4795,7 +4840,7 @@ inline void CachedProductState::set_allocated_base_product_state(::BaseProductSt
   if (message_arena == nullptr) {
     delete base_product_state_;
   }
-  if (base_product_state) {
+  if (base_product_state != nullptr) {
     ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
       ::PROTOBUF_NAMESPACE_ID::Arena::GetArena(base_product_state);
     if (message_arena != submessage_arena) {
@@ -4811,10 +4856,10 @@ inline void CachedProductState::set_allocated_base_product_state(::BaseProductSt
 }
 
 // .BackfillProgress backfill_progress = 2;
-inline bool CachedProductState::_internal_has_backfill_progress() const {
+inline auto CachedProductState::_internal_has_backfill_progress() const -> bool {
   return this != internal_default_instance() && backfill_progress_ != nullptr;
 }
-inline bool CachedProductState::has_backfill_progress() const {
+inline auto CachedProductState::has_backfill_progress() const -> bool {
   return _internal_has_backfill_progress();
 }
 inline void CachedProductState::clear_backfill_progress() {
@@ -4823,12 +4868,12 @@ inline void CachedProductState::clear_backfill_progress() {
   }
   backfill_progress_ = nullptr;
 }
-inline const ::BackfillProgress& CachedProductState::_internal_backfill_progress() const {
+inline auto CachedProductState::_internal_backfill_progress() const -> const ::BackfillProgress& {
   const ::BackfillProgress* p = backfill_progress_;
   return p != nullptr ? *p : *reinterpret_cast<const ::BackfillProgress*>(
       &::_BackfillProgress_default_instance_);
 }
-inline const ::BackfillProgress& CachedProductState::backfill_progress() const {
+inline auto CachedProductState::backfill_progress() const -> const ::BackfillProgress& {
   // @@protoc_insertion_point(field_get:CachedProductState.backfill_progress)
   return _internal_backfill_progress();
 }
@@ -4838,14 +4883,14 @@ inline void CachedProductState::unsafe_arena_set_allocated_backfill_progress(
     delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(backfill_progress_);
   }
   backfill_progress_ = backfill_progress;
-  if (backfill_progress) {
+  if (backfill_progress != nullptr) {
     
   } else {
     
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:CachedProductState.backfill_progress)
 }
-inline ::BackfillProgress* CachedProductState::release_backfill_progress() {
+inline auto CachedProductState::release_backfill_progress() -> ::BackfillProgress* {
   
   ::BackfillProgress* temp = backfill_progress_;
   backfill_progress_ = nullptr;
@@ -4854,14 +4899,14 @@ inline ::BackfillProgress* CachedProductState::release_backfill_progress() {
   }
   return temp;
 }
-inline ::BackfillProgress* CachedProductState::unsafe_arena_release_backfill_progress() {
+inline auto CachedProductState::unsafe_arena_release_backfill_progress() -> ::BackfillProgress* {
   // @@protoc_insertion_point(field_release:CachedProductState.backfill_progress)
   
   ::BackfillProgress* temp = backfill_progress_;
   backfill_progress_ = nullptr;
   return temp;
 }
-inline ::BackfillProgress* CachedProductState::_internal_mutable_backfill_progress() {
+inline auto CachedProductState::_internal_mutable_backfill_progress() -> ::BackfillProgress* {
   
   if (backfill_progress_ == nullptr) {
     auto* p = CreateMaybeMessage<::BackfillProgress>(GetArena());
@@ -4869,7 +4914,7 @@ inline ::BackfillProgress* CachedProductState::_internal_mutable_backfill_progre
   }
   return backfill_progress_;
 }
-inline ::BackfillProgress* CachedProductState::mutable_backfill_progress() {
+inline auto CachedProductState::mutable_backfill_progress() -> ::BackfillProgress* {
   // @@protoc_insertion_point(field_mutable:CachedProductState.backfill_progress)
   return _internal_mutable_backfill_progress();
 }
@@ -4878,7 +4923,7 @@ inline void CachedProductState::set_allocated_backfill_progress(::BackfillProgre
   if (message_arena == nullptr) {
     delete backfill_progress_;
   }
-  if (backfill_progress) {
+  if (backfill_progress != nullptr) {
     ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
       ::PROTOBUF_NAMESPACE_ID::Arena::GetArena(backfill_progress);
     if (message_arena != submessage_arena) {
@@ -4894,10 +4939,10 @@ inline void CachedProductState::set_allocated_backfill_progress(::BackfillProgre
 }
 
 // .RepairProgress repair_progress = 3;
-inline bool CachedProductState::_internal_has_repair_progress() const {
+inline auto CachedProductState::_internal_has_repair_progress() const -> bool {
   return this != internal_default_instance() && repair_progress_ != nullptr;
 }
-inline bool CachedProductState::has_repair_progress() const {
+inline auto CachedProductState::has_repair_progress() const -> bool {
   return _internal_has_repair_progress();
 }
 inline void CachedProductState::clear_repair_progress() {
@@ -4906,12 +4951,12 @@ inline void CachedProductState::clear_repair_progress() {
   }
   repair_progress_ = nullptr;
 }
-inline const ::RepairProgress& CachedProductState::_internal_repair_progress() const {
+inline auto CachedProductState::_internal_repair_progress() const -> const ::RepairProgress& {
   const ::RepairProgress* p = repair_progress_;
   return p != nullptr ? *p : *reinterpret_cast<const ::RepairProgress*>(
       &::_RepairProgress_default_instance_);
 }
-inline const ::RepairProgress& CachedProductState::repair_progress() const {
+inline auto CachedProductState::repair_progress() const -> const ::RepairProgress& {
   // @@protoc_insertion_point(field_get:CachedProductState.repair_progress)
   return _internal_repair_progress();
 }
@@ -4921,14 +4966,14 @@ inline void CachedProductState::unsafe_arena_set_allocated_repair_progress(
     delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(repair_progress_);
   }
   repair_progress_ = repair_progress;
-  if (repair_progress) {
+  if (repair_progress != nullptr) {
     
   } else {
     
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:CachedProductState.repair_progress)
 }
-inline ::RepairProgress* CachedProductState::release_repair_progress() {
+inline auto CachedProductState::release_repair_progress() -> ::RepairProgress* {
   
   ::RepairProgress* temp = repair_progress_;
   repair_progress_ = nullptr;
@@ -4937,14 +4982,14 @@ inline ::RepairProgress* CachedProductState::release_repair_progress() {
   }
   return temp;
 }
-inline ::RepairProgress* CachedProductState::unsafe_arena_release_repair_progress() {
+inline auto CachedProductState::unsafe_arena_release_repair_progress() -> ::RepairProgress* {
   // @@protoc_insertion_point(field_release:CachedProductState.repair_progress)
   
   ::RepairProgress* temp = repair_progress_;
   repair_progress_ = nullptr;
   return temp;
 }
-inline ::RepairProgress* CachedProductState::_internal_mutable_repair_progress() {
+inline auto CachedProductState::_internal_mutable_repair_progress() -> ::RepairProgress* {
   
   if (repair_progress_ == nullptr) {
     auto* p = CreateMaybeMessage<::RepairProgress>(GetArena());
@@ -4952,7 +4997,7 @@ inline ::RepairProgress* CachedProductState::_internal_mutable_repair_progress()
   }
   return repair_progress_;
 }
-inline ::RepairProgress* CachedProductState::mutable_repair_progress() {
+inline auto CachedProductState::mutable_repair_progress() -> ::RepairProgress* {
   // @@protoc_insertion_point(field_mutable:CachedProductState.repair_progress)
   return _internal_mutable_repair_progress();
 }
@@ -4961,7 +5006,7 @@ inline void CachedProductState::set_allocated_repair_progress(::RepairProgress* 
   if (message_arena == nullptr) {
     delete repair_progress_;
   }
-  if (repair_progress) {
+  if (repair_progress != nullptr) {
     ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
       ::PROTOBUF_NAMESPACE_ID::Arena::GetArena(repair_progress);
     if (message_arena != submessage_arena) {
@@ -4977,10 +5022,10 @@ inline void CachedProductState::set_allocated_repair_progress(::RepairProgress* 
 }
 
 // .UpdateProgress update_progress = 4;
-inline bool CachedProductState::_internal_has_update_progress() const {
+inline auto CachedProductState::_internal_has_update_progress() const -> bool {
   return this != internal_default_instance() && update_progress_ != nullptr;
 }
-inline bool CachedProductState::has_update_progress() const {
+inline auto CachedProductState::has_update_progress() const -> bool {
   return _internal_has_update_progress();
 }
 inline void CachedProductState::clear_update_progress() {
@@ -4989,12 +5034,12 @@ inline void CachedProductState::clear_update_progress() {
   }
   update_progress_ = nullptr;
 }
-inline const ::UpdateProgress& CachedProductState::_internal_update_progress() const {
+inline auto CachedProductState::_internal_update_progress() const -> const ::UpdateProgress& {
   const ::UpdateProgress* p = update_progress_;
   return p != nullptr ? *p : *reinterpret_cast<const ::UpdateProgress*>(
       &::_UpdateProgress_default_instance_);
 }
-inline const ::UpdateProgress& CachedProductState::update_progress() const {
+inline auto CachedProductState::update_progress() const -> const ::UpdateProgress& {
   // @@protoc_insertion_point(field_get:CachedProductState.update_progress)
   return _internal_update_progress();
 }
@@ -5004,14 +5049,14 @@ inline void CachedProductState::unsafe_arena_set_allocated_update_progress(
     delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(update_progress_);
   }
   update_progress_ = update_progress;
-  if (update_progress) {
+  if (update_progress != nullptr) {
     
   } else {
     
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:CachedProductState.update_progress)
 }
-inline ::UpdateProgress* CachedProductState::release_update_progress() {
+inline auto CachedProductState::release_update_progress() -> ::UpdateProgress* {
   
   ::UpdateProgress* temp = update_progress_;
   update_progress_ = nullptr;
@@ -5020,14 +5065,14 @@ inline ::UpdateProgress* CachedProductState::release_update_progress() {
   }
   return temp;
 }
-inline ::UpdateProgress* CachedProductState::unsafe_arena_release_update_progress() {
+inline auto CachedProductState::unsafe_arena_release_update_progress() -> ::UpdateProgress* {
   // @@protoc_insertion_point(field_release:CachedProductState.update_progress)
   
   ::UpdateProgress* temp = update_progress_;
   update_progress_ = nullptr;
   return temp;
 }
-inline ::UpdateProgress* CachedProductState::_internal_mutable_update_progress() {
+inline auto CachedProductState::_internal_mutable_update_progress() -> ::UpdateProgress* {
   
   if (update_progress_ == nullptr) {
     auto* p = CreateMaybeMessage<::UpdateProgress>(GetArena());
@@ -5035,7 +5080,7 @@ inline ::UpdateProgress* CachedProductState::_internal_mutable_update_progress()
   }
   return update_progress_;
 }
-inline ::UpdateProgress* CachedProductState::mutable_update_progress() {
+inline auto CachedProductState::mutable_update_progress() -> ::UpdateProgress* {
   // @@protoc_insertion_point(field_mutable:CachedProductState.update_progress)
   return _internal_mutable_update_progress();
 }
@@ -5044,7 +5089,7 @@ inline void CachedProductState::set_allocated_update_progress(::UpdateProgress* 
   if (message_arena == nullptr) {
     delete update_progress_;
   }
-  if (update_progress) {
+  if (update_progress != nullptr) {
     ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
       ::PROTOBUF_NAMESPACE_ID::Arena::GetArena(update_progress);
     if (message_arena != submessage_arena) {
@@ -5067,10 +5112,10 @@ inline void CachedProductState::set_allocated_update_progress(::UpdateProgress* 
 inline void ProductOperations::clear_active_operation() {
   active_operation_ = 0;
 }
-inline ::Operation ProductOperations::_internal_active_operation() const {
+inline auto ProductOperations::_internal_active_operation() const -> ::Operation {
   return static_cast< ::Operation >(active_operation_);
 }
-inline ::Operation ProductOperations::active_operation() const {
+inline auto ProductOperations::active_operation() const -> ::Operation {
   // @@protoc_insertion_point(field_get:ProductOperations.active_operation)
   return _internal_active_operation();
 }
@@ -5087,10 +5132,10 @@ inline void ProductOperations::set_active_operation(::Operation value) {
 inline void ProductOperations::clear_priority() {
   priority_ = PROTOBUF_ULONGLONG(0);
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint64 ProductOperations::_internal_priority() const {
+inline auto ProductOperations::_internal_priority() const -> ::PROTOBUF_NAMESPACE_ID::uint64 {
   return priority_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint64 ProductOperations::priority() const {
+inline auto ProductOperations::priority() const -> ::PROTOBUF_NAMESPACE_ID::uint64 {
   // @@protoc_insertion_point(field_get:ProductOperations.priority)
   return _internal_priority();
 }
@@ -5111,7 +5156,7 @@ inline void ProductOperations::set_priority(::PROTOBUF_NAMESPACE_ID::uint64 valu
 inline void ProductInstall::clear_uid() {
   uid_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline const std::string& ProductInstall::uid() const {
+inline auto ProductInstall::uid() const -> const std::string& {
   // @@protoc_insertion_point(field_get:ProductInstall.uid)
   return _internal_uid();
 }
@@ -5119,11 +5164,11 @@ inline void ProductInstall::set_uid(const std::string& value) {
   _internal_set_uid(value);
   // @@protoc_insertion_point(field_set:ProductInstall.uid)
 }
-inline std::string* ProductInstall::mutable_uid() {
+inline auto ProductInstall::mutable_uid() -> std::string* {
   // @@protoc_insertion_point(field_mutable:ProductInstall.uid)
   return _internal_mutable_uid();
 }
-inline const std::string& ProductInstall::_internal_uid() const {
+inline auto ProductInstall::_internal_uid() const -> const std::string& {
   return uid_.Get();
 }
 inline void ProductInstall::_internal_set_uid(const std::string& value) {
@@ -5150,11 +5195,11 @@ inline void ProductInstall::set_uid(const char* value,
       reinterpret_cast<const char*>(value), size), GetArena());
   // @@protoc_insertion_point(field_set_pointer:ProductInstall.uid)
 }
-inline std::string* ProductInstall::_internal_mutable_uid() {
+inline auto ProductInstall::_internal_mutable_uid() -> std::string* {
   
   return uid_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline std::string* ProductInstall::release_uid() {
+inline auto ProductInstall::release_uid() -> std::string* {
   // @@protoc_insertion_point(field_release:ProductInstall.uid)
   return uid_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
@@ -5173,7 +5218,7 @@ inline void ProductInstall::set_allocated_uid(std::string* uid) {
 inline void ProductInstall::clear_product_code() {
   product_code_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline const std::string& ProductInstall::product_code() const {
+inline auto ProductInstall::product_code() const -> const std::string& {
   // @@protoc_insertion_point(field_get:ProductInstall.product_code)
   return _internal_product_code();
 }
@@ -5181,11 +5226,11 @@ inline void ProductInstall::set_product_code(const std::string& value) {
   _internal_set_product_code(value);
   // @@protoc_insertion_point(field_set:ProductInstall.product_code)
 }
-inline std::string* ProductInstall::mutable_product_code() {
+inline auto ProductInstall::mutable_product_code() -> std::string* {
   // @@protoc_insertion_point(field_mutable:ProductInstall.product_code)
   return _internal_mutable_product_code();
 }
-inline const std::string& ProductInstall::_internal_product_code() const {
+inline auto ProductInstall::_internal_product_code() const -> const std::string& {
   return product_code_.Get();
 }
 inline void ProductInstall::_internal_set_product_code(const std::string& value) {
@@ -5212,11 +5257,11 @@ inline void ProductInstall::set_product_code(const char* value,
       reinterpret_cast<const char*>(value), size), GetArena());
   // @@protoc_insertion_point(field_set_pointer:ProductInstall.product_code)
 }
-inline std::string* ProductInstall::_internal_mutable_product_code() {
+inline auto ProductInstall::_internal_mutable_product_code() -> std::string* {
   
   return product_code_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline std::string* ProductInstall::release_product_code() {
+inline auto ProductInstall::release_product_code() -> std::string* {
   // @@protoc_insertion_point(field_release:ProductInstall.product_code)
   return product_code_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
@@ -5232,10 +5277,10 @@ inline void ProductInstall::set_allocated_product_code(std::string* product_code
 }
 
 // .UserSettings settings = 3;
-inline bool ProductInstall::_internal_has_settings() const {
+inline auto ProductInstall::_internal_has_settings() const -> bool {
   return this != internal_default_instance() && settings_ != nullptr;
 }
-inline bool ProductInstall::has_settings() const {
+inline auto ProductInstall::has_settings() const -> bool {
   return _internal_has_settings();
 }
 inline void ProductInstall::clear_settings() {
@@ -5244,12 +5289,12 @@ inline void ProductInstall::clear_settings() {
   }
   settings_ = nullptr;
 }
-inline const ::UserSettings& ProductInstall::_internal_settings() const {
+inline auto ProductInstall::_internal_settings() const -> const ::UserSettings& {
   const ::UserSettings* p = settings_;
   return p != nullptr ? *p : *reinterpret_cast<const ::UserSettings*>(
       &::_UserSettings_default_instance_);
 }
-inline const ::UserSettings& ProductInstall::settings() const {
+inline auto ProductInstall::settings() const -> const ::UserSettings& {
   // @@protoc_insertion_point(field_get:ProductInstall.settings)
   return _internal_settings();
 }
@@ -5259,14 +5304,14 @@ inline void ProductInstall::unsafe_arena_set_allocated_settings(
     delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(settings_);
   }
   settings_ = settings;
-  if (settings) {
+  if (settings != nullptr) {
     
   } else {
     
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:ProductInstall.settings)
 }
-inline ::UserSettings* ProductInstall::release_settings() {
+inline auto ProductInstall::release_settings() -> ::UserSettings* {
   
   ::UserSettings* temp = settings_;
   settings_ = nullptr;
@@ -5275,14 +5320,14 @@ inline ::UserSettings* ProductInstall::release_settings() {
   }
   return temp;
 }
-inline ::UserSettings* ProductInstall::unsafe_arena_release_settings() {
+inline auto ProductInstall::unsafe_arena_release_settings() -> ::UserSettings* {
   // @@protoc_insertion_point(field_release:ProductInstall.settings)
   
   ::UserSettings* temp = settings_;
   settings_ = nullptr;
   return temp;
 }
-inline ::UserSettings* ProductInstall::_internal_mutable_settings() {
+inline auto ProductInstall::_internal_mutable_settings() -> ::UserSettings* {
   
   if (settings_ == nullptr) {
     auto* p = CreateMaybeMessage<::UserSettings>(GetArena());
@@ -5290,7 +5335,7 @@ inline ::UserSettings* ProductInstall::_internal_mutable_settings() {
   }
   return settings_;
 }
-inline ::UserSettings* ProductInstall::mutable_settings() {
+inline auto ProductInstall::mutable_settings() -> ::UserSettings* {
   // @@protoc_insertion_point(field_mutable:ProductInstall.settings)
   return _internal_mutable_settings();
 }
@@ -5299,7 +5344,7 @@ inline void ProductInstall::set_allocated_settings(::UserSettings* settings) {
   if (message_arena == nullptr) {
     delete settings_;
   }
-  if (settings) {
+  if (settings != nullptr) {
     ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
       ::PROTOBUF_NAMESPACE_ID::Arena::GetArena(settings);
     if (message_arena != submessage_arena) {
@@ -5315,10 +5360,10 @@ inline void ProductInstall::set_allocated_settings(::UserSettings* settings) {
 }
 
 // .CachedProductState cached_product_state = 4;
-inline bool ProductInstall::_internal_has_cached_product_state() const {
+inline auto ProductInstall::_internal_has_cached_product_state() const -> bool {
   return this != internal_default_instance() && cached_product_state_ != nullptr;
 }
-inline bool ProductInstall::has_cached_product_state() const {
+inline auto ProductInstall::has_cached_product_state() const -> bool {
   return _internal_has_cached_product_state();
 }
 inline void ProductInstall::clear_cached_product_state() {
@@ -5327,12 +5372,12 @@ inline void ProductInstall::clear_cached_product_state() {
   }
   cached_product_state_ = nullptr;
 }
-inline const ::CachedProductState& ProductInstall::_internal_cached_product_state() const {
+inline auto ProductInstall::_internal_cached_product_state() const -> const ::CachedProductState& {
   const ::CachedProductState* p = cached_product_state_;
   return p != nullptr ? *p : *reinterpret_cast<const ::CachedProductState*>(
       &::_CachedProductState_default_instance_);
 }
-inline const ::CachedProductState& ProductInstall::cached_product_state() const {
+inline auto ProductInstall::cached_product_state() const -> const ::CachedProductState& {
   // @@protoc_insertion_point(field_get:ProductInstall.cached_product_state)
   return _internal_cached_product_state();
 }
@@ -5342,14 +5387,14 @@ inline void ProductInstall::unsafe_arena_set_allocated_cached_product_state(
     delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(cached_product_state_);
   }
   cached_product_state_ = cached_product_state;
-  if (cached_product_state) {
+  if (cached_product_state != nullptr) {
     
   } else {
     
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:ProductInstall.cached_product_state)
 }
-inline ::CachedProductState* ProductInstall::release_cached_product_state() {
+inline auto ProductInstall::release_cached_product_state() -> ::CachedProductState* {
   
   ::CachedProductState* temp = cached_product_state_;
   cached_product_state_ = nullptr;
@@ -5358,14 +5403,14 @@ inline ::CachedProductState* ProductInstall::release_cached_product_state() {
   }
   return temp;
 }
-inline ::CachedProductState* ProductInstall::unsafe_arena_release_cached_product_state() {
+inline auto ProductInstall::unsafe_arena_release_cached_product_state() -> ::CachedProductState* {
   // @@protoc_insertion_point(field_release:ProductInstall.cached_product_state)
   
   ::CachedProductState* temp = cached_product_state_;
   cached_product_state_ = nullptr;
   return temp;
 }
-inline ::CachedProductState* ProductInstall::_internal_mutable_cached_product_state() {
+inline auto ProductInstall::_internal_mutable_cached_product_state() -> ::CachedProductState* {
   
   if (cached_product_state_ == nullptr) {
     auto* p = CreateMaybeMessage<::CachedProductState>(GetArena());
@@ -5373,7 +5418,7 @@ inline ::CachedProductState* ProductInstall::_internal_mutable_cached_product_st
   }
   return cached_product_state_;
 }
-inline ::CachedProductState* ProductInstall::mutable_cached_product_state() {
+inline auto ProductInstall::mutable_cached_product_state() -> ::CachedProductState* {
   // @@protoc_insertion_point(field_mutable:ProductInstall.cached_product_state)
   return _internal_mutable_cached_product_state();
 }
@@ -5382,7 +5427,7 @@ inline void ProductInstall::set_allocated_cached_product_state(::CachedProductSt
   if (message_arena == nullptr) {
     delete cached_product_state_;
   }
-  if (cached_product_state) {
+  if (cached_product_state != nullptr) {
     ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
       ::PROTOBUF_NAMESPACE_ID::Arena::GetArena(cached_product_state);
     if (message_arena != submessage_arena) {
@@ -5398,10 +5443,10 @@ inline void ProductInstall::set_allocated_cached_product_state(::CachedProductSt
 }
 
 // .ProductOperations product_operations = 5;
-inline bool ProductInstall::_internal_has_product_operations() const {
+inline auto ProductInstall::_internal_has_product_operations() const -> bool {
   return this != internal_default_instance() && product_operations_ != nullptr;
 }
-inline bool ProductInstall::has_product_operations() const {
+inline auto ProductInstall::has_product_operations() const -> bool {
   return _internal_has_product_operations();
 }
 inline void ProductInstall::clear_product_operations() {
@@ -5410,12 +5455,12 @@ inline void ProductInstall::clear_product_operations() {
   }
   product_operations_ = nullptr;
 }
-inline const ::ProductOperations& ProductInstall::_internal_product_operations() const {
+inline auto ProductInstall::_internal_product_operations() const -> const ::ProductOperations& {
   const ::ProductOperations* p = product_operations_;
   return p != nullptr ? *p : *reinterpret_cast<const ::ProductOperations*>(
       &::_ProductOperations_default_instance_);
 }
-inline const ::ProductOperations& ProductInstall::product_operations() const {
+inline auto ProductInstall::product_operations() const -> const ::ProductOperations& {
   // @@protoc_insertion_point(field_get:ProductInstall.product_operations)
   return _internal_product_operations();
 }
@@ -5425,14 +5470,14 @@ inline void ProductInstall::unsafe_arena_set_allocated_product_operations(
     delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(product_operations_);
   }
   product_operations_ = product_operations;
-  if (product_operations) {
+  if (product_operations != nullptr) {
     
   } else {
     
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:ProductInstall.product_operations)
 }
-inline ::ProductOperations* ProductInstall::release_product_operations() {
+inline auto ProductInstall::release_product_operations() -> ::ProductOperations* {
   
   ::ProductOperations* temp = product_operations_;
   product_operations_ = nullptr;
@@ -5441,14 +5486,14 @@ inline ::ProductOperations* ProductInstall::release_product_operations() {
   }
   return temp;
 }
-inline ::ProductOperations* ProductInstall::unsafe_arena_release_product_operations() {
+inline auto ProductInstall::unsafe_arena_release_product_operations() -> ::ProductOperations* {
   // @@protoc_insertion_point(field_release:ProductInstall.product_operations)
   
   ::ProductOperations* temp = product_operations_;
   product_operations_ = nullptr;
   return temp;
 }
-inline ::ProductOperations* ProductInstall::_internal_mutable_product_operations() {
+inline auto ProductInstall::_internal_mutable_product_operations() -> ::ProductOperations* {
   
   if (product_operations_ == nullptr) {
     auto* p = CreateMaybeMessage<::ProductOperations>(GetArena());
@@ -5456,7 +5501,7 @@ inline ::ProductOperations* ProductInstall::_internal_mutable_product_operations
   }
   return product_operations_;
 }
-inline ::ProductOperations* ProductInstall::mutable_product_operations() {
+inline auto ProductInstall::mutable_product_operations() -> ::ProductOperations* {
   // @@protoc_insertion_point(field_mutable:ProductInstall.product_operations)
   return _internal_mutable_product_operations();
 }
@@ -5465,7 +5510,7 @@ inline void ProductInstall::set_allocated_product_operations(::ProductOperations
   if (message_arena == nullptr) {
     delete product_operations_;
   }
-  if (product_operations) {
+  if (product_operations != nullptr) {
     ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
       ::PROTOBUF_NAMESPACE_ID::Arena::GetArena(product_operations);
     if (message_arena != submessage_arena) {
@@ -5488,7 +5533,7 @@ inline void ProductInstall::set_allocated_product_operations(::ProductOperations
 inline void ProductConfig::clear_product_code() {
   product_code_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline const std::string& ProductConfig::product_code() const {
+inline auto ProductConfig::product_code() const -> const std::string& {
   // @@protoc_insertion_point(field_get:ProductConfig.product_code)
   return _internal_product_code();
 }
@@ -5496,11 +5541,11 @@ inline void ProductConfig::set_product_code(const std::string& value) {
   _internal_set_product_code(value);
   // @@protoc_insertion_point(field_set:ProductConfig.product_code)
 }
-inline std::string* ProductConfig::mutable_product_code() {
+inline auto ProductConfig::mutable_product_code() -> std::string* {
   // @@protoc_insertion_point(field_mutable:ProductConfig.product_code)
   return _internal_mutable_product_code();
 }
-inline const std::string& ProductConfig::_internal_product_code() const {
+inline auto ProductConfig::_internal_product_code() const -> const std::string& {
   return product_code_.Get();
 }
 inline void ProductConfig::_internal_set_product_code(const std::string& value) {
@@ -5527,11 +5572,11 @@ inline void ProductConfig::set_product_code(const char* value,
       reinterpret_cast<const char*>(value), size), GetArena());
   // @@protoc_insertion_point(field_set_pointer:ProductConfig.product_code)
 }
-inline std::string* ProductConfig::_internal_mutable_product_code() {
+inline auto ProductConfig::_internal_mutable_product_code() -> std::string* {
   
   return product_code_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline std::string* ProductConfig::release_product_code() {
+inline auto ProductConfig::release_product_code() -> std::string* {
   // @@protoc_insertion_point(field_release:ProductConfig.product_code)
   return product_code_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
@@ -5550,7 +5595,7 @@ inline void ProductConfig::set_allocated_product_code(std::string* product_code)
 inline void ProductConfig::clear_metadata_hash() {
   metadata_hash_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline const std::string& ProductConfig::metadata_hash() const {
+inline auto ProductConfig::metadata_hash() const -> const std::string& {
   // @@protoc_insertion_point(field_get:ProductConfig.metadata_hash)
   return _internal_metadata_hash();
 }
@@ -5558,11 +5603,11 @@ inline void ProductConfig::set_metadata_hash(const std::string& value) {
   _internal_set_metadata_hash(value);
   // @@protoc_insertion_point(field_set:ProductConfig.metadata_hash)
 }
-inline std::string* ProductConfig::mutable_metadata_hash() {
+inline auto ProductConfig::mutable_metadata_hash() -> std::string* {
   // @@protoc_insertion_point(field_mutable:ProductConfig.metadata_hash)
   return _internal_mutable_metadata_hash();
 }
-inline const std::string& ProductConfig::_internal_metadata_hash() const {
+inline auto ProductConfig::_internal_metadata_hash() const -> const std::string& {
   return metadata_hash_.Get();
 }
 inline void ProductConfig::_internal_set_metadata_hash(const std::string& value) {
@@ -5589,11 +5634,11 @@ inline void ProductConfig::set_metadata_hash(const char* value,
       reinterpret_cast<const char*>(value), size), GetArena());
   // @@protoc_insertion_point(field_set_pointer:ProductConfig.metadata_hash)
 }
-inline std::string* ProductConfig::_internal_mutable_metadata_hash() {
+inline auto ProductConfig::_internal_mutable_metadata_hash() -> std::string* {
   
   return metadata_hash_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline std::string* ProductConfig::release_metadata_hash() {
+inline auto ProductConfig::release_metadata_hash() -> std::string* {
   // @@protoc_insertion_point(field_release:ProductConfig.metadata_hash)
   return metadata_hash_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
@@ -5612,7 +5657,7 @@ inline void ProductConfig::set_allocated_metadata_hash(std::string* metadata_has
 inline void ProductConfig::clear_timestamp() {
   timestamp_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline const std::string& ProductConfig::timestamp() const {
+inline auto ProductConfig::timestamp() const -> const std::string& {
   // @@protoc_insertion_point(field_get:ProductConfig.timestamp)
   return _internal_timestamp();
 }
@@ -5620,11 +5665,11 @@ inline void ProductConfig::set_timestamp(const std::string& value) {
   _internal_set_timestamp(value);
   // @@protoc_insertion_point(field_set:ProductConfig.timestamp)
 }
-inline std::string* ProductConfig::mutable_timestamp() {
+inline auto ProductConfig::mutable_timestamp() -> std::string* {
   // @@protoc_insertion_point(field_mutable:ProductConfig.timestamp)
   return _internal_mutable_timestamp();
 }
-inline const std::string& ProductConfig::_internal_timestamp() const {
+inline auto ProductConfig::_internal_timestamp() const -> const std::string& {
   return timestamp_.Get();
 }
 inline void ProductConfig::_internal_set_timestamp(const std::string& value) {
@@ -5651,11 +5696,11 @@ inline void ProductConfig::set_timestamp(const char* value,
       reinterpret_cast<const char*>(value), size), GetArena());
   // @@protoc_insertion_point(field_set_pointer:ProductConfig.timestamp)
 }
-inline std::string* ProductConfig::_internal_mutable_timestamp() {
+inline auto ProductConfig::_internal_mutable_timestamp() -> std::string* {
   
   return timestamp_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline std::string* ProductConfig::release_timestamp() {
+inline auto ProductConfig::release_timestamp() -> std::string* {
   // @@protoc_insertion_point(field_release:ProductConfig.timestamp)
   return timestamp_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
@@ -5678,7 +5723,7 @@ inline void ProductConfig::set_allocated_timestamp(std::string* timestamp) {
 inline void ActiveProcess::clear_process_name() {
   process_name_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline const std::string& ActiveProcess::process_name() const {
+inline auto ActiveProcess::process_name() const -> const std::string& {
   // @@protoc_insertion_point(field_get:ActiveProcess.process_name)
   return _internal_process_name();
 }
@@ -5686,11 +5731,11 @@ inline void ActiveProcess::set_process_name(const std::string& value) {
   _internal_set_process_name(value);
   // @@protoc_insertion_point(field_set:ActiveProcess.process_name)
 }
-inline std::string* ActiveProcess::mutable_process_name() {
+inline auto ActiveProcess::mutable_process_name() -> std::string* {
   // @@protoc_insertion_point(field_mutable:ActiveProcess.process_name)
   return _internal_mutable_process_name();
 }
-inline const std::string& ActiveProcess::_internal_process_name() const {
+inline auto ActiveProcess::_internal_process_name() const -> const std::string& {
   return process_name_.Get();
 }
 inline void ActiveProcess::_internal_set_process_name(const std::string& value) {
@@ -5717,11 +5762,11 @@ inline void ActiveProcess::set_process_name(const char* value,
       reinterpret_cast<const char*>(value), size), GetArena());
   // @@protoc_insertion_point(field_set_pointer:ActiveProcess.process_name)
 }
-inline std::string* ActiveProcess::_internal_mutable_process_name() {
+inline auto ActiveProcess::_internal_mutable_process_name() -> std::string* {
   
   return process_name_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline std::string* ActiveProcess::release_process_name() {
+inline auto ActiveProcess::release_process_name() -> std::string* {
   // @@protoc_insertion_point(field_release:ActiveProcess.process_name)
   return process_name_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
@@ -5740,10 +5785,10 @@ inline void ActiveProcess::set_allocated_process_name(std::string* process_name)
 inline void ActiveProcess::clear_pid() {
   pid_ = 0;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 ActiveProcess::_internal_pid() const {
+inline auto ActiveProcess::_internal_pid() const -> ::PROTOBUF_NAMESPACE_ID::int32 {
   return pid_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 ActiveProcess::pid() const {
+inline auto ActiveProcess::pid() const -> ::PROTOBUF_NAMESPACE_ID::int32 {
   // @@protoc_insertion_point(field_get:ActiveProcess.pid)
   return _internal_pid();
 }
@@ -5757,27 +5802,27 @@ inline void ActiveProcess::set_pid(::PROTOBUF_NAMESPACE_ID::int32 value) {
 }
 
 // repeated string uri = 3;
-inline int ActiveProcess::_internal_uri_size() const {
+inline auto ActiveProcess::_internal_uri_size() const -> int {
   return uri_.size();
 }
-inline int ActiveProcess::uri_size() const {
+inline auto ActiveProcess::uri_size() const -> int {
   return _internal_uri_size();
 }
 inline void ActiveProcess::clear_uri() {
   uri_.Clear();
 }
-inline std::string* ActiveProcess::add_uri() {
+inline auto ActiveProcess::add_uri() -> std::string* {
   // @@protoc_insertion_point(field_add_mutable:ActiveProcess.uri)
   return _internal_add_uri();
 }
-inline const std::string& ActiveProcess::_internal_uri(int index) const {
+inline auto ActiveProcess::_internal_uri(int index) const -> const std::string& {
   return uri_.Get(index);
 }
-inline const std::string& ActiveProcess::uri(int index) const {
+inline auto ActiveProcess::uri(int index) const -> const std::string& {
   // @@protoc_insertion_point(field_get:ActiveProcess.uri)
   return _internal_uri(index);
 }
-inline std::string* ActiveProcess::mutable_uri(int index) {
+inline auto ActiveProcess::mutable_uri(int index) -> std::string* {
   // @@protoc_insertion_point(field_mutable:ActiveProcess.uri)
   return uri_.Mutable(index);
 }
@@ -5799,7 +5844,7 @@ inline void ActiveProcess::set_uri(int index, const char* value, size_t size) {
     reinterpret_cast<const char*>(value), size);
   // @@protoc_insertion_point(field_set_pointer:ActiveProcess.uri)
 }
-inline std::string* ActiveProcess::_internal_add_uri() {
+inline auto ActiveProcess::_internal_add_uri() -> std::string* {
   return uri_.Add();
 }
 inline void ActiveProcess::add_uri(const std::string& value) {
@@ -5819,13 +5864,13 @@ inline void ActiveProcess::add_uri(const char* value, size_t size) {
   uri_.Add()->assign(reinterpret_cast<const char*>(value), size);
   // @@protoc_insertion_point(field_add_pointer:ActiveProcess.uri)
 }
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>&
-ActiveProcess::uri() const {
+inline auto
+ActiveProcess::uri() const -> const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>& {
   // @@protoc_insertion_point(field_list:ActiveProcess.uri)
   return uri_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*
-ActiveProcess::mutable_uri() {
+inline auto
+ActiveProcess::mutable_uri() -> ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* {
   // @@protoc_insertion_point(field_mutable_list:ActiveProcess.uri)
   return &uri_;
 }
@@ -5838,10 +5883,10 @@ ActiveProcess::mutable_uri() {
 inline void DownloadSettings::clear_download_limit() {
   download_limit_ = 0;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 DownloadSettings::_internal_download_limit() const {
+inline auto DownloadSettings::_internal_download_limit() const -> ::PROTOBUF_NAMESPACE_ID::int32 {
   return download_limit_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 DownloadSettings::download_limit() const {
+inline auto DownloadSettings::download_limit() const -> ::PROTOBUF_NAMESPACE_ID::int32 {
   // @@protoc_insertion_point(field_get:DownloadSettings.download_limit)
   return _internal_download_limit();
 }
@@ -5858,10 +5903,10 @@ inline void DownloadSettings::set_download_limit(::PROTOBUF_NAMESPACE_ID::int32 
 inline void DownloadSettings::clear_backfill_limit() {
   backfill_limit_ = 0;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 DownloadSettings::_internal_backfill_limit() const {
+inline auto DownloadSettings::_internal_backfill_limit() const -> ::PROTOBUF_NAMESPACE_ID::int32 {
   return backfill_limit_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 DownloadSettings::backfill_limit() const {
+inline auto DownloadSettings::backfill_limit() const -> ::PROTOBUF_NAMESPACE_ID::int32 {
   // @@protoc_insertion_point(field_get:DownloadSettings.backfill_limit)
   return _internal_backfill_limit();
 }
@@ -5879,166 +5924,166 @@ inline void DownloadSettings::set_backfill_limit(::PROTOBUF_NAMESPACE_ID::int32 
 // ProductDb
 
 // repeated .ProductInstall product_installs = 1;
-inline int ProductDb::_internal_product_installs_size() const {
+inline auto ProductDb::_internal_product_installs_size() const -> int {
   return product_installs_.size();
 }
-inline int ProductDb::product_installs_size() const {
+inline auto ProductDb::product_installs_size() const -> int {
   return _internal_product_installs_size();
 }
 inline void ProductDb::clear_product_installs() {
   product_installs_.Clear();
 }
-inline ::ProductInstall* ProductDb::mutable_product_installs(int index) {
+inline auto ProductDb::mutable_product_installs(int index) -> ::ProductInstall* {
   // @@protoc_insertion_point(field_mutable:ProductDb.product_installs)
   return product_installs_.Mutable(index);
 }
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ProductInstall >*
-ProductDb::mutable_product_installs() {
+inline auto
+ProductDb::mutable_product_installs() -> ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ProductInstall >* {
   // @@protoc_insertion_point(field_mutable_list:ProductDb.product_installs)
   return &product_installs_;
 }
-inline const ::ProductInstall& ProductDb::_internal_product_installs(int index) const {
+inline auto ProductDb::_internal_product_installs(int index) const -> const ::ProductInstall& {
   return product_installs_.Get(index);
 }
-inline const ::ProductInstall& ProductDb::product_installs(int index) const {
+inline auto ProductDb::product_installs(int index) const -> const ::ProductInstall& {
   // @@protoc_insertion_point(field_get:ProductDb.product_installs)
   return _internal_product_installs(index);
 }
-inline ::ProductInstall* ProductDb::_internal_add_product_installs() {
+inline auto ProductDb::_internal_add_product_installs() -> ::ProductInstall* {
   return product_installs_.Add();
 }
-inline ::ProductInstall* ProductDb::add_product_installs() {
+inline auto ProductDb::add_product_installs() -> ::ProductInstall* {
   // @@protoc_insertion_point(field_add:ProductDb.product_installs)
   return _internal_add_product_installs();
 }
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ProductInstall >&
-ProductDb::product_installs() const {
+inline auto
+ProductDb::product_installs() const -> const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ProductInstall >& {
   // @@protoc_insertion_point(field_list:ProductDb.product_installs)
   return product_installs_;
 }
 
 // repeated .InstallHandshake active_installs = 2;
-inline int ProductDb::_internal_active_installs_size() const {
+inline auto ProductDb::_internal_active_installs_size() const -> int {
   return active_installs_.size();
 }
-inline int ProductDb::active_installs_size() const {
+inline auto ProductDb::active_installs_size() const -> int {
   return _internal_active_installs_size();
 }
 inline void ProductDb::clear_active_installs() {
   active_installs_.Clear();
 }
-inline ::InstallHandshake* ProductDb::mutable_active_installs(int index) {
+inline auto ProductDb::mutable_active_installs(int index) -> ::InstallHandshake* {
   // @@protoc_insertion_point(field_mutable:ProductDb.active_installs)
   return active_installs_.Mutable(index);
 }
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::InstallHandshake >*
-ProductDb::mutable_active_installs() {
+inline auto
+ProductDb::mutable_active_installs() -> ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::InstallHandshake >* {
   // @@protoc_insertion_point(field_mutable_list:ProductDb.active_installs)
   return &active_installs_;
 }
-inline const ::InstallHandshake& ProductDb::_internal_active_installs(int index) const {
+inline auto ProductDb::_internal_active_installs(int index) const -> const ::InstallHandshake& {
   return active_installs_.Get(index);
 }
-inline const ::InstallHandshake& ProductDb::active_installs(int index) const {
+inline auto ProductDb::active_installs(int index) const -> const ::InstallHandshake& {
   // @@protoc_insertion_point(field_get:ProductDb.active_installs)
   return _internal_active_installs(index);
 }
-inline ::InstallHandshake* ProductDb::_internal_add_active_installs() {
+inline auto ProductDb::_internal_add_active_installs() -> ::InstallHandshake* {
   return active_installs_.Add();
 }
-inline ::InstallHandshake* ProductDb::add_active_installs() {
+inline auto ProductDb::add_active_installs() -> ::InstallHandshake* {
   // @@protoc_insertion_point(field_add:ProductDb.active_installs)
   return _internal_add_active_installs();
 }
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::InstallHandshake >&
-ProductDb::active_installs() const {
+inline auto
+ProductDb::active_installs() const -> const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::InstallHandshake >& {
   // @@protoc_insertion_point(field_list:ProductDb.active_installs)
   return active_installs_;
 }
 
 // repeated .ActiveProcess active_processes = 3;
-inline int ProductDb::_internal_active_processes_size() const {
+inline auto ProductDb::_internal_active_processes_size() const -> int {
   return active_processes_.size();
 }
-inline int ProductDb::active_processes_size() const {
+inline auto ProductDb::active_processes_size() const -> int {
   return _internal_active_processes_size();
 }
 inline void ProductDb::clear_active_processes() {
   active_processes_.Clear();
 }
-inline ::ActiveProcess* ProductDb::mutable_active_processes(int index) {
+inline auto ProductDb::mutable_active_processes(int index) -> ::ActiveProcess* {
   // @@protoc_insertion_point(field_mutable:ProductDb.active_processes)
   return active_processes_.Mutable(index);
 }
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ActiveProcess >*
-ProductDb::mutable_active_processes() {
+inline auto
+ProductDb::mutable_active_processes() -> ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ActiveProcess >* {
   // @@protoc_insertion_point(field_mutable_list:ProductDb.active_processes)
   return &active_processes_;
 }
-inline const ::ActiveProcess& ProductDb::_internal_active_processes(int index) const {
+inline auto ProductDb::_internal_active_processes(int index) const -> const ::ActiveProcess& {
   return active_processes_.Get(index);
 }
-inline const ::ActiveProcess& ProductDb::active_processes(int index) const {
+inline auto ProductDb::active_processes(int index) const -> const ::ActiveProcess& {
   // @@protoc_insertion_point(field_get:ProductDb.active_processes)
   return _internal_active_processes(index);
 }
-inline ::ActiveProcess* ProductDb::_internal_add_active_processes() {
+inline auto ProductDb::_internal_add_active_processes() -> ::ActiveProcess* {
   return active_processes_.Add();
 }
-inline ::ActiveProcess* ProductDb::add_active_processes() {
+inline auto ProductDb::add_active_processes() -> ::ActiveProcess* {
   // @@protoc_insertion_point(field_add:ProductDb.active_processes)
   return _internal_add_active_processes();
 }
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ActiveProcess >&
-ProductDb::active_processes() const {
+inline auto
+ProductDb::active_processes() const -> const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ActiveProcess >& {
   // @@protoc_insertion_point(field_list:ProductDb.active_processes)
   return active_processes_;
 }
 
 // repeated .ProductConfig product_configs = 4;
-inline int ProductDb::_internal_product_configs_size() const {
+inline auto ProductDb::_internal_product_configs_size() const -> int {
   return product_configs_.size();
 }
-inline int ProductDb::product_configs_size() const {
+inline auto ProductDb::product_configs_size() const -> int {
   return _internal_product_configs_size();
 }
 inline void ProductDb::clear_product_configs() {
   product_configs_.Clear();
 }
-inline ::ProductConfig* ProductDb::mutable_product_configs(int index) {
+inline auto ProductDb::mutable_product_configs(int index) -> ::ProductConfig* {
   // @@protoc_insertion_point(field_mutable:ProductDb.product_configs)
   return product_configs_.Mutable(index);
 }
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ProductConfig >*
-ProductDb::mutable_product_configs() {
+inline auto
+ProductDb::mutable_product_configs() -> ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ProductConfig >* {
   // @@protoc_insertion_point(field_mutable_list:ProductDb.product_configs)
   return &product_configs_;
 }
-inline const ::ProductConfig& ProductDb::_internal_product_configs(int index) const {
+inline auto ProductDb::_internal_product_configs(int index) const -> const ::ProductConfig& {
   return product_configs_.Get(index);
 }
-inline const ::ProductConfig& ProductDb::product_configs(int index) const {
+inline auto ProductDb::product_configs(int index) const -> const ::ProductConfig& {
   // @@protoc_insertion_point(field_get:ProductDb.product_configs)
   return _internal_product_configs(index);
 }
-inline ::ProductConfig* ProductDb::_internal_add_product_configs() {
+inline auto ProductDb::_internal_add_product_configs() -> ::ProductConfig* {
   return product_configs_.Add();
 }
-inline ::ProductConfig* ProductDb::add_product_configs() {
+inline auto ProductDb::add_product_configs() -> ::ProductConfig* {
   // @@protoc_insertion_point(field_add:ProductDb.product_configs)
   return _internal_add_product_configs();
 }
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ProductConfig >&
-ProductDb::product_configs() const {
+inline auto
+ProductDb::product_configs() const -> const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ProductConfig >& {
   // @@protoc_insertion_point(field_list:ProductDb.product_configs)
   return product_configs_;
 }
 
 // .DownloadSettings download_settings = 5;
-inline bool ProductDb::_internal_has_download_settings() const {
+inline auto ProductDb::_internal_has_download_settings() const -> bool {
   return this != internal_default_instance() && download_settings_ != nullptr;
 }
-inline bool ProductDb::has_download_settings() const {
+inline auto ProductDb::has_download_settings() const -> bool {
   return _internal_has_download_settings();
 }
 inline void ProductDb::clear_download_settings() {
@@ -6047,12 +6092,12 @@ inline void ProductDb::clear_download_settings() {
   }
   download_settings_ = nullptr;
 }
-inline const ::DownloadSettings& ProductDb::_internal_download_settings() const {
+inline auto ProductDb::_internal_download_settings() const -> const ::DownloadSettings& {
   const ::DownloadSettings* p = download_settings_;
   return p != nullptr ? *p : *reinterpret_cast<const ::DownloadSettings*>(
       &::_DownloadSettings_default_instance_);
 }
-inline const ::DownloadSettings& ProductDb::download_settings() const {
+inline auto ProductDb::download_settings() const -> const ::DownloadSettings& {
   // @@protoc_insertion_point(field_get:ProductDb.download_settings)
   return _internal_download_settings();
 }
@@ -6062,14 +6107,14 @@ inline void ProductDb::unsafe_arena_set_allocated_download_settings(
     delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(download_settings_);
   }
   download_settings_ = download_settings;
-  if (download_settings) {
+  if (download_settings != nullptr) {
     
   } else {
     
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:ProductDb.download_settings)
 }
-inline ::DownloadSettings* ProductDb::release_download_settings() {
+inline auto ProductDb::release_download_settings() -> ::DownloadSettings* {
   
   ::DownloadSettings* temp = download_settings_;
   download_settings_ = nullptr;
@@ -6078,14 +6123,14 @@ inline ::DownloadSettings* ProductDb::release_download_settings() {
   }
   return temp;
 }
-inline ::DownloadSettings* ProductDb::unsafe_arena_release_download_settings() {
+inline auto ProductDb::unsafe_arena_release_download_settings() -> ::DownloadSettings* {
   // @@protoc_insertion_point(field_release:ProductDb.download_settings)
   
   ::DownloadSettings* temp = download_settings_;
   download_settings_ = nullptr;
   return temp;
 }
-inline ::DownloadSettings* ProductDb::_internal_mutable_download_settings() {
+inline auto ProductDb::_internal_mutable_download_settings() -> ::DownloadSettings* {
   
   if (download_settings_ == nullptr) {
     auto* p = CreateMaybeMessage<::DownloadSettings>(GetArena());
@@ -6093,7 +6138,7 @@ inline ::DownloadSettings* ProductDb::_internal_mutable_download_settings() {
   }
   return download_settings_;
 }
-inline ::DownloadSettings* ProductDb::mutable_download_settings() {
+inline auto ProductDb::mutable_download_settings() -> ::DownloadSettings* {
   // @@protoc_insertion_point(field_mutable:ProductDb.download_settings)
   return _internal_mutable_download_settings();
 }
@@ -6102,7 +6147,7 @@ inline void ProductDb::set_allocated_download_settings(::DownloadSettings* downl
   if (message_arena == nullptr) {
     delete download_settings_;
   }
-  if (download_settings) {
+  if (download_settings != nullptr) {
     ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
       ::PROTOBUF_NAMESPACE_ID::Arena::GetArena(download_settings);
     if (message_arena != submessage_arena) {
@@ -6156,22 +6201,22 @@ PROTOBUF_NAMESPACE_OPEN
 
 template <> struct is_proto_enum< ::LanguageOption> : ::std::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::LanguageOption>() {
+inline auto GetEnumDescriptor< ::LanguageOption>() -> const EnumDescriptor* {
   return ::LanguageOption_descriptor();
 }
 template <> struct is_proto_enum< ::LanguageSettingType> : ::std::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::LanguageSettingType>() {
+inline auto GetEnumDescriptor< ::LanguageSettingType>() -> const EnumDescriptor* {
   return ::LanguageSettingType_descriptor();
 }
 template <> struct is_proto_enum< ::ShortcutOption> : ::std::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::ShortcutOption>() {
+inline auto GetEnumDescriptor< ::ShortcutOption>() -> const EnumDescriptor* {
   return ::ShortcutOption_descriptor();
 }
 template <> struct is_proto_enum< ::Operation> : ::std::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::Operation>() {
+inline auto GetEnumDescriptor< ::Operation>() -> const EnumDescriptor* {
   return ::Operation_descriptor();
 }
 
