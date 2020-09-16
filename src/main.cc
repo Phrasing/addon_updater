@@ -56,15 +56,18 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
   const auto result = client->Get(
       "https://addons-ecs.forgesvc.net/api/v2/addon/"
       "search?gameId=1&searchFilter=&pageSize=500");
+      
+
+  if (!result.ec) {
+    std::fprintf(stderr, "Error: failed to retrieve curse repository.\n");
+    return 1;
+  }
 
   addon_updater::AddonVect addons{};
   if (!addon_updater::DeserializeAddons(
           result.data, addon_updater::AddonType::kCurse, &addons)) {
     std::fprintf(stderr, "Error: failed to deserialize curse addons.\n");
   }
-  /*if (!addon_updater::DeserializeAddons(
-          result.data, addon_updater::AddonType::kTukui, &addons)) {
-  }*/
 
   window.Render([&](const std::pair<int32_t, int32_t>& window_size) {
     { gui.DrawGui(addons, window_size); }

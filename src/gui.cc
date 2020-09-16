@@ -37,6 +37,14 @@ void Gui::DrawGui(std::vector<addon_updater::Addon>& addons,
 
 void Gui::RenderBrowseTab(std::vector<addon_updater::Addon>& addons) {
   for (auto& addon : addons) {
+    if (addon.thumbnail.is_uploaded) {
+      ImGui::Image(addon.thumbnail.pixels,
+                   ImVec2(addon.thumbnail.width, addon.thumbnail.height));
+      ImGui::SameLine();
+    }
+    ImGui::Text(addon.name);
+    ImGui::Text(addon.stripped_version);
+
     if (addon.thumbnail.is_loaded && !addon.thumbnail.is_uploaded) {
       auto* uploaded_texture =
           UploadTexture(addon.thumbnail.pixels, addon.thumbnail.width,
@@ -45,48 +53,44 @@ void Gui::RenderBrowseTab(std::vector<addon_updater::Addon>& addons) {
       if (uploaded_texture != nullptr) {
         addon.thumbnail.pixels = static_cast<uint8_t*>(uploaded_texture);
       }
+
       addon.thumbnail.is_uploaded = true;
     }
 
-    if (!addon.thumbnail.is_loaded && !addon.thumbnail.in_progress) {
+    if (ImGui::IsItemVisible() && !addon.thumbnail.is_loaded &&
+        !addon.thumbnail.in_progress) {
       addon.thumbnail.in_progress = true;
       boost::asio::post(*thd_pool_, [&]() {
-        auto async_client = ClientFactory::GetInstance().NewAsyncClient();
+        const auto response = ClientFactory::GetInstance().NewSyncClient()->Get(
+            addon.screenshot_url);
 
-        async_client->Get(addon.screenshot_url, [&](const beast::error_code& ec,
-                                                    std::string_view response) {
-          if (!response.empty()) {
-            const auto buffer_size = response.size();
-            auto buffer = std::make_unique<uint8_t[]>(buffer_size);
-            std::memcpy(buffer.get(), response.data(), response.size());
+        if (response.ec) {
+          const auto buffer_size = response.data.size();
+          auto buffer = std::make_unique<uint8_t[]>(buffer_size);
+          std::memcpy(buffer.get(), response.data.data(), buffer_size);
 
-            int32_t width, height, channels;
-            auto* texture = LoadTexture(buffer.get(), buffer_size, &width,
-                                       &height, &channels);
+          int32_t width = 0;
+          int32_t height = 0;
+          int32_t channels = 0;
+          auto* texture = LoadTexture(buffer.get(), buffer_size, &width,
+                                      &height, &channels);
 
-            if (texture != nullptr) {
-              auto* resized_texture =
-                  ResizeTexture(texture, width, height, kThumbnailWidth,
-                                kThumbnailHeight, channels);
-              if (resized_texture != nullptr) {
-                addon.thumbnail.pixels = resized_texture;
-                addon.thumbnail.width = kThumbnailWidth;
-                addon.thumbnail.height = kThumbnailHeight;
-                addon.thumbnail.channels = channels;
-              }
+          if (texture != nullptr) {
+            auto* resized_texture =
+                ResizeTexture(texture, width, height, kThumbnailWidth,
+                              kThumbnailHeight, channels);
+            if (resized_texture != nullptr) {
+              addon.thumbnail.pixels = resized_texture;
+              addon.thumbnail.width = kThumbnailWidth;
+              addon.thumbnail.height = kThumbnailHeight;
+              addon.thumbnail.channels = channels;
             }
           }
-          addon.thumbnail.is_loaded = true;
-          addon.thumbnail.in_progress = false;
-        });
+        }
+        addon.thumbnail.is_loaded = true;
+        addon.thumbnail.in_progress = false;
       });
     }
-    if (addon.thumbnail.is_uploaded) {
-      ImGui::Image(addon.thumbnail.pixels,
-                   ImVec2(addon.thumbnail.width, addon.thumbnail.height));
-      ImGui::SameLine();
-    }
-    ImGui::Text(addon.name);
   }
 }
 }  // namespace addon_updater

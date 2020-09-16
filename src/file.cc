@@ -8,14 +8,6 @@ namespace {
 
 constexpr auto kBufferSize = 1024;
 
-std::string_view RemoveSuffixIfPresent(std::string_view s,
-                                       std::string_view suffix) {
-  if (s.ends_with(suffix)) {
-    s.remove_suffix(suffix.size());
-  }
-  return s;
-}
-
 std::string WindowsErrorMessage(DWORD error) {
   LPSTR get_last_error_message;
 
@@ -34,7 +26,7 @@ std::string WindowsErrorMessage(DWORD error) {
       get_last_error_message,
       static_cast<std::size_t>(get_last_error_message_length));
 
-  message = RemoveSuffixIfPresent(message, "\r\n");
+  message = string_util::RemoveSuffixIfPresent(message, "\r\n");
   std::string message_copy(message);
   static_cast<void>(::LocalFree(get_last_error_message));
   return message_copy;
@@ -107,12 +99,11 @@ ReadFileResult ReadFileWithExpectedSize(WindowsHandleFile &file, int file_size,
     return result;
   }
   result.content.resize(*read_size);
-  if (*read_size < size_to_read) {
-    return result;
-  } else {
+  if (*read_size >= size_to_read) {
     ReadFileBuffered(file, buffer_size, &result);
-    return result;
   }
+
+  return result;
 }
 
 ReadFileResult ReadFileResult::Failure(const std::string &error) {

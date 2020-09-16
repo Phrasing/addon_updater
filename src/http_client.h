@@ -94,6 +94,8 @@ class SyncHttpClient {
 
   HttpResponse Get(std::string_view url, const Headers& headers = Headers());
 
+  void Reset();
+
  private:
   beast::ssl_stream<beast::tcp_stream> stream_;
   tcp::resolver resolver_;

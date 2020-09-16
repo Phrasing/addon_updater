@@ -1,11 +1,14 @@
 #ifndef ADDON_UPDATER_STRING_UTIL_INL
 #define ADDON_UPDATER_STRING_UTIL_INL
-#pragma once
 
 namespace string_util {
 
 inline bool Replace(std::string* base_string, std::string_view old_string,
                     std::string_view new_string) {
+  if (base_string->empty() || old_string.empty()) {
+    return false;
+  }
+
   const auto start = base_string->find(old_string);
   if (start == std::string::npos) {
     return false;
@@ -16,6 +19,10 @@ inline bool Replace(std::string* base_string, std::string_view old_string,
 
 inline void ReplaceAll(std::string* base_string, std::string_view old_string,
                        std::string_view new_string) {
+  if (base_string->empty() || old_string.empty()) {
+    return;
+  }
+
   auto position = base_string->find(old_string);
   while (position != std::string::npos) {
     base_string->replace(position, old_string.length(), new_string);
@@ -31,6 +38,29 @@ inline bool Search(std::string_view target, std::string_view base_string) {
                      base_string.end(), [](const char a, const char b) {
                        return std::tolower(a) == std::tolower(b);
                      }) != base_string.end();
+}
+
+inline int64_t StringToNumber(std::string_view str) {
+  if (str.empty()) return 0;
+  return std::stoll(str.data());
+}
+
+inline std::string StripNonDigits(std::string_view str) {
+  auto string_copy = std::string(str.begin(), str.end());
+
+  string_copy.erase(std::remove_if(string_copy.begin(), string_copy.end(),
+                                   [](char c) { return !std::isdigit(c); }),
+                    string_copy.end());
+
+  return string_copy;
+}
+
+inline std::string_view RemoveSuffixIfPresent(std::string_view s,
+                                       std::string_view suffix) {
+  if (s.ends_with(suffix)) {
+    s.remove_suffix(suffix.size());
+  }
+  return s;
 }
 
 }  // namespace string_util

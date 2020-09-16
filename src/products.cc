@@ -55,26 +55,28 @@ std::optional<ProductDb> GetProductDb(std::string_view product_db_path) {
 
 void GetWowInstallations(const ProductDb& product_db,
                          std::vector<WowInstallation>* detected_installations) {
-  for (auto& installs : product_db.product_installs()) {
+  for (const auto& installs : product_db.product_installs()) {
     const auto& settings = installs.settings();
     if (installs.product_code().find("wow") != std::string::npos) {
-      const auto* reflect = settings.GetReflection();
-      if (!reflect->GetUnknownFields(settings).empty()) {
-        if (reflect->GetUnknownFields(settings).field_count() == 3) {
-          const auto product_flavor =
-              reflect->GetUnknownFields(settings).field(2);
-          if (product_flavor.type() ==
-                  google::protobuf::UnknownField::Type::TYPE_LENGTH_DELIMITED &&
-              product_flavor.number() == 13) {
-            const auto& flavor_string = product_flavor.length_delimited();
+      const auto* reflection = UserSettings::GetReflection();
 
-            auto base_path = settings.install_path() + '/' + flavor_string;
-            string_util::ReplaceAll(&base_path, "/", R"(\)");
-            detected_installations->push_back(
-                {StringToClientType(flavor_string), base_path,
-                 base_path + R"(\Interface\Addons\)", base_path + R"(\WTF\)"});
-          }
-        }
+      if (reflection->GetUnknownFields(settings).empty()) continue;
+      if (reflection->GetUnknownFields(settings).field_count() != 3) continue;
+
+      const auto product_flavor =
+          reflection->GetUnknownFields(settings).field(2);
+
+      if (product_flavor.type() ==
+              google::protobuf::UnknownField::Type::TYPE_LENGTH_DELIMITED &&
+          product_flavor.number() == 13) {
+        const auto& flavor_string = product_flavor.length_delimited();
+
+        auto base_path = settings.install_path() + '/' + flavor_string;
+        string_util::ReplaceAll(&base_path, "/", R"(\)");
+
+        detected_installations->push_back(
+            {StringToClientType(flavor_string), base_path,
+             base_path + R"(\Interface\Addons\)", base_path + R"(\WTF\)"});
       }
     }
   }

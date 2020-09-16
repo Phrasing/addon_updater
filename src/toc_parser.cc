@@ -45,16 +45,10 @@ std::optional<TocFile> addon_updater::ParseTocFile(std::string_view file_path) {
   toc_file.title = std::move(GetTocValue("Title", result.content));
   toc_file.notes = std::move(GetTocValue("Notes", result.content));
 
-  auto readable_version = std::move(GetTocValue("Version", result.content));
+  toc_file.readable_version = std::move(GetTocValue("Version", result.content));
 
-  toc_file.readable_version = readable_version;
-
-  readable_version.erase(
-      std::remove_if(readable_version.begin(), readable_version.end(),
-                     [](uint8_t c) { return !std::isdigit(c); }),
-      readable_version.end());
-  
-  toc_file.numeric_version = std::stoi(readable_version);
+  toc_file.numeric_version = string_util::StringToNumber(
+      string_util::StripNonDigits(toc_file.readable_version));
 
   return toc_file;
 }

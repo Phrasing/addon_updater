@@ -224,8 +224,9 @@ void AsyncHttpClient::ReadHeader(beast::error_code ec,
 
 void AsyncHttpClient::Shutdown(beast::error_code ec) {
   if (ec == boost::asio::error::eof) {
-    ec.assign(0, ec.category());
+    ec = {};
   }
+
 }
 
 void AsyncHttpClient::CallbackError(const beast::error_code& ec) {
@@ -244,7 +245,7 @@ ClientFactory::ClientFactory() : work_(ioc_), thd_pool_(4) {
 }
 
 ClientFactory::~ClientFactory() {
-  // ioc_.stop();
+  ioc_.stop();
   thd_.join();
 }
 
@@ -277,8 +278,14 @@ HttpResponse SyncHttpClient::Get(std::string_view url, const Headers& headers) {
     return {"", ec};
   }
 
-  beast::get_lowest_layer(stream_).connect(
-      std::move(resolver_.resolve(host, kSslPort)));
+  try {
+    beast::get_lowest_layer(stream_).connect(
+        std::move(resolver_.resolve(host, kSslPort)));
+  } catch (boost::exception& ec) {
+    std::fprintf(stderr,
+                 "Error: Failed to resolve hostname.\nCheck your internet "
+                 "connection.\n");
+  }
 
   tcp::no_delay option(true);
   stream_.next_layer().socket().set_option(option);
@@ -312,4 +319,5 @@ HttpResponse SyncHttpClient::Get(std::string_view url, const Headers& headers) {
 
   return {(*result).get().body(), ec};
 }
+void SyncHttpClient::Reset() {}
 }  // namespace http_client

@@ -76,6 +76,7 @@ struct CurseGameVersionLatestFile {
 };
 
 struct CurseLatestFile {
+  bool Deserialize(const rj::Value::ConstObject& object);
   std::string display_name;
   std::string file_name;
   std::string download_url;
@@ -87,7 +88,19 @@ struct CurseLatestFile {
 }  // namespace curse_structs
 
 enum class AddonType { kTukui, kCurse };
+enum class AddonReleaseType { kStable = 1, kBeta = 2, kAlpha = 3 };
 enum class AddonFlavor { kRetail, kRetailPtr, kClassic, kClassicPtr, kBeta };
+
+inline std::string FlavorToString(AddonFlavor flavor) {
+  switch (flavor) {
+    case AddonFlavor::kRetail:
+      return "wow_retail";
+    case AddonFlavor::kClassic:
+      return "wow_classic";
+    default:
+      return {};
+  }
+}
 
 struct AddonThumbnail {
   uint8_t* pixels;
@@ -118,14 +131,18 @@ struct Addon {
   std::string author;
   std::string description;
   std::string readable_version;
+  std::string stripped_version;
 
-  std::vector<curse_structs::CurseAttachment> attachments;
+  int64_t numeric_version;
+
+  bool is_ignored = false;
 
   AddonThumbnail thumbnail;
   AddonFlavor flavor;
   AddonType type;
 };
 
+using LatestFilesVect = std::vector<curse_structs::CurseLatestFile>;
 using AddonVect = std::vector<Addon>;
 
 struct InstalledAddon : Addon {

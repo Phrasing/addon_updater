@@ -8,7 +8,7 @@ struct TocFile {
   std::string title;
   std::string notes;
   std::string readable_version;
-  int32_t numeric_version;
+  int64_t numeric_version;
   std::string author;
   std::string interface;
 };

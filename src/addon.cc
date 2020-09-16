@@ -5,6 +5,20 @@
 // clang-format on
 
 namespace addon_updater {
+namespace {
+std::optional<curse_structs::CurseLatestFile> CheckForRelease(
+    AddonReleaseType release_type, AddonFlavor addon_flavor,
+    const LatestFilesVect& latest_files) {
+  for (const auto& latest_file : latest_files) {
+    const auto flavor = FlavorToString(addon_flavor);
+    if (latest_file.release_type == static_cast<uint32_t>(release_type) &&
+        !latest_file.is_alternate &&
+        latest_file.game_version_flavor == flavor) {
+      return latest_file;
+    }
+  }
+  return std::nullopt;
+}
 
 bool DeserializeCurse(const rj::Value::ConstObject& object, Addon* addon) {
   addon->id = rj_util::GetField<uint32_t>(object, curse_structs::kField_Id,
@@ -19,8 +33,10 @@ bool DeserializeCurse(const rj::Value::ConstObject& object, Addon* addon) {
 
   if (rj_util::HasMemberOfType(object, curse_structs::kField_Attachments,
                                rj::kArrayType)) {
-    const auto array = object[curse_structs::kField_Attachments].GetArray();
-    for (const auto* it = array.Begin(); it != array.End(); ++it) {
+    const auto curse_attachments =
+        object[curse_structs::kField_Attachments].GetArray();
+    for (const auto* it = curse_attachments.Begin();
+         it != curse_attachments.End(); ++it) {
       if (!it->IsObject()) continue;
       curse_structs::CurseAttachment attachment{};
       if (attachment.Deserialize(it->GetObject()) && attachment.is_default) {
@@ -31,12 +47,49 @@ bool DeserializeCurse(const rj::Value::ConstObject& object, Addon* addon) {
     }
   }
 
+  std::vector<curse_structs::CurseLatestFile> latest_files{};
+  if (rj_util::HasMemberOfType(object, curse_structs::kField_LatestFiles,
+                               rj::kArrayType)) {
+    const auto curse_latest_files =
+        object[curse_structs::kField_LatestFiles].GetArray();
+    for (const auto* it = curse_latest_files.Begin();
+         it != curse_latest_files.End(); ++it) {
+      if (!it->IsObject()) continue;
+
+      curse_structs::CurseLatestFile latest_file{};
+      if (latest_file.Deserialize(it->GetObject())) {
+        latest_files.push_back(latest_file);
+      }
+    }
+  }
+
+  if (auto stable = CheckForRelease(AddonReleaseType::kStable, addon->flavor,
+                                    latest_files);
+      stable != std::nullopt) {
+    addon->readable_version = stable.value().display_name;
+    addon->stripped_version =
+        string_util::StripNonDigits(addon->readable_version);
+    addon->numeric_version =
+        string_util::StringToNumber(addon->stripped_version);
+    addon->download_url = stable.value().download_url;
+  } else if (auto beta = CheckForRelease(AddonReleaseType::kBeta, addon->flavor,
+                                         latest_files);
+             beta != std::nullopt) {
+    addon->readable_version = stable.value().display_name;
+    addon->stripped_version =
+        string_util::StripNonDigits(addon->readable_version);
+    addon->numeric_version =
+        string_util::StringToNumber(addon->stripped_version);
+    addon->download_url = stable.value().download_url;
+  }
+
   return true;
 }
 
 bool DeserializeTukui(const rj::Value::ConstObject& object, Addon* addon) {
   return true;
 }
+}  // namespace
 
 bool Addon::Deserialize(const rj::Value::ConstObject& object) {
   switch (this->type) {
@@ -90,7 +143,7 @@ void InstalledAddon::Serialize(
   if (!this->directories.empty()) {
     writer->String("directories");
     writer->StartArray();
-    for (auto& directory : this->directories) {
+    for (const auto& directory : this->directories) {
       writer->String(directory);
     }
     writer->EndArray();
@@ -100,7 +153,7 @@ void InstalledAddon::Serialize(
 }
 
 void InstalledAddon::Uninstall() {
-  for (auto& directory : directories) {
+  for (const auto& directory : directories) {
     if (!std::filesystem::remove_all(directory)) {
       std::cerr << "Failed to remove directory " << directory << std::endl;
     }
@@ -120,6 +173,7 @@ bool DeserializeAddons(std::string_view json, AddonType addon_type,
   for (const auto* it = document.Begin(); it != document.End(); ++it) {
     Addon addon{};
     addon.type = addon_type;
+    addon.flavor = AddonFlavor::kRetail;
     if (addon.Deserialize(it->GetObject())) {
       addons->push_back(addon);
     }
@@ -146,5 +200,18 @@ bool addon_updater::curse_structs::CurseAttachment::Deserialize(
   this->thumbnail_url = std::move(rj_util::GetStringDef(
       object, curse_structs::attachments::kField_ThumbnailUrl));
 
+  return true;
+}
+
+bool addon_updater::curse_structs::CurseLatestFile::Deserialize(
+    const rj::Value::ConstObject& object) {
+  this->display_name = std::move(rj_util::GetStringDef(object, "displayName"));
+  this->game_version_flavor =
+      std::move(rj_util::GetStringDef(object, "gameVersionFlavor"));
+  this->download_url = std::move(rj_util::GetStringDef(object, "downloadUrl"));
+  this->file_name = std::move(rj_util::GetStringDef(object, "fileName"));
+  this->is_alternate = rj_util::GetBoolDef(object, "isAlternate");
+  this->release_type =
+      rj_util::GetField<uint32_t>(object, "releaseType", rj::kNumberType);
   return true;
 }
