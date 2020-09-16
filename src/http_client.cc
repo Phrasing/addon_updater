@@ -226,7 +226,6 @@ void AsyncHttpClient::Shutdown(beast::error_code ec) {
   if (ec == boost::asio::error::eof) {
     ec = {};
   }
-
 }
 
 void AsyncHttpClient::CallbackError(const beast::error_code& ec) {
@@ -251,14 +250,16 @@ ClientFactory::~ClientFactory() {
 
 std::shared_ptr<AsyncHttpClient> ClientFactory::NewAsyncClient() {
   ssl::context ctx{ssl::context::tlsv12_client};
-  // ctx.set_verify_mode(ssl::verify_none);
-  return std::make_shared<AsyncHttpClient>(net::make_strand(ioc_), ctx);
+  ctx.set_verify_mode(ssl::verify_none);
+  return std::move(
+      std::make_shared<AsyncHttpClient>(net::make_strand(ioc_), ctx));
 }
 
 std::shared_ptr<SyncHttpClient> ClientFactory::NewSyncClient() {
   ssl::context ctx{ssl::context::tlsv12_client};
   ctx.set_verify_mode(ssl::verify_none);
-  return std::make_shared<SyncHttpClient>(net::make_strand(ioc_), ctx);
+  return std::move(
+      std::make_shared<SyncHttpClient>(net::make_strand(ioc_), ctx));
 }
 
 SyncHttpClient::SyncHttpClient(const net::any_io_executor& ex,

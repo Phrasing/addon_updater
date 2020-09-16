@@ -75,12 +75,12 @@ bool DeserializeCurse(const rj::Value::ConstObject& object, Addon* addon) {
   } else if (auto beta = CheckForRelease(AddonReleaseType::kBeta, addon->flavor,
                                          latest_files);
              beta != std::nullopt) {
-    addon->readable_version = stable.value().display_name;
+    addon->readable_version = beta.value().display_name;
     addon->stripped_version =
         string_util::StripNonDigits(addon->readable_version);
     addon->numeric_version =
         string_util::StringToNumber(addon->stripped_version);
-    addon->download_url = stable.value().download_url;
+    addon->download_url = beta.value().download_url;
   }
 
   return true;

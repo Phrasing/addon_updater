@@ -31,6 +31,10 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
   auto products = addon_updater::GetProductDb(
       R"(C:\ProgramData\Battle.net\Agent\product.db)");
 
+  if (!addon_updater::WriteFile(R"(C:\Users\User\Desktop\test.txt)", "stuff")) {
+
+  }
+
   if (products != std::nullopt) {
     GetWowInstallations((products.value()), &wow_installs);
   }
@@ -43,20 +47,18 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
     }
   }
 
-  boost::asio::thread_pool thd_pool_(std::thread::hardware_concurrency());
+  boost::asio::thread_pool thd_pool(std::thread::hardware_concurrency());
 
   auto window = addon_updater::Window("Test", {kWindowWidth, kWindowHeight});
-  auto gui = addon_updater::Gui(&thd_pool_);
+  auto gui = addon_updater::Gui(&thd_pool);
 
   bool show_demo_window = true;
   bool show_another_window = false;
 
-  auto client = addon_updater::ClientFactory::GetInstance().NewSyncClient();
-
-  const auto result = client->Get(
-      "https://addons-ecs.forgesvc.net/api/v2/addon/"
-      "search?gameId=1&searchFilter=&pageSize=500");
-      
+  const auto result =
+      addon_updater::ClientFactory::GetInstance().NewSyncClient()->Get(
+          "https://addons-ecs.forgesvc.net/api/v2/addon/"
+          "search?gameId=1&searchFilter=&pageSize=500");
 
   if (!result.ec) {
     std::fprintf(stderr, "Error: failed to retrieve curse repository.\n");
@@ -72,7 +74,8 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
   window.Render([&](const std::pair<int32_t, int32_t>& window_size) {
     { gui.DrawGui(addons, window_size); }
   });
-  thd_pool_.join();
+
+  thd_pool.join();
 
   // system("pause");
   return 0;

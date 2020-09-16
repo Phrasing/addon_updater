@@ -11,7 +11,10 @@ struct ReadFileResult {
   static ReadFileResult Failure(const std::string &error);
 };
 
+
 ReadFileResult ReadFile(const char *path);
+
+bool WriteFile(const char *path, std::string_view buffer, bool truncate = true);
 
 }  // namespace addon_updater
 

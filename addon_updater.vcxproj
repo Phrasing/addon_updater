@@ -83,8 +83,8 @@
     <TargetName>$(ProjectName)-$(Configuration)</TargetName>
     <IncludePath>C:\Libraries\boost_1_74_0;$(SolutionDir)third_party\openssl\include;$(SolutionDir)third_party\uri\include;$(SolutionDir)third_party\protobuf\$(Configuration)\include;$(SolutionDir)third_party\rapidjson\include;$(SolutionDir)third_party\imgui\include;$(SolutionDir)third_party\glew\include;$(SolutionDir)third_party\glfw\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Libraries\boost_1_74_0\lib64-msvc-14.2;$(SolutionDir)third_party\openssl\lib\$(Platform)\$(Configuration);$(SolutionDir)third_party\uri\lib\$(Platform)\$(Configuration);$(SolutionDir)third_party\protobuf\$(Configuration);$(SolutionDir)third_party\imgui\lib\$(Configuration);$(SolutionDir)third_party\glfw\lib\$(Configuration);$(SoltutionDir)third_party\glew\lib\$(Configuration);$(LibraryPath)</LibraryPath>
-    <EnableMicrosoftCodeAnalysis>false</EnableMicrosoftCodeAnalysis>
-    <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
+    <EnableMicrosoftCodeAnalysis>true</EnableMicrosoftCodeAnalysis>
+    <EnableClangTidyCodeAnalysis>false</EnableClangTidyCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -93,8 +93,8 @@
     <TargetName>$(ProjectName)-$(Configuration)</TargetName>
     <IncludePath>C:\Libraries\boost_1_74_0;$(SolutionDir)third_party\openssl\include;$(SolutionDir)third_party\uri\include;$(SolutionDir)third_party\protobuf\$(Configuration)\include;$(SolutionDir)third_party\rapidjson\include;$(SolutionDir)third_party\imgui\include;$(SolutionDir)third_party\glew\include;$(SolutionDir)third_party\glfw\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Libraries\boost_1_74_0\lib64-msvc-14.2;$(SolutionDir)third_party\openssl\lib\$(Platform)\$(Configuration);$(SolutionDir)third_party\uri\lib\$(Platform)\$(Configuration);$(SolutionDir)third_party\protobuf\$(Configuration);$(SolutionDir)third_party\imgui\lib\$(Configuration);$(SolutionDir)third_party\glfw\lib\$(Configuration);$(SoltutionDir)third_party\glew\lib\$(Configuration);$(LibraryPath)</LibraryPath>
-    <EnableMicrosoftCodeAnalysis>false</EnableMicrosoftCodeAnalysis>
-    <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
+    <EnableMicrosoftCodeAnalysis>true</EnableMicrosoftCodeAnalysis>
+    <EnableClangTidyCodeAnalysis>false</EnableClangTidyCodeAnalysis>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

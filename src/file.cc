@@ -56,7 +56,18 @@ class WindowsHandleFile {
     return static_cast<int>(read_size);
   }
 
-  static std::string get_last_error_message() {
+  std::optional<int> Write(const void *buffer, int buffer_size,
+                           bool truncate) noexcept {
+    DWORD write_size;
+    if (truncate) ::SetEndOfFile(handle_);
+    if (!::WriteFile(this->handle_, buffer, buffer_size, &write_size,
+                     nullptr)) {
+      return std::nullopt;
+    }
+    return static_cast<int>(write_size);
+  }
+
+  static std::string GetLastErrorMessage() {
     return WindowsErrorMessage(::GetLastError());
   }
 
@@ -65,6 +76,25 @@ class WindowsHandleFile {
 };
 
 }  // namespace
+
+bool WriteFileBuffered(WindowsHandleFile &file, std::string_view data,
+                       bool truncate) {
+  int total_bytes = 0;
+  for (;;) {
+    auto bytes_written = file.Write(data.data() + total_bytes,
+                                    data.size() - total_bytes, truncate);
+    if (!bytes_written.has_value()) {
+      std::fprintf(stderr, "Error: failed to write to file\n%s\n",
+                   WindowsErrorMessage(GetLastError()).c_str());
+      return false;
+    }
+
+    total_bytes += *bytes_written;
+
+    if (total_bytes >= data.size()) break;
+  }
+  return (total_bytes > 0);
+}
 
 void ReadFileBuffered(WindowsHandleFile &file, int buffer_size,
                       ReadFileResult *out) {
@@ -77,7 +107,7 @@ void ReadFileBuffered(WindowsHandleFile &file, int buffer_size,
         file.Read(&out->content[size_before], buffer_size);
     if (!read_size.has_value()) {
       out->error = "Failed to read from file: " +
-                   WindowsHandleFile::get_last_error_message();
+                   WindowsHandleFile::GetLastErrorMessage();
       return;
     }
     out->content.resize(size_before + *read_size);
@@ -94,8 +124,8 @@ ReadFileResult ReadFileWithExpectedSize(WindowsHandleFile &file, int file_size,
   result.content.resize(size_to_read);
   const auto read_size = file.Read(result.content.data(), size_to_read);
   if (!read_size.has_value()) {
-    result.error = "Failed to read from file: " +
-                   WindowsHandleFile::get_last_error_message();
+    result.error =
+        "Failed to read from file: " + WindowsHandleFile::GetLastErrorMessage();
     return result;
   }
   result.content.resize(*read_size);
@@ -123,11 +153,24 @@ ReadFileResult ReadEntireFile(const char *path, WindowsHandleFile &file) {
                                   kBufferSize);
 }
 
+bool WriteFile(const char *path, std::string_view buffer, bool truncate) {
+  const auto handle =
+      ::CreateFileA(path, GENERIC_WRITE,
+                    FILE_SHARE_DELETE | FILE_SHARE_READ | FILE_SHARE_WRITE,
+                    nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+  if (handle == INVALID_HANDLE_VALUE) {
+    return false;
+  }
+
+  WindowsHandleFile file(handle);
+  return WriteFileBuffered(file, buffer, truncate);
+}
+
 ReadFileResult ReadFile(const char *path) {
-  auto *const handle =
+  const auto handle =
       ::CreateFileA(path, GENERIC_READ,
                     FILE_SHARE_DELETE | FILE_SHARE_READ | FILE_SHARE_WRITE,
-                    nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+                    nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
   if (handle == INVALID_HANDLE_VALUE) {
     const auto error = ::GetLastError();
     return ReadFileResult::Failure(std::string("failed to open ") + path +
