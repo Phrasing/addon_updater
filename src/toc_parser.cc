@@ -36,7 +36,7 @@ inline std::string GetTocValue(std::string_view key,
 }
 
 std::optional<TocFile> addon_updater::ParseTocFile(std::string_view file_path) {
-  auto result = addon_updater::ReadFile(file_path.data());
+  auto result = addon_updater::ReadFile(file_path);
 
   if (!result.Ok()) return {};
 

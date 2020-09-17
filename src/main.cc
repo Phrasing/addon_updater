@@ -19,21 +19,17 @@ constexpr auto kWindowHeight = 480;
 }  // namespace
 
 int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
-#ifdef _DEBUG
+  //#ifdef _DEBUG
   if (AllocConsole()) {
     FILE* dummy{};
     freopen_s(&dummy, "CONOUT$", "w", stdout);
     freopen_s(&dummy, "CONOUT$", "w", stderr);
   }
-#endif  // !DEBUG
+  //#endif  // !DEBUG
 
   std::vector<addon_updater::WowInstallation> wow_installs{};
   auto products = addon_updater::GetProductDb(
       R"(C:\ProgramData\Battle.net\Agent\product.db)");
-
-  if (!addon_updater::WriteFile(R"(C:\Users\User\Desktop\test.txt)", "stuff")) {
-
-  }
 
   if (products != std::nullopt) {
     GetWowInstallations((products.value()), &wow_installs);
@@ -55,13 +51,16 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
   bool show_demo_window = true;
   bool show_another_window = false;
 
-  const auto result =
-      addon_updater::ClientFactory::GetInstance().NewSyncClient()->Get(
-          "https://addons-ecs.forgesvc.net/api/v2/addon/"
-          "search?gameId=1&searchFilter=&pageSize=500");
+  const auto client =
+      addon_updater::ClientFactory::GetInstance().NewSyncClient();
 
-  if (!result.ec) {
+  auto result = client->Get(
+      "https://addons-ecs.forgesvc.net/api/v2/addon/"
+      "search?gameId=1&searchFilter=&pageSize=500");
+
+  if (!result.ec || result.data.empty()) {
     std::fprintf(stderr, "Error: failed to retrieve curse repository.\n");
+    system("pause");
     return 1;
   }
 
@@ -69,7 +68,10 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
   if (!addon_updater::DeserializeAddons(
           result.data, addon_updater::AddonType::kCurse, &addons)) {
     std::fprintf(stderr, "Error: failed to deserialize curse addons.\n");
+    system("pause");
+    return 1;
   }
+  //
 
   window.Render([&](const std::pair<int32_t, int32_t>& window_size) {
     { gui.DrawGui(addons, window_size); }

@@ -49,14 +49,19 @@ inline std::string StripNonDigits(std::string_view str) {
   auto string_copy = std::string(str.begin(), str.end());
 
   string_copy.erase(std::remove_if(string_copy.begin(), string_copy.end(),
-                                   [](char c) { return !std::isdigit(c); }),
+                                   [](char c) {
+                                     if (static_cast<unsigned char>(c) > 127)
+                                       return true;
+
+                                     return !std::isdigit(c);
+                                   }),
                     string_copy.end());
 
   return string_copy;
 }
 
 inline std::string_view RemoveSuffixIfPresent(std::string_view s,
-                                       std::string_view suffix) {
+                                              std::string_view suffix) {
   if (s.ends_with(suffix)) {
     s.remove_suffix(suffix.size());
   }

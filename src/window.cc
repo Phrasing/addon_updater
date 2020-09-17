@@ -60,7 +60,7 @@ Window::Window(std::string_view window_title,
                                        window_title.data(), nullptr, nullptr);
 
   glfwMakeContextCurrent(glfw_ctx_->window);
-  glfwSwapInterval(1);  // Enable vsync
+  glfwSwapInterval(1);  
 
   static_cast<void>(glewInit());
 
@@ -80,7 +80,7 @@ Window::Window(std::string_view window_title,
 
 void Window::Render(const RenderCallback& draw_callback) {
   while (!glfwWindowShouldClose(glfw_ctx_->window)) {
-    glfwWaitEvents();
+    glfwPollEvents();
 
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();

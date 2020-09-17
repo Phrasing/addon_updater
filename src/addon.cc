@@ -6,7 +6,7 @@
 
 namespace addon_updater {
 namespace {
-std::optional<curse_structs::CurseLatestFile> CheckForRelease(
+std::optional<CurseLatestFile> CheckForRelease(
     AddonReleaseType release_type, AddonFlavor addon_flavor,
     const LatestFilesVect& latest_files) {
   for (const auto& latest_file : latest_files) {
@@ -21,24 +21,24 @@ std::optional<curse_structs::CurseLatestFile> CheckForRelease(
 }
 
 bool DeserializeCurse(const rj::Value::ConstObject& object, Addon* addon) {
-  addon->id = rj_util::GetField<uint32_t>(object, curse_structs::kField_Id,
+  addon->id = rj_util::GetField<uint32_t>(object, curse_fields::kField_Id,
                                           rj::kNumberType);
   addon->name =
-      std::move(rj_util::GetStringDef(object, curse_structs::kField_Name));
+      std::move(rj_util::GetStringDef(object, curse_fields::kField_Name));
   addon->description =
-      std::move(rj_util::GetStringDef(object, curse_structs::kField_Summary));
+      std::move(rj_util::GetStringDef(object, curse_fields::kField_Summary));
   addon->slug =
-      std::move(rj_util::GetStringDef(object, curse_structs::kField_Slug));
+      std::move(rj_util::GetStringDef(object, curse_fields::kField_Slug));
   addon->type = AddonType::kCurse;
 
-  if (rj_util::HasMemberOfType(object, curse_structs::kField_Attachments,
+  if (rj_util::HasMemberOfType(object, curse_fields::kField_Attachments,
                                rj::kArrayType)) {
     const auto curse_attachments =
-        object[curse_structs::kField_Attachments].GetArray();
+        object[curse_fields::kField_Attachments].GetArray();
     for (const auto* it = curse_attachments.Begin();
          it != curse_attachments.End(); ++it) {
       if (!it->IsObject()) continue;
-      curse_structs::CurseAttachment attachment{};
+      CurseAttachment attachment{};
       if (attachment.Deserialize(it->GetObject()) && attachment.is_default) {
         string_util::ReplaceAll(&attachment.thumbnail_url, R"(/256)", R"(/64)");
         addon->screenshot_url = attachment.thumbnail_url;
@@ -47,16 +47,16 @@ bool DeserializeCurse(const rj::Value::ConstObject& object, Addon* addon) {
     }
   }
 
-  std::vector<curse_structs::CurseLatestFile> latest_files{};
-  if (rj_util::HasMemberOfType(object, curse_structs::kField_LatestFiles,
+  std::vector<CurseLatestFile> latest_files{};
+  if (rj_util::HasMemberOfType(object, curse_fields::kField_LatestFiles,
                                rj::kArrayType)) {
     const auto curse_latest_files =
-        object[curse_structs::kField_LatestFiles].GetArray();
+        object[curse_fields::kField_LatestFiles].GetArray();
     for (const auto* it = curse_latest_files.Begin();
          it != curse_latest_files.End(); ++it) {
       if (!it->IsObject()) continue;
 
-      curse_structs::CurseLatestFile latest_file{};
+      CurseLatestFile latest_file{};
       if (latest_file.Deserialize(it->GetObject())) {
         latest_files.push_back(latest_file);
       }
@@ -65,7 +65,7 @@ bool DeserializeCurse(const rj::Value::ConstObject& object, Addon* addon) {
 
   if (auto stable = CheckForRelease(AddonReleaseType::kStable, addon->flavor,
                                     latest_files);
-      stable != std::nullopt) {
+      stable.has_value()) {
     addon->readable_version = stable.value().display_name;
     addon->stripped_version =
         string_util::StripNonDigits(addon->readable_version);
@@ -74,7 +74,7 @@ bool DeserializeCurse(const rj::Value::ConstObject& object, Addon* addon) {
     addon->download_url = stable.value().download_url;
   } else if (auto beta = CheckForRelease(AddonReleaseType::kBeta, addon->flavor,
                                          latest_files);
-             beta != std::nullopt) {
+             beta.has_value()) {
     addon->readable_version = beta.value().display_name;
     addon->stripped_version =
         string_util::StripNonDigits(addon->readable_version);
@@ -184,26 +184,26 @@ bool DeserializeAddons(std::string_view json, AddonType addon_type,
 
 }  // namespace addon_updater
 
-bool addon_updater::curse_structs::CurseAttachment::Deserialize(
+bool addon_updater::CurseAttachment::Deserialize(
     const rj::Value::ConstObject& object) {
   this->id = rj_util::GetField<uint32_t>(
-      object, curse_structs::attachments::kField_Id, rj::kNumberType);
+      object, curse_fields::attachments::kField_Id, rj::kNumberType);
   this->project_id = rj_util::GetField<uint32_t>(
-      object, curse_structs::attachments::kField_ProjectId, rj::kNumberType);
+      object, curse_fields::attachments::kField_ProjectId, rj::kNumberType);
   this->description = std::move(rj_util::GetStringDef(
-      object, curse_structs::attachments::kField_Description));
+      object, curse_fields::attachments::kField_Description));
   this->is_default =
-      rj_util::GetBoolDef(object, curse_structs::attachments::kField_IsDefault);
+      rj_util::GetBoolDef(object, curse_fields::attachments::kField_IsDefault);
   this->url = std::move(
-      rj_util::GetStringDef(object, curse_structs::attachments::kField_Url));
+      rj_util::GetStringDef(object, curse_fields::attachments::kField_Url));
 
   this->thumbnail_url = std::move(rj_util::GetStringDef(
-      object, curse_structs::attachments::kField_ThumbnailUrl));
+      object, curse_fields::attachments::kField_ThumbnailUrl));
 
   return true;
 }
 
-bool addon_updater::curse_structs::CurseLatestFile::Deserialize(
+bool addon_updater::CurseLatestFile::Deserialize(
     const rj::Value::ConstObject& object) {
   this->display_name = std::move(rj_util::GetStringDef(object, "displayName"));
   this->game_version_flavor =

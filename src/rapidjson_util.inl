@@ -39,8 +39,11 @@ inline std::optional<std::string> GetString(const rj::Value::ConstObject& obj,
 inline std::optional<bool> GetBool(const rj::Value::ConstObject& obj,
                                    std::string_view member) {
   const auto result = obj.FindMember(member.data());
-  if (result != obj.MemberEnd() && result->value.GetType() == rj::Type::kTrueType ||
-      result->value.GetType() == rj::Type::kFalseType) {
+
+  const auto is_bool_type = result->value.GetType() == rj::Type::kTrueType ||
+                      result->value.GetType() == rj::Type::kFalseType;
+
+  if (result != obj.MemberEnd() && is_bool_type) {
     return result->value.Get<bool>();
   }
   return std::nullopt;

@@ -288,7 +288,7 @@ HttpResponse SyncHttpClient::Get(std::string_view url, const Headers& headers) {
                  "connection.\n");
   }
 
-  tcp::no_delay option(true);
+  tcp::no_delay option(false);
   stream_.next_layer().socket().set_option(option);
   stream_.handshake(ssl::stream_base::client);
 

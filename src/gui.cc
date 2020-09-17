@@ -2,6 +2,7 @@
 #include "pch.h"
 #include "gui.h"
 #include "texture.h"
+#include "file.h"
 #include "http_client.h"
 // clang-format on
 namespace addon_updater {
@@ -22,6 +23,22 @@ void Gui::DrawGui(std::vector<addon_updater::Addon>& addons,
   {
     if (ImGui::BeginTabBar("##MAIN_TAB_BAR")) {
       if (ImGui::BeginTabItem("Browse")) {
+        static std::string status = "";
+        if (ImGui::Button("Download")) {
+          addon_updater::ClientFactory::GetInstance()
+              .NewAsyncClient()
+              ->Download(
+                  "https://speed.hetzner.de/1GB.bin",
+                  [&](const beast::error_code& ec, std::string_view data) {
+                    addon_updater::WriteFile(R"(C:\Users\User\Desktop\1GB.bin)",
+                                             data);
+                  },
+                  [&](uint32_t progress, RequestState state) {
+                    status = std::to_string(progress) + "%";
+                  });
+        }
+        ImGui::Text(status);
+
         this->RenderBrowseTab(addons);
         ImGui::EndTabItem();
       }

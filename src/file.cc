@@ -90,9 +90,11 @@ bool WriteFileBuffered(WindowsHandleFile &file, std::string_view data,
     }
 
     total_bytes += *bytes_written;
+    std::cout << total_bytes << std::endl;
 
     if (total_bytes >= data.size()) break;
   }
+
   return (total_bytes > 0);
 }
 
@@ -148,16 +150,20 @@ ReadFileResult ReadEntireFile(const char *path, WindowsHandleFile &file) {
     const auto error = ::GetLastError();
     return ReadFileResult::Failure(std::string("failed to get size of file ") +
                                    path + ": " + WindowsErrorMessage(error));
+
   }
+  assert(file_size.QuadPart <= std::numeric_limits<std::int64_t>::max());
+
   return ReadFileWithExpectedSize(file, static_cast<int>(file_size.QuadPart),
                                   kBufferSize);
 }
 
-bool WriteFile(const char *path, std::string_view buffer, bool truncate) {
+bool WriteFile(std::string_view path, std::string_view buffer, bool truncate) {
   const auto handle =
-      ::CreateFileA(path, GENERIC_WRITE,
+      ::CreateFileA(path.data(), GENERIC_WRITE,
                     FILE_SHARE_DELETE | FILE_SHARE_READ | FILE_SHARE_WRITE,
                     nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+
   if (handle == INVALID_HANDLE_VALUE) {
     return false;
   }
@@ -166,18 +172,19 @@ bool WriteFile(const char *path, std::string_view buffer, bool truncate) {
   return WriteFileBuffered(file, buffer, truncate);
 }
 
-ReadFileResult ReadFile(const char *path) {
+ReadFileResult ReadFile(std::string_view path) {
   const auto handle =
-      ::CreateFileA(path, GENERIC_READ,
+      ::CreateFileA(path.data(), GENERIC_READ,
                     FILE_SHARE_DELETE | FILE_SHARE_READ | FILE_SHARE_WRITE,
                     nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
   if (handle == INVALID_HANDLE_VALUE) {
     const auto error = ::GetLastError();
-    return ReadFileResult::Failure(std::string("failed to open ") + path +
-                                   ": " + WindowsErrorMessage(error));
+    return ReadFileResult::Failure(std::string("failed to open ") +
+                                   path.data() + ": " +
+                                   WindowsErrorMessage(error));
   }
   WindowsHandleFile file(handle);
-  return ReadEntireFile(path, file);
+  return ReadEntireFile(path.data(), file);
 }
 
 }  // namespace addon_updater

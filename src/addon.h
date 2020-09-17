@@ -4,46 +4,6 @@
 
 namespace addon_updater {
 
-namespace curse_structs {
-
-constexpr auto kField_Id = "id";
-constexpr auto kField_Name = "name";
-constexpr auto kField_Authors = "authors";
-constexpr auto kField_Attachments = "attachments";
-constexpr auto kField_WebsiteUrl = "websiteUrl";
-constexpr auto kField_GameId = "gameId";
-constexpr auto kField_Summary = "summary";
-constexpr auto kField_DefaultFileId = "defaultFileId";
-constexpr auto kField_DownloadCount = "downloadCount";
-constexpr auto kField_LatestFiles = "latestFiles";
-constexpr auto kField_Categories = "categories";
-constexpr auto kField_Status = "status";
-constexpr auto kField_PrimaryCategoryId = "primaryCategoryId";
-constexpr auto kField_CategorySection = "categorySection";
-constexpr auto kField_Slug = "slug";
-constexpr auto kField_GameVersionLatestFiles = "gameVersionLatestFiles";
-constexpr auto kField_IsFeatured = "isFeatured";
-constexpr auto kField_PopularityScore = "popularityScore";
-constexpr auto kField_GamePopularityRank = "gamePopularityRank";
-constexpr auto kField_PrimaryLanguage = "primaryLanguage";
-constexpr auto kField_GameSlug = "gameSlug";
-constexpr auto kField_GameName = "gameName";
-constexpr auto kField_PortalName = "portalName";
-constexpr auto kField_DateModified = "dateModified";
-constexpr auto kField_DateCreated = "dateCreated";
-constexpr auto kField_DateReleased = "dateReleased";
-constexpr auto kField_IsAvailable = "isAvailable";
-constexpr auto kField_IsExperimental = "isExperimental";
-
-namespace attachments {
-constexpr auto kField_Id = "id";
-constexpr auto kField_ProjectId = "projectId";
-constexpr auto kField_ThumbnailUrl = "thumbnailUrl";
-constexpr auto kField_Url = "url";
-constexpr auto kField_Description = "description";
-constexpr auto kField_IsDefault = "isDefault";
-}  // namespace attachments
-
 struct CurseAuthor {
   std::string name;
   std::string url;
@@ -85,7 +45,47 @@ struct CurseLatestFile {
   bool is_alternate;
 };
 
-}  // namespace curse_structs
+namespace curse_fields {
+
+constexpr auto kField_Id = "id";
+constexpr auto kField_Name = "name";
+constexpr auto kField_Authors = "authors";
+constexpr auto kField_Attachments = "attachments";
+constexpr auto kField_WebsiteUrl = "websiteUrl";
+constexpr auto kField_GameId = "gameId";
+constexpr auto kField_Summary = "summary";
+constexpr auto kField_DefaultFileId = "defaultFileId";
+constexpr auto kField_DownloadCount = "downloadCount";
+constexpr auto kField_LatestFiles = "latestFiles";
+constexpr auto kField_Categories = "categories";
+constexpr auto kField_Status = "status";
+constexpr auto kField_PrimaryCategoryId = "primaryCategoryId";
+constexpr auto kField_CategorySection = "categorySection";
+constexpr auto kField_Slug = "slug";
+constexpr auto kField_GameVersionLatestFiles = "gameVersionLatestFiles";
+constexpr auto kField_IsFeatured = "isFeatured";
+constexpr auto kField_PopularityScore = "popularityScore";
+constexpr auto kField_GamePopularityRank = "gamePopularityRank";
+constexpr auto kField_PrimaryLanguage = "primaryLanguage";
+constexpr auto kField_GameSlug = "gameSlug";
+constexpr auto kField_GameName = "gameName";
+constexpr auto kField_PortalName = "portalName";
+constexpr auto kField_DateModified = "dateModified";
+constexpr auto kField_DateCreated = "dateCreated";
+constexpr auto kField_DateReleased = "dateReleased";
+constexpr auto kField_IsAvailable = "isAvailable";
+constexpr auto kField_IsExperimental = "isExperimental";
+
+namespace attachments {
+constexpr auto kField_Id = "id";
+constexpr auto kField_ProjectId = "projectId";
+constexpr auto kField_ThumbnailUrl = "thumbnailUrl";
+constexpr auto kField_Url = "url";
+constexpr auto kField_Description = "description";
+constexpr auto kField_IsDefault = "isDefault";
+}  // namespace attachments
+
+}
 
 enum class AddonType { kTukui, kCurse };
 enum class AddonReleaseType { kStable = 1, kBeta = 2, kAlpha = 3 };
@@ -142,7 +142,7 @@ struct Addon {
   AddonType type;
 };
 
-using LatestFilesVect = std::vector<curse_structs::CurseLatestFile>;
+using LatestFilesVect = std::vector<CurseLatestFile>;
 using AddonVect = std::vector<Addon>;
 
 struct InstalledAddon : Addon {

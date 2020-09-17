@@ -17,12 +17,9 @@ bool UpdaterConfig::SerializeToFile() {
   }
   writer.EndArray();
 
-  auto config_file = std::make_unique<std::fstream>(
-      this->config_file_path_, std::ios::out | std::ios::trunc);
-
-  if (!config_file->is_open()) return false;
-
-  config_file->write(string_buffer.GetString(), string_buffer.GetLength());
+  if (!WriteFile(this->config_file_path_, string_buffer.GetString(), true)) {
+    return false;
+  }
 
   return true;
 }
