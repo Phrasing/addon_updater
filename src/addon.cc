@@ -3,7 +3,7 @@
 #include "addon.h"
 #include "rapidjson_util.h"
 // clang-format on
-
+ 
 namespace addon_updater {
 namespace {
 std::optional<CurseLatestFile> CheckForRelease(

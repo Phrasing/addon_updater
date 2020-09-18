@@ -15,9 +15,9 @@ constexpr auto kThumbnailHeight = 32;
 Gui::Gui(boost::asio::thread_pool* thd_pool) : thd_pool_(thd_pool) {}
 
 void Gui::DrawGui(std::vector<addon_updater::Addon>& addons,
-                  const std::pair<int32_t, int32_t>& window_size) {
+                  const WindowSize& window_size) {
   ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Once);
-  ImGui::SetNextWindowSize(ImVec2(window_size.first, window_size.second));
+  ImGui::SetNextWindowSize(ImVec2(window_size.width, window_size.height));
   ImGui::Begin("##MAIN", nullptr,
                ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
   {

@@ -12,8 +12,8 @@ struct ReadFileResult {
 };
 
 ReadFileResult ReadFile(std::string_view path);
-
-bool WriteFile(std::string_view path, std::string_view buffer, bool truncate = true);
+bool WriteFile(std::string_view path, std::string_view buffer,
+               bool truncate = true);
 
 }  // namespace addon_updater
 

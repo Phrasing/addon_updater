@@ -17,6 +17,7 @@
     <ClCompile Include="src\gui.cc" />
     <ClCompile Include="src\file.cc" />
     <ClCompile Include="src\toc_parser.cc" />
+    <ClCompile Include="src\resource_loader.cc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.h" />
@@ -35,9 +36,23 @@
     <ClInclude Include="src\gui.h" />
     <ClInclude Include="src\file.h" />
     <ClInclude Include="src\toc_parser.h" />
+    <ClInclude Include="src\resource_loader.h" />
+    <ClInclude Include="data\resource\resource.h">
+      <Filter>resource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\rapidjson_util.inl" />
     <None Include="src\string_util.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="resource">
+      <UniqueIdentifier>{43e78830-8bda-4874-b6a3-d5d8b499e8c8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="data\resource\resource.rc">
+      <Filter>resource</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

@@ -79,8 +79,8 @@ void AsyncHttpClient::Download(std::string_view url,
                                const RequestCallback& request_callback,
                                const ProgressCallback& progress_callback,
                                const Headers& headers) {
-  request_callback_ = std::move(request_callback);
-  progress_callback_ = std::move(progress_callback);
+  request_callback_ = request_callback;
+  progress_callback_ = progress_callback;
   GetImpl(std::move(url), headers);
 }
 
@@ -146,6 +146,8 @@ void AsyncHttpClient::Write(beast::error_code ec,
 
 void AsyncHttpClient::Read(beast::error_code ec,
                            std::size_t bytes_transferred) {
+  if (!res_.has_value()) return;
+
   auto percent = static_cast<uint32_t>((bytes_read_ += bytes_transferred) *
                                        (100.0F / content_size_));
 
@@ -267,7 +269,7 @@ SyncHttpClient::SyncHttpClient(const net::any_io_executor& ex,
     : stream_(ex, ctx), resolver_(ex) {}
 
 HttpResponse SyncHttpClient::Get(std::string_view url, const Headers& headers) {
-  auto uri = network::uri{url.data()};
+  auto uri = network::uri{std::move(url.data())};
 
   const auto host = std::string{uri.host().data(), uri.host().length()};
   const auto path = std::string{uri.path().data(), uri.path().length()};

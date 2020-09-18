@@ -4,20 +4,28 @@
 
 namespace addon_updater {
 
-using RenderCallback = std::function<void(const std::pair<int32_t, int32_t>)>;
+struct WindowSize {
+  int width;
+  int height;
+};
 
 struct GlfwContext {
   GLFWwindow* window;
   HWND native_window_handle;
   ImVec4 clear_color;
-  std::pair<int32_t, int32_t> window_size;
+  WindowSize window_size;
 };
+
+using RenderCallback =
+    std::function<void(const addon_updater::WindowSize& window_size)>;
 
 class Window {
  public:
-  Window(std::string_view window_title,
-         std::pair<int32_t, int32_t> window_size);
+  Window(std::string_view window_title, const WindowSize& window_size);
   ~Window() = default;
+
+  Window(const Window&) = delete;
+  Window& operator=(const Window&) = delete;
 
   void Render(const RenderCallback& draw_callback);
 

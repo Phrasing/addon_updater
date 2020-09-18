@@ -1,6 +1,8 @@
 // clang-format off
 #include "pch.h"
 #include "window.h"
+#include "resource_loader.h"
+#include "../data/resource/resource.h"
 // clang-format on
 
 namespace addon_updater {
@@ -44,8 +46,7 @@ std::function<Ret(Params...)>
 
 };  // namespace
 
-Window::Window(std::string_view window_title,
-               std::pair<int32_t, int32_t> window_size)
+Window::Window(std::string_view window_title, const WindowSize& window_size)
     : glfw_ctx_(std::make_shared<GlfwContext>()) {
   glfwSetErrorCallback(GET_CALLBACK(GLFWerrorfun, Window)(
       std::bind(&Window::GlfwErrorCallback, this, std::placeholders::_1,
@@ -56,11 +57,11 @@ Window::Window(std::string_view window_title,
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
-  glfw_ctx_->window = glfwCreateWindow(window_size.first, window_size.second,
+  glfw_ctx_->window = glfwCreateWindow(window_size.width, window_size.height,
                                        window_title.data(), nullptr, nullptr);
 
   glfwMakeContextCurrent(glfw_ctx_->window);
-  glfwSwapInterval(1);  
+  glfwSwapInterval(1);
 
   static_cast<void>(glewInit());
 
@@ -69,6 +70,18 @@ Window::Window(std::string_view window_title,
 
   ImGuiIO& io = ImGui::GetIO();
   io.IniFilename = nullptr;
+
+  if (auto resource = addon_updater::GetResource(
+          IDR_ARCHIVO_NARROW_BOLD, addon_updater::ResourceType::kBinary);
+      resource != std::nullopt) {
+    ImFontConfig config{};
+    config.FontDataOwnedByAtlas = false;
+    io.Fonts->AddFontFromMemoryTTF(resource.value().data, resource.value().size,
+                                   20.F, &config);
+  }
+
+  unsigned int flags = ImGuiFreeType::MonoHinting;
+  ImGuiFreeType::BuildFontAtlas(io.Fonts, flags);
 
   ImGui::StyleColorsDark();
 
@@ -85,14 +98,19 @@ void Window::Render(const RenderCallback& draw_callback) {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
-    { draw_callback(glfw_ctx_->window_size); }
+
+    draw_callback(std::move(glfw_ctx_->window_size));
+
     ImGui::Render();
-    glfwGetFramebufferSize(glfw_ctx_->window, &glfw_ctx_->window_size.first,
-                           &glfw_ctx_->window_size.second);
-    glViewport(0, 0, glfw_ctx_->window_size.first,
-               glfw_ctx_->window_size.second);
+    glfwGetFramebufferSize(glfw_ctx_->window, &glfw_ctx_->window_size.width,
+                           &glfw_ctx_->window_size.height);
+
+    glViewport(0, 0, glfw_ctx_->window_size.width,
+               glfw_ctx_->window_size.height);
+
     glClearColor(glfw_ctx_->clear_color.x, glfw_ctx_->clear_color.y,
                  glfw_ctx_->clear_color.z, glfw_ctx_->clear_color.w);
+
     glClear(GL_COLOR_BUFFER_BIT);
     ImGui_ImplOpenGL3_RenderDrawData(std::move(ImGui::GetDrawData()));
 

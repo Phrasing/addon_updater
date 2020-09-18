@@ -59,7 +59,11 @@ class WindowsHandleFile {
   std::optional<int> Write(const void *buffer, int buffer_size,
                            bool truncate) noexcept {
     DWORD write_size;
-    if (truncate) ::SetEndOfFile(handle_);
+
+    if (truncate) {
+      ::SetEndOfFile(this->handle_);
+    }
+
     if (!::WriteFile(this->handle_, buffer, buffer_size, &write_size,
                      nullptr)) {
       return std::nullopt;
@@ -81,18 +85,15 @@ bool WriteFileBuffered(WindowsHandleFile &file, std::string_view data,
                        bool truncate) {
   int total_bytes = 0;
   for (;;) {
-    auto bytes_written = file.Write(data.data() + total_bytes,
-                                    data.size() - total_bytes, truncate);
-    if (!bytes_written.has_value()) {
+    const auto bytes_written = file.Write(data.data() + total_bytes,
+                                          data.size() - total_bytes, truncate);
+    if (!bytes_written.has_value() || !*bytes_written) {
       std::fprintf(stderr, "Error: failed to write to file\n%s\n",
                    WindowsErrorMessage(GetLastError()).c_str());
       return false;
     }
 
-    total_bytes += *bytes_written;
-    std::cout << total_bytes << std::endl;
-
-    if (total_bytes >= data.size()) break;
+    if ((total_bytes += *bytes_written) >= data.size()) break;
   }
 
   return (total_bytes > 0);
@@ -150,7 +151,6 @@ ReadFileResult ReadEntireFile(const char *path, WindowsHandleFile &file) {
     const auto error = ::GetLastError();
     return ReadFileResult::Failure(std::string("failed to get size of file ") +
                                    path + ": " + WindowsErrorMessage(error));
-
   }
   assert(file_size.QuadPart <= std::numeric_limits<std::int64_t>::max());
 

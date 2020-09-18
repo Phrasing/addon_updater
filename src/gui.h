@@ -11,8 +11,11 @@ class Gui {
   Gui(boost::asio::thread_pool* thd_pool);
   ~Gui() = default;
 
+  Gui(const Gui&) = delete;
+  Gui& operator=(const Gui&) = delete;
+
   void DrawGui(std::vector<addon_updater::Addon>& addons,
-               const std::pair<int32_t, int32_t>& window_size);
+               const WindowSize& window_size);
 
  private:
   boost::asio::thread_pool* thd_pool_;

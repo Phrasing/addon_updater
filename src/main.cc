@@ -11,6 +11,8 @@
 #include "base64.h"
 #include "file.h"
 #include "toc_parser.h"
+#include "resource_loader.h"
+#include "../data/resource/resource.h"
 // clang-format on
 
 namespace {
@@ -43,6 +45,15 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
     }
   }
 
+  if (auto resource = addon_updater::GetResource(
+          IDR_SLUGS, addon_updater::ResourceType::kText);
+      resource.has_value()) {
+    std::cout << reinterpret_cast<const char*>(resource.value().data)
+              << std::endl;
+  } else {
+    std::cout << "Failed\n";
+  }
+
   boost::asio::thread_pool thd_pool(std::thread::hardware_concurrency());
 
   auto window = addon_updater::Window("Test", {kWindowWidth, kWindowHeight});
@@ -71,9 +82,8 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
     system("pause");
     return 1;
   }
-  //
 
-  window.Render([&](const std::pair<int32_t, int32_t>& window_size) {
+  window.Render([&](const addon_updater::WindowSize& window_size) {
     { gui.DrawGui(addons, window_size); }
   });
 
