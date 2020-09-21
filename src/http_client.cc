@@ -55,6 +55,12 @@ void AsyncHttpClient::GetImpl(std::string_view url, const Headers& headers) {
     std::cout << "\n[REQUEST]\n" << req_.base() << std::endl;
   }
 
+  // stream_.next_layer()
+  //  .  // bytes per second
+
+  //  stream_.next_layer().rate_policy().read_limit(1000000 / 2);
+  // stream_.next_layer().rate_policy().write_limit(1000000 / 2);
+
   resolver_.async_resolve(
       host, kSslPort,
       beast::bind_front_handler(&AsyncHttpClient::Resolve, shared_from_this()));
@@ -110,7 +116,7 @@ void AsyncHttpClient::Connect(
     return;
   }
 
-  tcp::no_delay option(true);
+  tcp::no_delay option(false);
   stream_.next_layer().socket().set_option(option);
   stream_.async_handshake(boost::asio::ssl::stream_base::client,
                           beast::bind_front_handler(&AsyncHttpClient::Handshake,
@@ -157,15 +163,15 @@ void AsyncHttpClient::Read(beast::error_code ec,
     }
   }
 
-  auto callback = [this, percent, ec](RequestState state) {
+  auto callback = [this, percent, ec, bytes_transferred](RequestState state) {
     if (request_callback_) {
       request_callback_(ec, response_);
     } else if (download_callback_) {
-      download_callback_(ec, percent, (*res_).get().body(),
-                         RequestState::kStateFinish);
+      download_callback_(ec, {content_size_, bytes_transferred, percent, state},
+                         (*res_).get().body());
     }
     if (progress_callback_) {
-      progress_callback_(percent, state);
+      progress_callback_({content_size_, bytes_transferred, percent, state});
     }
   };
 
@@ -173,21 +179,27 @@ void AsyncHttpClient::Read(beast::error_code ec,
     if (!download_callback_) {
       response_ += std::move((*res_).get().body());
     } else {
-      download_callback_(ec, percent, std::move((*res_).get().body()),
-                         RequestState::kStatePending);
+      download_callback_(ec,
+                         {content_size_, bytes_transferred, percent,
+                          RequestState::kStatePending},
+                         (*res_).get().body());
     }
 
     if (progress_callback_) {
-      progress_callback_(percent, RequestState::kStatePending);
+      if (!progress_callback_({content_size_, bytes_transferred, percent,
+                               RequestState::kStatePending})) {
+        goto shutdown;
+      }
     }
+
     http::async_read_some(
         stream_, buffer_, (*res_),
         beast::bind_front_handler(&AsyncHttpClient::Read, shared_from_this()));
 
-    (*res_).release();
   } else {
     response_ += std::move((*res_).get().body());
 
+  shutdown:
     stream_.async_shutdown(beast::bind_front_handler(&AsyncHttpClient::Shutdown,
                                                      shared_from_this()));
 
@@ -196,9 +208,8 @@ void AsyncHttpClient::Read(beast::error_code ec,
     } else {
       callback(RequestState::kStateFinish);
     }
-
-    (*res_).release();
   }
+  (*res_).release();
 }
 
 void AsyncHttpClient::ReadHeader(beast::error_code ec,
@@ -234,10 +245,11 @@ void AsyncHttpClient::CallbackError(const beast::error_code& ec) {
   if (request_callback_) {
     request_callback_(ec, "");
   } else if (download_callback_) {
-    download_callback_(ec, 0, "", RequestState::kStateError);
+    download_callback_(ec, {content_size_, 0, 0, RequestState::kStateError},
+                       "");
   }
   if (progress_callback_) {
-    progress_callback_(0, RequestState::kStateError);
+    progress_callback_({content_size_, 0, 0, RequestState::kStateError});
   }
 }
 
@@ -288,9 +300,10 @@ HttpResponse SyncHttpClient::Get(std::string_view url, const Headers& headers) {
     std::fprintf(stderr,
                  "Error: Failed to resolve hostname.\nCheck your internet "
                  "connection.\n");
+    return HttpResponse();
   }
 
-  tcp::no_delay option(false);
+  tcp::no_delay option(true);
   stream_.next_layer().socket().set_option(option);
   stream_.handshake(ssl::stream_base::client);
 
@@ -320,7 +333,11 @@ HttpResponse SyncHttpClient::Get(std::string_view url, const Headers& headers) {
     ec = {};
   }
 
-  return {(*result).get().body(), ec};
+  const auto body = (*result).get().body();
+
+  (*result).release();
+
+  return {body, ec};
 }
 void SyncHttpClient::Reset() {}
 }  // namespace http_client

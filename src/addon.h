@@ -3,6 +3,23 @@
 #pragma once
 
 namespace addon_updater {
+namespace tukui_fields {
+constexpr auto kField_Id = "id";
+constexpr auto kField_Name = "name";
+constexpr auto kField_SmallDesc = "small_desc";
+constexpr auto kField_Author = "author";
+constexpr auto kField_Version = "version";
+constexpr auto kField_ScreenshotUrl = "screenshot_url";
+constexpr auto kField_DownloadUrl = "url";
+constexpr auto kField_Category = "category";
+constexpr auto kField_Downloads = "downloads";
+constexpr auto kField_LastUpdate = "lastupdate";
+constexpr auto kField_Patch = "patch";
+constexpr auto kField_WebUrl = "web_url";
+constexpr auto kField_LastDownload = "last_download";
+constexpr auto kField_ChangeLog = "changelog";
+constexpr auto kField_DonateUrl = "donate_url";
+}
 
 struct CurseAuthor {
   std::string name;
@@ -105,9 +122,9 @@ inline std::string FlavorToString(AddonFlavor flavor) {
 struct AddonThumbnail {
   uint8_t* pixels;
   size_t pixels_size;
-  int32_t width;
-  int32_t height;
-  int32_t channels;
+  int width;
+  int height;
+  int channels;
 
   bool is_loaded = false;
   bool in_progress = false;
@@ -116,11 +133,17 @@ struct AddonThumbnail {
 
 struct InstalledAddon;
 
+struct Slug {
+  bool Deserialize(const rj::Value::ConstMemberIterator& iterator);
+  std::string slug_name;
+  std::string addon_name;
+};
+
 struct Addon {
   bool Deserialize(const rj::Value::ConstObject& object);
   InstalledAddon Install() const;
 
-  bool operator==(const Addon& addon) { return id == addon.id; }
+  bool operator==(const Addon& addon) const { return id == addon.id; }
 
   int32_t id;
   std::string name;
@@ -137,26 +160,45 @@ struct Addon {
 
   bool is_ignored = false;
 
+  DownloadStatus download_status;
   AddonThumbnail thumbnail;
   AddonFlavor flavor;
   AddonType type;
 };
 
-using LatestFilesVect = std::vector<CurseLatestFile>;
-using AddonVect = std::vector<Addon>;
-
 struct InstalledAddon : Addon {
+  InstalledAddon& operator=(const Addon& addon);
+  bool operator==(const InstalledAddon& addon) const {
+    return this->id == addon.id;
+  }
   void Serialize(rj::PrettyWriter<rj::StringBuffer>* writer) const;
 
   void Uninstall();
   bool Update();
 
-  bool up_to_date;
-  std::unordered_set<std::string> directories;
+  bool up_to_date = true;
+  std::vector<std::string> directories;
 };
 
+struct InstalledAddonHash {
+  size_t operator()(const InstalledAddon& addon) const {
+    return static_cast<size_t>(addon.id);
+  }
+};
+
+using LatestFiles = std::vector<CurseLatestFile>;
+using Addons = std::vector<Addon>;
+using Slugs = std::vector<Slug>;
+using InstalledAddons = std::vector<InstalledAddon>;
+
+bool DetectInstalledAddons(std::string_view addons_path, AddonFlavor flavor,
+                           const Slugs& slugs, const Addons& addons,
+                           InstalledAddons& installed_addons);
+
+bool DeserializeAddonSlugs(std::string_view json, Slugs* slugs);
+
 bool DeserializeAddons(std::string_view json, AddonType addon_type,
-                       AddonVect* addons);
+                       AddonFlavor addon_flavor, Addons* addons);
 
 }  // namespace addon_updater
 

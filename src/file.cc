@@ -93,7 +93,10 @@ bool WriteFileBuffered(WindowsHandleFile &file, std::string_view data,
       return false;
     }
 
-    if ((total_bytes += *bytes_written) >= data.size()) break;
+    total_bytes += *bytes_written;
+
+    if (static_cast<size_t>(*bytes_written) >= data.size())
+      break;
   }
 
   return (total_bytes > 0);
@@ -108,6 +111,7 @@ void ReadFileBuffered(WindowsHandleFile &file, int buffer_size,
 
     std::optional<int> read_size =
         file.Read(&out->content[size_before], buffer_size);
+
     if (!read_size.has_value()) {
       out->error = "Failed to read from file: " +
                    WindowsHandleFile::GetLastErrorMessage();

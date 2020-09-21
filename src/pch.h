@@ -3,9 +3,12 @@
 #pragma once
 // clang-format off
 
+#define MINIZ_HAS_64BIT_REGISTERS 1
+#include <miniz.h>
 
-
+#define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui.h>
+#include <imgui_internal.h>
 #include <imgui_stdlib.h>
 #include <imgui_freetype.h>
 #include <imgui_impl_glfw.h>
@@ -50,6 +53,7 @@
 
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include <GLFW/glfw3.h>
+#include <GLFW/glfw3native.h>
 
 #include <boost/algorithm/string_regex.hpp>
 #include <boost/beast/core.hpp>
@@ -81,6 +85,7 @@ namespace rj = rapidjson;
 #include <optional>
 #include <filesystem>
 
+#include "http_client.h"
 #include "string_util.h"
 #include "singleton.h"
 #include "products.pb.h"

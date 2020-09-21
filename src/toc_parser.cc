@@ -5,27 +5,47 @@
 // clang-format on
 
 namespace addon_updater {
-namespace {
-inline void StripColorCharacters(std::string& str) {
-  str = boost::regex_replace(
-      str, std::move(boost::regex(R"(\|[a-zA-Z0-9]{9})")), "");
+TocParser::TocParser(std::string_view file_path)
+    : new_line_regex_(boost::regex(R"(\|r)")),
+      color_encoded_regex_(boost::regex(R"(\|[a-zA-Z0-9]{9})")) {
+  this->Load(file_path);
 }
 
-inline void StripNewLineCharacters(std::string& str) {
-  str = boost::regex_replace(str, std::move(boost::regex(R"(\|r)")), "");
+TocParser::~TocParser() {}
+
+void TocParser::Load(std::string_view file_path) noexcept {
+  auto result = ReadFile(file_path);
+  if (result.Ok()) {
+    contents_ = std::move(result.content);
+  }
 }
 
-inline std::string GetTocValue(std::string_view key,
-                               const std::string& toc_data) {
+std::optional<TocFile> TocParser::ParseTocFile() {
+  TocFile toc_file{};
+  toc_file.author = std::move(GetValue("Author"));
+  toc_file.title = std::move(GetValue("Title"));
+  toc_file.notes = std::move(GetValue("Notes"));
+
+  toc_file.readable_version = std::move(GetValue("Version"));
+  toc_file.stripped_version =
+      string_util::StripNonDigits(toc_file.readable_version);
+
+  toc_file.numeric_version =
+      string_util::StringToNumber(toc_file.stripped_version);
+
+  return toc_file;
+}
+
+std::string TocParser::GetValue(std::string_view key) {
   boost::match_results<std::string::const_iterator> results;
   if (boost::regex_search(
-          static_cast<std::string::const_iterator>(toc_data.begin()),
-          static_cast<std::string::const_iterator>(toc_data.end()), results,
+          static_cast<std::string::const_iterator>(contents_.begin()),
+          static_cast<std::string::const_iterator>(contents_.end()), results,
           boost::regex("^## " + std::string(key) + ":(.*?)$"),
           boost::match_default)) {
     auto result = std::string(results[1].first, results[1].second);
-    StripColorCharacters(result);
-    StripNewLineCharacters(result);
+    this->StripColorCharacters(result);
+    this->StripNewlineCharacters(result);
     if (result.at(0) == ' ') {
       result.erase(0, 1);
     }
@@ -33,24 +53,13 @@ inline std::string GetTocValue(std::string_view key,
   }
   return std::string();
 }
+
+void TocParser::StripNewlineCharacters(std::string& string) {
+  string = boost::regex_replace(string, new_line_regex_, "");
 }
 
-std::optional<TocFile> addon_updater::ParseTocFile(std::string_view file_path) {
-  auto result = addon_updater::ReadFile(file_path);
-
-  if (!result.Ok()) return {};
-
-  TocFile toc_file{};
-  toc_file.author = std::move(GetTocValue("Author", result.content));
-  toc_file.title = std::move(GetTocValue("Title", result.content));
-  toc_file.notes = std::move(GetTocValue("Notes", result.content));
-
-  toc_file.readable_version = std::move(GetTocValue("Version", result.content));
-
-  toc_file.numeric_version = string_util::StringToNumber(
-      string_util::StripNonDigits(toc_file.readable_version));
-
-  return toc_file;
+void TocParser::StripColorCharacters(std::string& string) {
+  string = boost::regex_replace(string, color_encoded_regex_, "");
 }
 
 }

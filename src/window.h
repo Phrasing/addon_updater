@@ -14,6 +14,7 @@ struct GlfwContext {
   HWND native_window_handle;
   ImVec4 clear_color;
   WindowSize window_size;
+  WNDPROC window_callback_;
 };
 
 using RenderCallback =
@@ -30,6 +31,7 @@ class Window {
   void Render(const RenderCallback& draw_callback);
 
  private:
+  LRESULT WindowCallback(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
   void GlfwErrorCallback(int error_code, const char* description);
   std::shared_ptr<GlfwContext> glfw_ctx_;
 };

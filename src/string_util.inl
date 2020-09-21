@@ -40,9 +40,9 @@ inline bool Search(std::string_view target, std::string_view base_string) {
                      }) != base_string.end();
 }
 
-inline int64_t StringToNumber(std::string_view str) {
+inline size_t StringToNumber(std::string_view str) {
   if (str.empty()) return 0;
-  return std::stoll(str.data());
+  return std::stoull(str.data());
 }
 
 inline std::string StripNonDigits(std::string_view str) {

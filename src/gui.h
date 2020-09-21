@@ -14,7 +14,7 @@ class Gui {
   Gui(const Gui&) = delete;
   Gui& operator=(const Gui&) = delete;
 
-  void DrawGui(std::vector<addon_updater::Addon>& addons,
+  void DrawGui(Addons& addons, std::vector<InstalledAddon>& installed_addons,
                const WindowSize& window_size);
 
  private:
@@ -22,6 +22,7 @@ class Gui {
 
  private:
   void RenderBrowseTab(std::vector<addon_updater::Addon>& addons);
+  void RenderInstalledTab(std::vector<addon_updater::InstalledAddon>& addons);
 };
 }  // namespace addon_updater_gui
 

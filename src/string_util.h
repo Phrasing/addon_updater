@@ -18,7 +18,7 @@ inline std::string_view RemoveSuffixIfPresent(std::string_view s,
                                               std::string_view suffix);
 
 inline std::string StripNonDigits(std::string_view str);
-inline int64_t StringToNumber(std::string_view str);
+inline size_t StringToNumber(std::string_view str);
 
 }  // namespace string_util
 

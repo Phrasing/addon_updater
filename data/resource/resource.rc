@@ -39,8 +39,8 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 
 #endif  // APSTUDIO_INVOKED
 
-        IDR_SLUGS TEXT "..\\slugs.json"
-        IDR_ARCHIVO_NARROW_BOLD BINARY "..\\fonts\\ArchivoNarrow-Bold.ttf"
+        ADDON_SLUGS_RESOURCE TEXT "..\\slugs.json"
+        ARCHIVO_NARROW_RESOURCE BINARY "..\\fonts\\ArchivoNarrow-Medium.ttf"
 
 
 #endif  // English (United States) resources

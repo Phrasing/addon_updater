@@ -2,12 +2,10 @@
 #define ADDON_UPDATER_RESOURCE_LOADER_H
 
 namespace addon_updater {
-
 enum class ResourceType {
     kBinary,
     kText
 };
-
 
 struct Resource {
   uint8_t* data;

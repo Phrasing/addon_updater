@@ -14,27 +14,42 @@ struct PairHash {
   }
 };
 
+enum class RequestState {
+  kStatePending,
+  kStateFinish,
+  kStateError,
+  kStateNone,
+  kStateCancel
+};
+
 struct HttpResponse {
   std::string data;
   beast::error_code ec;
 };
 
-enum class RequestState { kStatePending, kStateFinish, kStateError };
+struct DownloadStatus {
+  size_t content_size;
+  size_t bytes_transferred;
+  uint32_t progress;
+  RequestState state = RequestState::kStateNone;
+};
+
+using LimitedTcpStream =
+    beast::basic_stream<net::ip::tcp, net::any_io_executor,
+                        beast::simple_rate_policy>;
 
 using RequestCallback =
     std::function<void(const beast::error_code&, std::string_view)>;
 
-using ProgressCallback = std::function<void(uint32_t, RequestState)>;
+using ProgressCallback = std::function<bool(const DownloadStatus&)>;
 
-using DownloadCallback = std::function<void(const beast::error_code&, uint32_t,
-                                            std::string_view, RequestState)>;
+using DownloadCallback = std::function<void(
+    const beast::error_code&, const DownloadStatus&, std::string_view)>;
 
 using Parameters = std::vector<std::pair<std::string, std::string>>;
 
 using Headers =
     std::unordered_set<std::pair<std::string, std::string>, PairHash>;
-
-
 
 class AsyncHttpClient : public std::enable_shared_from_this<AsyncHttpClient> {
  public:

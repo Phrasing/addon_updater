@@ -18,6 +18,7 @@
     <ClCompile Include="src\file.cc" />
     <ClCompile Include="src\toc_parser.cc" />
     <ClCompile Include="src\resource_loader.cc" />
+    <ClCompile Include="src\zip_file.cc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.h" />
@@ -40,6 +41,7 @@
     <ClInclude Include="data\resource\resource.h">
       <Filter>resource</Filter>
     </ClInclude>
+    <ClInclude Include="src\zip_file.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\rapidjson_util.inl" />

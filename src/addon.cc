@@ -1,19 +1,21 @@
 // clang-format off
 #include "pch.h"
 #include "addon.h"
+#include "toc_parser.h"
 #include "rapidjson_util.h"
 // clang-format on
- 
+
 namespace addon_updater {
 namespace {
-std::optional<CurseLatestFile> CheckForRelease(
-    AddonReleaseType release_type, AddonFlavor addon_flavor,
-    const LatestFilesVect& latest_files) {
-  for (const auto& latest_file : latest_files) {
+std::optional<CurseLatestFile> CheckForRelease(AddonReleaseType release_type,
+                                               AddonFlavor addon_flavor,
+                                               LatestFiles& latest_files) {
+  for (auto& latest_file : latest_files) {
     const auto flavor = FlavorToString(addon_flavor);
     if (latest_file.release_type == static_cast<uint32_t>(release_type) &&
         !latest_file.is_alternate &&
         latest_file.game_version_flavor == flavor) {
+      string_util::ReplaceAll(&latest_file.download_url, "edge", "media");
       return latest_file;
     }
   }
@@ -30,22 +32,6 @@ bool DeserializeCurse(const rj::Value::ConstObject& object, Addon* addon) {
   addon->slug =
       std::move(rj_util::GetStringDef(object, curse_fields::kField_Slug));
   addon->type = AddonType::kCurse;
-
-  if (rj_util::HasMemberOfType(object, curse_fields::kField_Attachments,
-                               rj::kArrayType)) {
-    const auto curse_attachments =
-        object[curse_fields::kField_Attachments].GetArray();
-    for (const auto* it = curse_attachments.Begin();
-         it != curse_attachments.End(); ++it) {
-      if (!it->IsObject()) continue;
-      CurseAttachment attachment{};
-      if (attachment.Deserialize(it->GetObject()) && attachment.is_default) {
-        string_util::ReplaceAll(&attachment.thumbnail_url, R"(/256)", R"(/64)");
-        addon->screenshot_url = attachment.thumbnail_url;
-        break;
-      }
-    }
-  }
 
   std::vector<CurseLatestFile> latest_files{};
   if (rj_util::HasMemberOfType(object, curse_fields::kField_LatestFiles,
@@ -83,28 +69,63 @@ bool DeserializeCurse(const rj::Value::ConstObject& object, Addon* addon) {
     addon->download_url = beta.value().download_url;
   }
 
+  if (addon->download_url.empty()) return false;
+
+  if (rj_util::HasMemberOfType(object, curse_fields::kField_Attachments,
+                               rj::kArrayType)) {
+    const auto curse_attachments =
+        object[curse_fields::kField_Attachments].GetArray();
+    for (const auto* it = curse_attachments.Begin();
+         it != curse_attachments.End(); ++it) {
+      if (!it->IsObject()) continue;
+      CurseAttachment attachment{};
+      if (attachment.Deserialize(it->GetObject()) && attachment.is_default) {
+        string_util::ReplaceAll(&attachment.thumbnail_url, R"(/256)", R"(/64)");
+        addon->screenshot_url = attachment.thumbnail_url;
+        break;
+      }
+    }
+  }
+
   return true;
 }
 
 bool DeserializeTukui(const rj::Value::ConstObject& object, Addon* addon) {
+  addon->name =
+      std::move(rj_util::GetStringDef(object, tukui_fields::kField_Name));
+  addon->description =
+      std::move(rj_util::GetStringDef(object, tukui_fields::kField_SmallDesc));
+  addon->author =
+      std::move(rj_util::GetStringDef(object, tukui_fields::kField_Author));
+  addon->readable_version =
+      std::move(rj_util::GetStringDef(object, tukui_fields::kField_Version));
+  addon->stripped_version =
+      string_util::StripNonDigits(addon->readable_version);
+  addon->numeric_version = string_util::StringToNumber(addon->stripped_version);
+  addon->screenshot_url = std::move(
+      rj_util::GetStringDef(object, tukui_fields::kField_ScreenshotUrl));
+  addon->download_url = std::move(
+      rj_util::GetStringDef(object, tukui_fields::kField_DownloadUrl));
+
   return true;
 }
 }  // namespace
 
 bool Addon::Deserialize(const rj::Value::ConstObject& object) {
+  bool result = false;
   switch (this->type) {
     case AddonType::kCurse: {
-      DeserializeCurse(object, this);
+      result = DeserializeCurse(object, this);
     } break;
 
     case AddonType::kTukui: {
-      DeserializeTukui(object, this);
+      result = DeserializeTukui(object, this);
     } break;
 
     default:
       break;
   }
-  return true;
+  return result;
 }
 
 InstalledAddon Addon::Install() const {
@@ -119,6 +140,26 @@ InstalledAddon Addon::Install() const {
   installed_addon.readable_version = this->readable_version;
 
   return installed_addon;
+}
+
+InstalledAddon& InstalledAddon::operator=(const Addon& addon) {
+  this->author = addon.author;
+  this->description = addon.description;
+  this->download_status = addon.download_status;
+  this->download_url = addon.download_url;
+  this->flavor = addon.flavor;
+  this->id = addon.id;
+  this->slug = addon.slug;
+  this->name = addon.name;
+  this->thumbnail = addon.thumbnail;
+  this->thumbnail.is_loaded = false;
+  this->thumbnail.is_uploaded = false;
+  this->thumbnail.pixels = nullptr;
+  this->thumbnail.in_progress = false;
+
+  this->screenshot_url = addon.screenshot_url;
+
+  return *this;
 }
 
 void InstalledAddon::Serialize(
@@ -162,8 +203,99 @@ void InstalledAddon::Uninstall() {
 
 bool InstalledAddon::Update() { return false; }
 
+bool DetectInstalledAddons(std::string_view addons_path, AddonFlavor flavor,
+                           const Slugs& slugs, const Addons& addons,
+                           InstalledAddons& installed_addons) {
+  if (!std::filesystem::exists(addons_path)) return false;
+
+  for (auto& addon : std::filesystem::directory_iterator(addons_path)) {
+    const auto addon_name = addon.path().filename().string();
+
+    const auto is_addon =
+        std::find_if(slugs.begin(), slugs.end(), [&](const Slug& slug) -> bool {
+          return slug.addon_name == addon_name;
+        });
+
+    if (is_addon != slugs.end()) {
+      InstalledAddon installed_addon{};
+
+      bool check_next = true;
+      for (auto& installed_addon : installed_addons) {
+        if (installed_addon.slug == is_addon->slug_name) {
+          installed_addon.directories.push_back(addon.path().string());
+          check_next = false;
+        }
+      }
+
+      if (!check_next) continue;
+
+      const auto toc_file = addon.path().string() + R"(\)" +
+                            addon.path().filename().string() + ".toc";
+
+      if (!std::filesystem::exists(toc_file)) continue;
+
+      TocParser toc_parser(toc_file);
+      if (!toc_parser.Ok()) return false;
+
+      const auto result = toc_parser.ParseTocFile();
+      if (!result.has_value()) continue;
+
+      if (result.value().readable_version.empty()) {
+        continue;
+      }
+
+      const auto is_detected =
+          std::find_if(addons.begin(), addons.end(),
+                       [&is_addon](const Addon& addon) -> bool {
+                         return addon.slug == is_addon->slug_name;
+                       });
+
+      if (is_detected != addons.end()) {
+        installed_addon.readable_version = result->readable_version;
+        installed_addon.numeric_version = result->numeric_version;
+        installed_addon.stripped_version = result->stripped_version;
+        installed_addon.directories.push_back(addon.path().string());
+
+        if (installed_addon.stripped_version.find(
+                is_detected->stripped_version) == std::string::npos) {
+          installed_addon.up_to_date = false;
+        }
+
+        installed_addon = *is_detected;
+        installed_addons.push_back(installed_addon);
+      }
+    }
+  }
+
+  /*std::sort(installed_addons.begin(), installed_addons.end());
+  installed_addons.erase(
+      std::unique(installed_addons.begin(), installed_addons.end()),
+      installed_addons.end());*/
+
+  return true;
+}
+
+bool DeserializeAddonSlugs(std::string_view json, Slugs* slugs) {
+  rj::Document doc;
+  doc.Parse(json.data(), json.length());
+
+  if (doc.HasParseError()) {
+    return false;
+  }
+
+  for (rj::Value::ConstMemberIterator itr = doc.MemberBegin();
+       itr != doc.MemberEnd(); ++itr) {
+    Slug addon_slug{};
+    if (addon_slug.Deserialize(itr)) {
+      slugs->push_back(addon_slug);
+    }
+  }
+
+  return true;
+}
+
 bool DeserializeAddons(std::string_view json, AddonType addon_type,
-                       AddonVect* addons) {
+                       AddonFlavor addon_flavor, Addons* addons) {
   rj::Document document{};
   document.Parse(json.data(), json.length());
   if (document.HasParseError()) {
@@ -173,11 +305,23 @@ bool DeserializeAddons(std::string_view json, AddonType addon_type,
   for (const auto* it = document.Begin(); it != document.End(); ++it) {
     Addon addon{};
     addon.type = addon_type;
-    addon.flavor = AddonFlavor::kRetail;
+    addon.flavor = addon_flavor;
     if (addon.Deserialize(it->GetObject())) {
       addons->push_back(addon);
     }
   }
+
+  return true;
+}
+
+bool Slug::Deserialize(const rj::Value::ConstMemberIterator& iterator) {
+  if (!(iterator->name.IsString() && iterator->value.IsArray() &&
+        !iterator->value.GetArray().Empty())) {
+    return false;
+  }
+
+  this->addon_name = std::move(iterator->name.GetString());
+  this->slug_name = std::move(iterator->value.GetArray()[0].GetString());
 
   return true;
 }

@@ -4,8 +4,8 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
 //
+#define ADDON_SLUGS_RESOURCE 101
+#define ARCHIVO_NARROW_RESOURCE 102
 
-#define IDR_SLUGS 101
-#define IDR_ARCHIVO_NARROW_BOLD 103
 
 #endif  // !ADDON_UPDATER_RESOURCE_H

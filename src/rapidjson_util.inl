@@ -10,7 +10,7 @@ namespace rj_util {
 
 inline bool HasMemberOfType(const rj::Value::ConstObject& obj,
                             std::string_view member, const rj::Type type) {
-  const auto result = obj.FindMember(member.data());
+  const auto result = obj.FindMember(std::move(member.data()));
   return result != obj.MemberEnd() && result->value.GetType() == type;
 }
 
@@ -18,7 +18,7 @@ template <typename T>
 inline std::optional<T> GetFieldIfExists(const rj::Value::ConstObject& obj,
                                          std::string_view member,
                                          const rj::Type type) {
-  const auto result = obj.FindMember(member.data());
+  const auto result = obj.FindMember(std::move(member.data()));
   if (result != obj.MemberEnd() && result->value.GetType() == type) {
     return result->value.Get<T>();
   }

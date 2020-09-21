@@ -37,19 +37,18 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
     GetWowInstallations((products.value()), &wow_installs);
   }
 
-  for (auto& install : wow_installs) {
-    auto toc_file = addon_updater::ParseTocFile(install.addons_path +
-                                                R"(BigWigs\BigWigs.toc)");
-    if (toc_file != std::nullopt) {
-      std::cout << toc_file.value().numeric_version << std::endl;
-    }
-  }
-
+  addon_updater::Slugs addon_slugs{};
   if (auto resource = addon_updater::GetResource(
-          IDR_SLUGS, addon_updater::ResourceType::kText);
+          ADDON_SLUGS_RESOURCE, addon_updater::ResourceType::kText);
       resource.has_value()) {
-    std::cout << reinterpret_cast<const char*>(resource.value().data)
-              << std::endl;
+    if (!addon_updater::DeserializeAddonSlugs(
+            reinterpret_cast<const char*>(resource->data),
+            &addon_slugs)) {
+      std::fprintf(stderr, "Error: failed to deserialize addon slugs.\n");
+      system("pause");
+      return 1;
+    }
+
   } else {
     std::cout << "Failed\n";
   }
@@ -59,15 +58,17 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
   auto window = addon_updater::Window("Test", {kWindowWidth, kWindowHeight});
   auto gui = addon_updater::Gui(&thd_pool);
 
-  bool show_demo_window = true;
-  bool show_another_window = false;
+  auto result =
+      addon_updater::ClientFactory::GetInstance().NewSyncClient()->Get(
+          "https://addons-ecs.forgesvc.net/api/v2/addon/"
+          "search?gameId=1&searchFilter=&pageSize=500");
 
-  const auto client =
-      addon_updater::ClientFactory::GetInstance().NewSyncClient();
+  auto tukui = addon_updater::ClientFactory::GetInstance().NewSyncClient()->Get(
+      "https://www.tukui.org/api.php?addons=all");
 
-  auto result = client->Get(
-      "https://addons-ecs.forgesvc.net/api/v2/addon/"
-      "search?gameId=1&searchFilter=&pageSize=500");
+  auto tukui_classic =
+      addon_updater::ClientFactory::GetInstance().NewSyncClient()->Get(
+          "https://www.tukui.org/api.php?classic-addons=all");
 
   if (!result.ec || result.data.empty()) {
     std::fprintf(stderr, "Error: failed to retrieve curse repository.\n");
@@ -75,16 +76,52 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
     return 1;
   }
 
-  addon_updater::AddonVect addons{};
+  addon_updater::Addons addons{};
   if (!addon_updater::DeserializeAddons(
-          result.data, addon_updater::AddonType::kCurse, &addons)) {
+          result.data, addon_updater::AddonType::kCurse,
+          addon_updater::AddonFlavor::kRetail, &addons)) {
     std::fprintf(stderr, "Error: failed to deserialize curse addons.\n");
     system("pause");
     return 1;
   }
 
+  addon_updater::InstalledAddons installed_addons{};
+  for (auto& install : wow_installs) {
+    if (install.client_type == addon_updater::ClientType::kRetail) {
+      auto result = addon_updater::DetectInstalledAddons(
+          install.addons_path, addon_updater::AddonFlavor::kRetail, addon_slugs,
+          addons, installed_addons);
+    }
+  }
+
+  if (!addon_updater::DeserializeAddons(
+          tukui.data, addon_updater::AddonType::kTukui,
+          addon_updater::AddonFlavor::kRetail, &addons)) {
+    std::fprintf(stderr, "Error: failed to deserialize tukui addons.\n");
+    system("pause");
+    return 1;
+  }
+
+  if (!addon_updater::DeserializeAddons(
+          tukui_classic.data, addon_updater::AddonType::kTukui,
+          addon_updater::AddonFlavor::kClassic, &addons)) {
+    std::fprintf(stderr,
+                 "Error: failed to deserialize classic tukui addons.\n");
+    system("pause");
+    return 1;
+  }
+
+  for (auto& install : installed_addons) {
+    std::cout << install.name << std::endl;
+    for (auto& dir : install.directories) {
+      std::cout << "{" << dir << "}, \n";
+    }
+    std::cout << "\n";
+    //  std::cout << slug.addon_name << " : " << slug.slug_name << std::endl;
+  }
+
   window.Render([&](const addon_updater::WindowSize& window_size) {
-    { gui.DrawGui(addons, window_size); }
+    { gui.DrawGui(addons, installed_addons, window_size); }
   });
 
   thd_pool.join();
