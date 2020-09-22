@@ -1,36 +1,13 @@
 // clang-format off
 #include "pch.h"
 #include "file.h"
+#include "windows_error_message.h"
 // clang-format on
 
 namespace addon_updater {
 namespace {
 
 constexpr auto kBufferSize = 1024;
-
-std::string WindowsErrorMessage(DWORD error) {
-  LPSTR get_last_error_message;
-
-  const auto get_last_error_message_length = ::FormatMessageA(
-      FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
-          FORMAT_MESSAGE_IGNORE_INSERTS,
-      nullptr, ::GetLastError(), 0,
-      reinterpret_cast<LPSTR>(&get_last_error_message),
-      (std::numeric_limits<DWORD>::max)(), nullptr);
-
-  if (get_last_error_message_length == 0) {
-    return "unknown error";
-  }
-
-  std::string_view message(
-      get_last_error_message,
-      static_cast<std::size_t>(get_last_error_message_length));
-
-  message = string_util::RemoveSuffixIfPresent(message, "\r\n");
-  std::string message_copy(message);
-  static_cast<void>(::LocalFree(get_last_error_message));
-  return message_copy;
-}
 
 class WindowsHandleFile {
  public:
@@ -190,12 +167,12 @@ ReadFileResult ReadFile(std::string_view path) {
   return ReadEntireFile(path.data(), file);
 }
 
-std::string GetWindowsDriveLetterPrefix() {
+std::optional<std::string> GetWindowsDriveLetterPrefix() {
   std::vector<char> buffer(MAX_PATH);
   auto result = ::GetWindowsDirectoryA(buffer.data(), buffer.size());
   buffer.resize(result);
-  return !buffer.empty() ? std::string(buffer.begin(), buffer.begin() + 3)
-                         : std::string();
+  if (buffer.empty()) return {};
+  return std::string(buffer.begin(), buffer.begin() + 3);
 }
 
 }  // namespace addon_updater

@@ -204,6 +204,7 @@
     <ClCompile Include="src\thumbnail_cache.cc" />
     <ClCompile Include="src\toc_parser.cc" />
     <ClCompile Include="src\window.cc" />
+    <ClCompile Include="src\windows_error_message.cc" />
     <ClCompile Include="src\zip_file.cc" />
   </ItemGroup>
   <ItemGroup>
@@ -225,6 +226,7 @@
     <ClInclude Include="src\thumbnail_cache.h" />
     <ClInclude Include="src\toc_parser.h" />
     <ClInclude Include="src\window.h" />
+    <ClInclude Include="src\windows_error_message.h" />
     <ClInclude Include="src\zip_file.h" />
   </ItemGroup>
   <ItemGroup>

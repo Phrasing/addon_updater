@@ -12,6 +12,7 @@
 #include "file.h"
 #include "toc_parser.h"
 #include "resource_loader.h"
+#include "windows_error_message.h"
 #include "../data/resource/resource.h"
 // clang-format on
 
@@ -20,9 +21,11 @@ constexpr auto kWindowWidth = 640;
 constexpr auto kWindowHeight = 480;
 
 constexpr auto kTukuiApiUrl = "https://www.tukui.org/api.php?addons=all";
+
 constexpr auto kCurseApiUrl =
     "https://addons-ecs.forgesvc.net/api/v2/addon/"
     "search?gameId=1&searchFilter=&pageSize=500";
+
 constexpr auto kTukuiClassicApiUrl =
     "https://www.tukui.org/api.php?classic-addons=all";
 
@@ -37,10 +40,16 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
   }
   //#endif  // !DEBUG
 
+  const auto drive_prefix = addon_updater::GetWindowsDriveLetterPrefix();
+  if (!drive_prefix.has_value()) {
+    addon_updater::WindowsErrorMessageBox(
+        "Error: failed to get windows drive prefix: " +
+        addon_updater::WindowsErrorMessage(GetLastError()));
+  }
+
   std::vector<addon_updater::WowInstallation> wow_installs{};
-  auto products =
-      addon_updater::GetProductDb(addon_updater::GetWindowsDriveLetterPrefix() +
-                                  R"(ProgramData\Battle.net\Agent\product.db)");
+  auto products = addon_updater::GetProductDb(
+      *drive_prefix + R"(ProgramData\Battle.net\Agent\product.db)");
 
   if (products != std::nullopt) {
     GetWowInstallations((products.value()), &wow_installs);
@@ -52,47 +61,49 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
       resource.has_value()) {
     if (!addon_updater::DeserializeAddonSlugs(
             reinterpret_cast<const char*>(resource->data), &addon_slugs)) {
-      std::fprintf(stderr, "Error: failed to deserialize addon slugs.\n");
-      system("pause");
+      addon_updater::WindowsErrorMessageBox(
+          "Error: failed to deserialize addon slugs.");
       return 1;
     }
   } else {
-    std::fprintf(stderr, "Error: failed to get addon slugs resource.\n");
+    addon_updater::WindowsErrorMessageBox(
+        "Error: failed to get addon slugs resource.");
+    return 1;
   }
 
   boost::asio::thread_pool thd_pool(std::thread::hardware_concurrency());
 
   auto window = addon_updater::Window("Test", {kWindowWidth, kWindowHeight});
-  auto gui = addon_updater::Gui(&thd_pool);
+  auto gui = addon_updater::Gui(thd_pool);
 
   addon_updater::Addons addons{};
 
   auto curse_client =
       addon_updater::ClientFactory::GetInstance().NewAsyncClient();
 
-  curse_client->Get(
-      kCurseApiUrl, [&](const beast::error_code& ec, std::string_view result) {
-        if (!addon_updater::DeserializeAddons(
-                result, addon_updater::AddonType::kCurse,
-                addon_updater::AddonFlavor::kRetail, &addons)) {
-          std::fprintf(stderr, "Error: failed to deserialize curse addons.\n");
-          system("pause");
-        }
-      });
+  curse_client->Get(kCurseApiUrl,
+                    [&](const beast::error_code& ec, std::string_view result) {
+                      if (!addon_updater::DeserializeAddons(
+                              result, addon_updater::AddonType::kCurse,
+                              addon_updater::AddonFlavor::kRetail, &addons)) {
+                        addon_updater::WindowsErrorMessageBox(
+                            "Error: failed to deserialize curse addons.");
+                      }
+                    });
 
   auto tukui_client =
       addon_updater::ClientFactory::GetInstance().NewAsyncClient();
-  tukui_client->Get(kTukuiApiUrl, [&](const beast::error_code& ec,
-                                      std::string_view result) {
-    if (!addon_updater::DeserializeAddons(
-            result, addon_updater::AddonType::kTukui,
-            addon_updater::AddonFlavor::kRetail, &addons)) {
-      std::fprintf(stderr, "Error: failed to deserialize tukui   addons.\n");
-      system("pause");
-    }
-  });
+  tukui_client->Get(kTukuiApiUrl,
+                    [&](const beast::error_code& ec, std::string_view result) {
+                      if (!addon_updater::DeserializeAddons(
+                              result, addon_updater::AddonType::kTukui,
+                              addon_updater::AddonFlavor::kRetail, &addons)) {
+                        addon_updater::WindowsErrorMessageBox(
+                            "Error: failed to deserialize tukui addons.");
+                      }
+                    });
 
-  auto tukui_classic_client =
+  const auto tukui_classic_client =
       addon_updater::ClientFactory::GetInstance().NewAsyncClient();
   tukui_classic_client->Get(
       kTukuiClassicApiUrl,
@@ -100,9 +111,8 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
         if (!addon_updater::DeserializeAddons(
                 result, addon_updater::AddonType::kTukui,
                 addon_updater::AddonFlavor::kClassic, &addons)) {
-          std::fprintf(
-              stderr, "Error: failed to deserialize classic tukui   addons.\n");
-          system("pause");
+          addon_updater::WindowsErrorMessageBox(
+              "Error: failed to deserialize classic tukui addons.");
         }
       });
 

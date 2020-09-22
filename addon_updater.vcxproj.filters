@@ -19,6 +19,7 @@
     <ClCompile Include="src\toc_parser.cc" />
     <ClCompile Include="src\resource_loader.cc" />
     <ClCompile Include="src\zip_file.cc" />
+    <ClCompile Include="src\windows_error_message.cc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.h" />
@@ -42,6 +43,7 @@
       <Filter>resource</Filter>
     </ClInclude>
     <ClInclude Include="src\zip_file.h" />
+    <ClInclude Include="src\windows_error_message.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\rapidjson_util.inl" />

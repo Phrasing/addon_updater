@@ -21,8 +21,8 @@ AsyncHttpClient::AsyncHttpClient(const net::any_io_executor& ex,
     : resolver_(ex),
       stream_(ex, ctx),
       bytes_read_(0),
-      content_size_(0),
-      verbose_enabled_(false) {
+      content_size_(0)
+      {
   res_.emplace();
   (*res_).body_limit(std::numeric_limits<std::uint64_t>::max());
 }
@@ -89,7 +89,7 @@ void AsyncHttpClient::Verbose(bool enable) { verbose_enabled_ = enable; }
 void AsyncHttpClient::Resolve(beast::error_code ec,
                               const tcp::resolver::results_type& results) {
   if (ec) {
-    CallbackError(ec);
+    this->Callback(ec, RequestState::kStateError);
     if (verbose_enabled_) DumpError(ec);
     return;
   }
@@ -100,14 +100,16 @@ void AsyncHttpClient::Resolve(beast::error_code ec,
       beast::bind_front_handler(&AsyncHttpClient::Connect, shared_from_this()));
 }
 
-void AsyncHttpClient::Connect(boost::system::error_code ec,
+void AsyncHttpClient::Connect(beast::error_code ec,
                               tcp::resolver::results_type::endpoint_type) {
   if (ec) {
-    CallbackError(ec);
+    this->Callback(ec, RequestState::kStateError);
     if (verbose_enabled_) DumpError(ec);
     return;
   }
 
+  tcp::no_delay option(true);
+  stream_.next_layer().socket().set_option(option);
   stream_.async_handshake(boost::asio::ssl::stream_base::client,
                           beast::bind_front_handler(&AsyncHttpClient::Handshake,
                                                     shared_from_this()));
@@ -115,7 +117,7 @@ void AsyncHttpClient::Connect(boost::system::error_code ec,
 
 void AsyncHttpClient::Handshake(beast::error_code ec) {
   if (ec) {
-    CallbackError(ec);
+    this->Callback(ec, RequestState::kStateError);
     if (verbose_enabled_) DumpError(ec);
     return;
   }
@@ -128,7 +130,7 @@ void AsyncHttpClient::Handshake(beast::error_code ec) {
 void AsyncHttpClient::Write(beast::error_code ec,
                             std::size_t bytes_transferred) {
   if (ec) {
-    CallbackError(ec);
+    this->Callback(ec, RequestState::kStateError);
     if (verbose_enabled_) DumpError(ec);
     return;
   }
@@ -143,33 +145,21 @@ void AsyncHttpClient::Write(beast::error_code ec,
 void AsyncHttpClient::Read(beast::error_code ec,
                            std::size_t bytes_transferred) {
   if (!res_.has_value()) return;
-  auto percent = static_cast<uint32_t>((bytes_read_ += bytes_transferred) *
-                                       (100.0F / content_size_));
+
+  auto progress = static_cast<uint32_t>((bytes_read_ += bytes_transferred) *
+                                        (100.0F / content_size_));
 
   if (content_size_ > 0) {
     if (ec == boost::asio::error::eof) {
-      percent = 100;
+      progress = 100;
     }
   }
 
   if (!res_->is_done()) {
-    if (!download_callback_) {
-      response_ += res_->get().body();
-    } else {
-      download_callback_(ec,
-                         {content_size_, bytes_transferred, percent,
-                          RequestState::kStatePending},
-                         res_->get().body());
-    }
+    if (!this->Callback(ec, RequestState::kStatePending, bytes_transferred,
+                        progress))
+      goto shutdown;
 
-    if (progress_callback_) {
-      if (!progress_callback_({content_size_, bytes_transferred, percent,
-                               RequestState::kStatePending})) {
-        goto shutdown;
-      }
-    }
-
-    // MUST RELEASE BEFORE CALLING "async_read_some"
     res_->release();
     http::async_read_some(
         stream_, buffer_, *res_,
@@ -177,26 +167,16 @@ void AsyncHttpClient::Read(beast::error_code ec,
 
   } else {
   shutdown:
-    response_ += res_->get().body();
     stream_.async_shutdown(beast::bind_front_handler(&AsyncHttpClient::Shutdown,
                                                      shared_from_this()));
 
     if (ec && ec != boost::system::errc::not_connected) {
-      this->CallbackError(ec);
+      this->Callback(ec, RequestState::kStateError, 0, 0);
     } else {
-      if (request_callback_) {
-        request_callback_(ec, response_);
-      } else if (download_callback_) {
-        download_callback_(ec,
-                           {content_size_, bytes_transferred, percent,
-                            RequestState::kStateFinish},
-                           res_->get().body());
-      }
-      if (progress_callback_) {
-        progress_callback_({content_size_, bytes_transferred, percent,
-                            RequestState::kStateFinish});
-      }
+      this->Callback(ec, RequestState::kStateFinish, bytes_transferred,
+                     progress);
     }
+
     request_done_ = true;
   }
 }
@@ -206,21 +186,19 @@ void AsyncHttpClient::ReadHeader(beast::error_code ec,
   boost::ignore_unused(bytes_transferred);
 
   if (ec) {
-    CallbackError(ec);
+    this->Callback(ec, RequestState::kStateError);
     if (verbose_enabled_) DumpError(ec);
     return;
   }
 
-  if ((*res_).content_length().is_initialized()) {
-    content_size_ = (*res_).content_length().value();
+  if (res_->content_length().is_initialized()) {
+    content_size_ = res_->content_length().value();
   }
 
-  if (request_callback_) {
-    response_ += res_->get().body();
-  }
+  this->Callback(ec, RequestState::kStatePending, bytes_transferred, 0);
 
   if (verbose_enabled_) {
-    std::cout << "\n[HEADER]\n" << (*res_).get().base() << std::endl;
+    std::cout << "\n[HEADER]\n" << res_->get().base() << std::endl;
   }
 
   http::async_read_some(
@@ -234,16 +212,31 @@ void AsyncHttpClient::Shutdown(beast::error_code ec) {
   }
 }
 
-void AsyncHttpClient::CallbackError(const beast::error_code& ec) {
+bool AsyncHttpClient::Callback(const beast::error_code& ec,
+                               RequestState request_state,
+                               size_t bytes_transferred, uint32_t progress) {
   if (request_callback_) {
-    request_callback_(ec, "");
-  } else if (download_callback_) {
-    download_callback_(ec, {content_size_, 0, 0, RequestState::kStateError},
-                       "");
+    if (request_state == RequestState::kStatePending) {
+      response_ += std::move(res_->get().body());
+    } else if (request_state == RequestState::kStateFinish) {
+      response_ += std::move(res_->get().body());
+      request_callback_(ec, response_);
+    }
   }
+
+  if (download_callback_) {
+    download_callback_(
+        ec, {content_size_, bytes_transferred, progress, request_state},
+        std::move(res_->get().body()));
+  }
+
   if (progress_callback_) {
-    progress_callback_({content_size_, 0, 0, RequestState::kStateError});
+    if (!progress_callback_(
+            {content_size_, bytes_transferred, progress, request_state}))
+      return false;
   }
+
+  return true;
 }
 
 ClientFactory::ClientFactory() : work_(ioc_), thd_pool_(4) {
@@ -286,15 +279,8 @@ HttpResponse SyncHttpClient::Get(std::string_view url, const Headers& headers) {
     return {"", ec};
   }
 
-  try {
-    beast::get_lowest_layer(stream_).connect(
-        std::move(resolver_.resolve(host, kSslPort)));
-  } catch (boost::exception& ec) {
-    std::fprintf(stderr,
-                 "Error: Failed to resolve hostname.\nCheck your internet "
-                 "connection.\n");
-    return HttpResponse();
-  }
+  beast::get_lowest_layer(stream_).connect(
+      std::move(resolver_.resolve(host, kSslPort)));
 
   tcp::no_delay option(true);
   stream_.next_layer().socket().set_option(option);

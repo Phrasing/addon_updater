@@ -7,7 +7,6 @@
 // clang-format on
 
 namespace ImGui {
-
 bool BufferingBar(const char* label, float value, const ImVec2& size_arg) {
   auto* window = GetCurrentWindow();
   if (window->SkipItems) return false;
@@ -34,9 +33,11 @@ bool BufferingBar(const char* label, float value, const ImVec2& size_arg) {
   window->DrawList->AddRectFilled(bb.Min, ImVec2(pos.x + start, bb.Max.y), bg);
   window->DrawList->AddRectFilled(
       bb.Min, ImVec2(pos.x + start * value, bb.Max.y), fg_col);
+
+  return true;
 }
 
-bool Spinner(const char* label, float radius, int thickness) {
+bool Spinner(const char* label, const ImVec2& radius, int thickness) {
   auto* window = ImGui::GetCurrentWindow();
   if (window->SkipItems) return false;
 
@@ -44,10 +45,11 @@ bool Spinner(const char* label, float radius, int thickness) {
   const auto& style = ctx.Style;
   const auto id = window->GetID(label);
 
-  ImVec2 pos = window->DC.CursorPos;
-  ImVec2 size((radius)*2, (radius + style.FramePadding.y) * 2);
+  const auto pos = window->DC.CursorPos;
+  const auto size =
+      ImVec2((radius.x) * 2, (radius.y + style.FramePadding.y) * 2);
 
-  const ImRect bb(pos, ImVec2(pos.x + size.x, pos.y + size.y));
+  const auto bb = ImRect(pos, ImVec2(pos.x + size.x, pos.y + size.y));
   ItemSize(bb, style.FramePadding.y);
   if (!ItemAdd(bb, id)) return false;
 
@@ -63,24 +65,24 @@ bool Spinner(const char* label, float radius, int thickness) {
                       static_cast<float>(num_segments);
 
   const ImVec2 centre =
-      ImVec2(pos.x + radius, pos.y + radius + style.FramePadding.y);
+      ImVec2(pos.x + radius.x, pos.y + radius.y + style.FramePadding.y);
 
   for (auto i = 0; i < num_segments; i++) {
     const float a =
         a_min + (static_cast<float>(i) / static_cast<float>(num_segments)) *
                     (a_max - a_min);
     window->DrawList->PathLineTo(
-        ImVec2(centre.x + ImCos(a + ctx.Time * 8) * radius,
-               centre.y + ImSin(a + ctx.Time * 8) * radius));
+        ImVec2(centre.x + ImCos(a + ctx.Time * 8) * radius.x,
+               centre.y + ImSin(a + ctx.Time * 8) * radius.y));
   }
 
   window->DrawList->PathStroke(ImGui::GetColorU32(ImGuiCol_ButtonHovered),
                                false, thickness);
+  return true;
 }
 }
 
 namespace addon_updater {
-
 namespace {
 
 constexpr auto kThumbnailWidth = 32;
@@ -98,15 +100,16 @@ void RenderLoadingScreen(const WindowSize& window_size) {
                ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
                    ImGuiWindowFlags_NoTitleBar);
   {
-    const ImU32 col = ImGui::GetColorU32(ImGuiCol_ButtonHovered);
-    ImGui::Spinner("##loading_spinner", 100, 50);
+    const auto spinner_size = ImVec2(100, 100);
+    ImGui::SetCursorPos((ImGui::GetWindowSize() - spinner_size) * 0.35F);
+    ImGui::Spinner("##loading_spinner", spinner_size, 25);
   }
   ImGui::End();
 }
 
 }  // namespace
 
-Gui::Gui(boost::asio::thread_pool* thd_pool) : thd_pool_(thd_pool) {}
+Gui::Gui(boost::asio::thread_pool& thd_pool) : thd_pool_(&thd_pool) {}
 
 void Gui::DrawGui(Addons& addons, std::vector<InstalledAddon>& installed_addons,
                   const WindowSize& window_size, bool is_loading) {
@@ -157,9 +160,9 @@ void Gui::RenderBrowseTab(std::vector<addon_updater::Addon>& addons) {
         ClientFactory::GetInstance().NewAsyncClient()->Download(
             addon.download_url,
             [&](const beast::error_code& ec, std::string_view response) {
-              auto result = WriteFile(
-                  R"(C:\Users\User\Desktop\)" + addon.readable_version + ".zip",
-                  response, true);
+              auto result =
+                  WriteFile(R"(C:\Users\User\Desktop\)" + addon.name + ".zip",
+                            response, true);
             },
             [&](const DownloadStatus& download_status) {
               if (addon.download_status.state == RequestState::kStateCancel) {
@@ -179,7 +182,8 @@ void Gui::RenderBrowseTab(std::vector<addon_updater::Addon>& addons) {
                           ImVec2(200, 6));
       ImGui::SameLine();
       if (ImGui::Button(
-              (std::string("Cancel ##") + addon.readable_version).c_str())) {
+              (std::string(ICON_FA_STOP_CIRCLE "##") + addon.readable_version)
+                  .c_str())) {
         addon.download_status.state = RequestState::kStateCancel;
       }
     }
@@ -245,7 +249,8 @@ void Gui::RenderInstalledTab(std::vector<InstalledAddon>& addons) {
         !addon.up_to_date) {
       ImGui::SameLine();
       if (ImGui::Button(
-              (std::string("Update ##") + addon.readable_version).c_str())) {
+              (std::string(ICON_FA_DOWNLOAD "##") + addon.readable_version)
+                  .c_str())) {
         addon.download_status.state = RequestState::kStatePending;
         ClientFactory::GetInstance().NewAsyncClient()->Download(
             addon.download_url,

@@ -8,7 +8,7 @@
 namespace addon_updater {
 class Gui {
  public:
-  Gui(boost::asio::thread_pool* thd_pool);
+  Gui( boost::asio::thread_pool& thd_pool);
   ~Gui() = default;
 
   Gui(const Gui&) = delete;
