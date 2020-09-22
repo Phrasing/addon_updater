@@ -109,16 +109,20 @@ void RenderLoadingScreen(const WindowSize& window_size) {
 Gui::Gui(boost::asio::thread_pool* thd_pool) : thd_pool_(thd_pool) {}
 
 void Gui::DrawGui(Addons& addons, std::vector<InstalledAddon>& installed_addons,
-                  const WindowSize& window_size) {
+                  const WindowSize& window_size, bool is_loading) {
   ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Once);
   ImGui::SetNextWindowSize(ImVec2(window_size.width, window_size.height));
-  // RenderLoadingScreen(window_size);
-  // return;
+
+  if (is_loading) {
+    RenderLoadingScreen(window_size);
+    return;
+  }
+
   ImGui::Begin("##MAIN", nullptr,
                ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
   {
     if (ImGui::BeginTabBar("##MAIN_TAB_BAR")) {
-      if (ImGui::BeginTabItem("Browse")) {
+      if (ImGui::BeginTabItem("Browse  " ICON_FA_SEARCH)) {
         this->RenderBrowseTab(addons);
         ImGui::EndTabItem();
       }
@@ -147,7 +151,8 @@ void Gui::RenderBrowseTab(std::vector<addon_updater::Addon>& addons) {
         addon.download_status.state != RequestState::kStateFinish) {
       ImGui::SameLine();
       if (ImGui::Button(
-              (std::string("Download ##") + addon.readable_version).c_str())) {
+              (std::string(ICON_FA_DOWNLOAD "##") + addon.readable_version)
+                  .c_str())) {
         addon.download_status.state = RequestState::kStatePending;
         ClientFactory::GetInstance().NewAsyncClient()->Download(
             addon.download_url,

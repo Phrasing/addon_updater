@@ -3,6 +3,8 @@
 #pragma once
 // clang-format off
 
+#include <IconsFontAwesome5.h>
+
 #define MINIZ_HAS_64BIT_REGISTERS 1
 #include <miniz.h>
 

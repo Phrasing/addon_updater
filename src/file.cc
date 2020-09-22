@@ -95,8 +95,7 @@ bool WriteFileBuffered(WindowsHandleFile &file, std::string_view data,
 
     total_bytes += *bytes_written;
 
-    if (static_cast<size_t>(*bytes_written) >= data.size())
-      break;
+    if (static_cast<size_t>(*bytes_written) >= data.size()) break;
   }
 
   return (total_bytes > 0);
@@ -189,6 +188,14 @@ ReadFileResult ReadFile(std::string_view path) {
   }
   WindowsHandleFile file(handle);
   return ReadEntireFile(path.data(), file);
+}
+
+std::string GetWindowsDriveLetterPrefix() {
+  std::vector<char> buffer(MAX_PATH);
+  auto result = ::GetWindowsDirectoryA(buffer.data(), buffer.size());
+  buffer.resize(result);
+  return !buffer.empty() ? std::string(buffer.begin(), buffer.begin() + 3)
+                         : std::string();
 }
 
 }  // namespace addon_updater

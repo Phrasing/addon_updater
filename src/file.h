@@ -11,6 +11,8 @@ struct ReadFileResult {
   static ReadFileResult Failure(const std::string &error);
 };
 
+std::string GetWindowsDriveLetterPrefix();
+
 ReadFileResult ReadFile(std::string_view path);
 bool WriteFile(std::string_view path, std::string_view buffer,
                bool truncate = true);

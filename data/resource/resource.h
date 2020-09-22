@@ -5,7 +5,8 @@
 // Microsoft Visual C++ generated include file.
 //
 #define ADDON_SLUGS_RESOURCE 101
-#define ARCHIVO_NARROW_RESOURCE 102
+#define DEFAULT_FONT_RESOURCE 102
+#define FONT_AWESOME_RESOURCE 103
 
 
 #endif  // !ADDON_UPDATER_RESOURCE_H

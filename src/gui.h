@@ -15,7 +15,7 @@ class Gui {
   Gui& operator=(const Gui&) = delete;
 
   void DrawGui(Addons& addons, std::vector<InstalledAddon>& installed_addons,
-               const WindowSize& window_size);
+               const WindowSize& window_size, bool is_loading);
 
  private:
   boost::asio::thread_pool* thd_pool_;

@@ -40,7 +40,8 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #endif  // APSTUDIO_INVOKED
 
         ADDON_SLUGS_RESOURCE TEXT "..\\slugs.json"
-        ARCHIVO_NARROW_RESOURCE BINARY "..\\fonts\\ArchivoNarrow-Medium.ttf"
+        DEFAULT_FONT_RESOURCE BINARY "..\\fonts\\ArchivoNarrow-Medium.ttf"
+        FONT_AWESOME_RESOURCE BINARY "..\\fonts\\fontawesome-webfont.ttf"
 
 
 #endif  // English (United States) resources

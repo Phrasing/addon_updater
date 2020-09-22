@@ -55,12 +55,6 @@ void AsyncHttpClient::GetImpl(std::string_view url, const Headers& headers) {
     std::cout << "\n[REQUEST]\n" << req_.base() << std::endl;
   }
 
-  // stream_.next_layer()
-  //  .  // bytes per second
-
-  //  stream_.next_layer().rate_policy().read_limit(1000000 / 2);
-  // stream_.next_layer().rate_policy().write_limit(1000000 / 2);
-
   resolver_.async_resolve(
       host, kSslPort,
       beast::bind_front_handler(&AsyncHttpClient::Resolve, shared_from_this()));
@@ -106,18 +100,14 @@ void AsyncHttpClient::Resolve(beast::error_code ec,
       beast::bind_front_handler(&AsyncHttpClient::Connect, shared_from_this()));
 }
 
-void AsyncHttpClient::Connect(
-    beast::error_code ec,
-    const tcp::resolver::results_type::endpoint_type& endpoint) {
-  boost::ignore_unused(endpoint);
+void AsyncHttpClient::Connect(boost::system::error_code ec,
+                              tcp::resolver::results_type::endpoint_type) {
   if (ec) {
     CallbackError(ec);
     if (verbose_enabled_) DumpError(ec);
     return;
   }
 
-  tcp::no_delay option(false);
-  stream_.next_layer().socket().set_option(option);
   stream_.async_handshake(boost::asio::ssl::stream_base::client,
                           beast::bind_front_handler(&AsyncHttpClient::Handshake,
                                                     shared_from_this()));
@@ -153,7 +143,6 @@ void AsyncHttpClient::Write(beast::error_code ec,
 void AsyncHttpClient::Read(beast::error_code ec,
                            std::size_t bytes_transferred) {
   if (!res_.has_value()) return;
-
   auto percent = static_cast<uint32_t>((bytes_read_ += bytes_transferred) *
                                        (100.0F / content_size_));
 
@@ -163,26 +152,14 @@ void AsyncHttpClient::Read(beast::error_code ec,
     }
   }
 
-  auto callback = [this, percent, ec, bytes_transferred](RequestState state) {
-    if (request_callback_) {
-      request_callback_(ec, response_);
-    } else if (download_callback_) {
-      download_callback_(ec, {content_size_, bytes_transferred, percent, state},
-                         (*res_).get().body());
-    }
-    if (progress_callback_) {
-      progress_callback_({content_size_, bytes_transferred, percent, state});
-    }
-  };
-
-  if (!(*res_).is_done()) {
+  if (!res_->is_done()) {
     if (!download_callback_) {
-      response_ += std::move((*res_).get().body());
+      response_ += res_->get().body();
     } else {
       download_callback_(ec,
                          {content_size_, bytes_transferred, percent,
                           RequestState::kStatePending},
-                         (*res_).get().body());
+                         res_->get().body());
     }
 
     if (progress_callback_) {
@@ -192,24 +169,36 @@ void AsyncHttpClient::Read(beast::error_code ec,
       }
     }
 
+    // MUST RELEASE BEFORE CALLING "async_read_some"
+    res_->release();
     http::async_read_some(
-        stream_, buffer_, (*res_),
+        stream_, buffer_, *res_,
         beast::bind_front_handler(&AsyncHttpClient::Read, shared_from_this()));
 
   } else {
-    response_ += std::move((*res_).get().body());
-
   shutdown:
+    response_ += res_->get().body();
     stream_.async_shutdown(beast::bind_front_handler(&AsyncHttpClient::Shutdown,
                                                      shared_from_this()));
 
     if (ec && ec != boost::system::errc::not_connected) {
-      callback(RequestState::kStateError);
+      this->CallbackError(ec);
     } else {
-      callback(RequestState::kStateFinish);
+      if (request_callback_) {
+        request_callback_(ec, response_);
+      } else if (download_callback_) {
+        download_callback_(ec,
+                           {content_size_, bytes_transferred, percent,
+                            RequestState::kStateFinish},
+                           res_->get().body());
+      }
+      if (progress_callback_) {
+        progress_callback_({content_size_, bytes_transferred, percent,
+                            RequestState::kStateFinish});
+      }
     }
+    request_done_ = true;
   }
-  (*res_).release();
 }
 
 void AsyncHttpClient::ReadHeader(beast::error_code ec,
@@ -226,12 +215,16 @@ void AsyncHttpClient::ReadHeader(beast::error_code ec,
     content_size_ = (*res_).content_length().value();
   }
 
+  if (request_callback_) {
+    response_ += res_->get().body();
+  }
+
   if (verbose_enabled_) {
     std::cout << "\n[HEADER]\n" << (*res_).get().base() << std::endl;
   }
 
   http::async_read_some(
-      stream_, buffer_, (*res_),
+      stream_, buffer_, *res_,
       beast::bind_front_handler(&AsyncHttpClient::Read, shared_from_this()));
 }
 

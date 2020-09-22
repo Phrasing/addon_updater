@@ -34,9 +34,8 @@ struct DownloadStatus {
   RequestState state = RequestState::kStateNone;
 };
 
-using LimitedTcpStream =
-    beast::basic_stream<net::ip::tcp, net::any_io_executor,
-                        beast::simple_rate_policy>;
+using LimitedTcpStream = beast::basic_stream<net::ip::tcp, net::any_io_executor,
+                                             beast::simple_rate_policy>;
 
 using RequestCallback =
     std::function<void(const beast::error_code&, std::string_view)>;
@@ -71,11 +70,13 @@ class AsyncHttpClient : public std::enable_shared_from_this<AsyncHttpClient> {
 
   void Verbose(bool enable);
 
+  bool Finished() const { return request_done_; }
+
  private:
   void Resolve(beast::error_code ec,
                const tcp::resolver::results_type& results);
-  void Connect(beast::error_code ec,
-               const tcp::resolver::results_type::endpoint_type& endpoint);
+  void Connect(boost::system::error_code ec,
+               tcp::resolver::results_type::endpoint_type);
   void Handshake(beast::error_code ec);
   void Write(beast::error_code ec, std::size_t bytes_transferred);
   void Read(beast::error_code ec, std::size_t bytes_transferred);
@@ -99,6 +100,7 @@ class AsyncHttpClient : public std::enable_shared_from_this<AsyncHttpClient> {
   size_t content_size_;
   size_t bytes_read_;
 
+  bool request_done_ = false;
   bool verbose_enabled_;
 };
 
