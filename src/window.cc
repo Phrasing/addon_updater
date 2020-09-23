@@ -2,6 +2,7 @@
 #include "pch.h"
 #include "window.h"
 #include "resource_loader.h"
+#include "windows_error_message.h"
 #include "../data/resource/resource.h"
 
 #include <windowsx.h>
@@ -51,7 +52,7 @@ std::function<Ret(Params...)>
 Window::Window(std::string_view window_title, const WindowSize& window_size)
     : glfw_ctx_(std::make_shared<GlfwContext>()) {
   glfwInit();
-  
+
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
   glfwWindowHint(GLFW_DECORATED, GL_FALSE);
@@ -75,7 +76,7 @@ Window::Window(std::string_view window_title, const WindowSize& window_size)
   glfwMakeContextCurrent(glfw_ctx_->window);
   glfwSwapInterval(1);
 
-  static_cast<void>(glewInit());
+  glewInit();
 
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
@@ -83,28 +84,30 @@ Window::Window(std::string_view window_title, const WindowSize& window_size)
   ImGuiIO& io = ImGui::GetIO();
   io.IniFilename = nullptr;
 
-  if (auto default_font = addon_updater::GetResource(
+  if (const auto default_font = addon_updater::GetResource(
           DEFAULT_FONT_RESOURCE, addon_updater::ResourceType::kBinary);
-      default_font != std::nullopt) {
+      default_font.has_value()) {
     ImFontConfig config{};
-    config.FontDataOwnedByAtlas = true;
+    config.FontDataOwnedByAtlas = false;
     io.Fonts->AddFontFromMemoryTTF(default_font->data, default_font->size, 20.F,
-                                   &config, io.Fonts->GetGlyphRangesDefault());
+                                   &config);
   }
 
-  if (auto font_awesome = addon_updater::GetResource(
+  if (const auto font_awesome = addon_updater::GetResource(
           FONT_AWESOME_RESOURCE, addon_updater::ResourceType::kBinary);
-      font_awesome != std::nullopt) {
+      font_awesome.has_value()) {
     ImFontConfig config{};
     config.MergeMode = true;
-    config.FontDataOwnedByAtlas = true;
-    const ImWchar icon_ranges[] = {ICON_MIN_FA, ICON_MAX_FA, 0};
-    io.Fonts->AddFontFromMemoryTTF(font_awesome->data, font_awesome->size, 18.F,
+    config.FontDataOwnedByAtlas = false;
+    static const ImWchar icon_ranges[] = {ICON_MIN_FA, ICON_MAX_FA, 0};
+    io.Fonts->AddFontFromMemoryTTF(font_awesome->data, font_awesome->size, 17.F,
                                    &config, icon_ranges);
   }
 
   unsigned int flags = ImGuiFreeType::RasterizerFlags::NoHinting;
-  ImGuiFreeType::BuildFontAtlas(io.Fonts, flags);
+  if (!ImGuiFreeType::BuildFontAtlas(io.Fonts, flags)) {
+    addon_updater::WindowsErrorMessageBox("Error: failed to build font atlas.");
+  }
 
   ImGui::StyleColorsDark();
 
@@ -139,7 +142,7 @@ void Window::Render(const RenderCallback& draw_callback) {
                  glfw_ctx_->clear_color.z, glfw_ctx_->clear_color.w);
 
     glClear(GL_COLOR_BUFFER_BIT);
-    ImGui_ImplOpenGL3_RenderDrawData(std::move(ImGui::GetDrawData()));
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
     glfwSwapBuffers(glfw_ctx_->window);
   }

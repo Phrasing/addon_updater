@@ -54,7 +54,7 @@ std::optional<ProductDb> GetProductDb(std::string_view product_db_path) {
 }
 
 void GetWowInstallations(const ProductDb& product_db,
-                         std::vector<WowInstallation>* detected_installations) {
+                         WowInstallations* detected_installations) {
   for (const auto& installs : product_db.product_installs()) {
     const auto& settings = installs.settings();
     if (installs.product_code().find("wow") != std::string::npos) {

@@ -14,8 +14,13 @@ struct ReadFileResult {
 std::optional<std::string> GetWindowsDriveLetterPrefix();
 
 ReadFileResult ReadFile(std::string_view path);
+
 bool WriteFile(std::string_view path, std::string_view buffer,
                bool truncate = true);
+
+bool OsFileExists(std::string_view file_name);
+bool OsDirectoryExists(std::string_view directory_name);
+
 
 }  // namespace addon_updater
 

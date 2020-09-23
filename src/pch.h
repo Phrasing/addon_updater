@@ -21,8 +21,9 @@
 #include <stbi_image_write.h>
 
 #define STB_IMAGE_IMPLEMENTATION
-#define STBI_FAILURE_USERMSG
 #define STB_IMAGE_STATIC
+#define STBI_ONLY_JPEG
+#define STBI_ONLY_PNG
 #include <stb_image.h>
 
 #define STB_IMAGE_RESIZE_IMPLEMENTATION 
@@ -91,6 +92,7 @@ namespace rj = rapidjson;
 #include "string_util.h"
 #include "singleton.h"
 #include "products.pb.h"
+#include "defer.h"
 
 // clang-format off
 

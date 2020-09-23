@@ -48,10 +48,6 @@ class WindowsHandleFile {
     return static_cast<int>(write_size);
   }
 
-  static std::string GetLastErrorMessage() {
-    return WindowsErrorMessage(::GetLastError());
-  }
-
  private:
   HANDLE handle_;
 };
@@ -64,7 +60,7 @@ bool WriteFileBuffered(WindowsHandleFile &file, std::string_view data,
   for (;;) {
     const auto bytes_written = file.Write(data.data() + total_bytes,
                                           data.size() - total_bytes, truncate);
-    if (!bytes_written.has_value() || !*bytes_written) {
+    if (!bytes_written.has_value() || *bytes_written == 0) {
       std::fprintf(stderr, "Error: failed to write to file\n%s\n",
                    WindowsErrorMessage(GetLastError()).c_str());
       return false;
@@ -89,8 +85,8 @@ void ReadFileBuffered(WindowsHandleFile &file, int buffer_size,
         file.Read(&out->content[size_before], buffer_size);
 
     if (!read_size.has_value()) {
-      out->error = "Failed to read from file: " +
-                   WindowsHandleFile::GetLastErrorMessage();
+      out->error =
+          "Failed to read from file: " + WindowsErrorMessage(::GetLastError());
       return;
     }
     out->content.resize(size_before + *read_size);
@@ -108,7 +104,7 @@ ReadFileResult ReadFileWithExpectedSize(WindowsHandleFile &file, int file_size,
   const auto read_size = file.Read(result.content.data(), size_to_read);
   if (!read_size.has_value()) {
     result.error =
-        "Failed to read from file: " + WindowsHandleFile::GetLastErrorMessage();
+        "Failed to read from file: " + WindowsErrorMessage(::GetLastError());
     return result;
   }
   result.content.resize(*read_size);
@@ -132,6 +128,7 @@ ReadFileResult ReadEntireFile(const char *path, WindowsHandleFile &file) {
     return ReadFileResult::Failure(std::string("failed to get size of file ") +
                                    path + ": " + WindowsErrorMessage(error));
   }
+
   assert(file_size.QuadPart <= std::numeric_limits<std::int64_t>::max());
 
   return ReadFileWithExpectedSize(file, static_cast<int>(file_size.QuadPart),
@@ -150,6 +147,24 @@ bool WriteFile(std::string_view path, std::string_view buffer, bool truncate) {
 
   WindowsHandleFile file(handle);
   return WriteFileBuffered(file, buffer, truncate);
+}
+
+bool OsFileExists(std::string_view file_name) {
+  const auto attrib = ::GetFileAttributesA(file_name.data());
+
+  if (attrib == INVALID_FILE_ATTRIBUTES) return false;
+  if (attrib & FILE_ATTRIBUTE_DIRECTORY) return false;
+
+  return true;
+}
+
+bool OsDirectoryExists(std::string_view directory_name) {
+  const auto attrib = ::GetFileAttributesA(directory_name.data());
+
+  if (attrib == INVALID_FILE_ATTRIBUTES) return false;
+  if (attrib & FILE_ATTRIBUTE_DIRECTORY) return true;
+
+  return true;
 }
 
 ReadFileResult ReadFile(std::string_view path) {

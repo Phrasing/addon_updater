@@ -1,5 +1,6 @@
 // clang-format off
 #include "pch.h"
+#include "file.h"
 #include "zip_file.h"
 // clang-format on
 
@@ -13,42 +14,40 @@ ZipFile::~ZipFile() { Reset(); }
 
 bool ZipFile::Unzip(std::string& path,
                     std::unordered_set<std::string>* install_paths) {
-  const auto file_count = Count();
-  auto* const archive = GetArchive();
+  if (path.empty()) return false;
 
-  if (path[path.size()] != '\\') {
-    path += '\\';
-  }
+  if (path.back() != '\\') path += '\\';
 
-  for (auto i = 0; i < file_count; i++) {
-    const auto info = GetInfo(i);
+  this->ForEach([&](const ZipInfo& zip_info) -> bool {
+    if (zip_info.is_directory) return true;
 
-    if (!info.is_directory) {
-      // path = addons folder
+    std::string full_path = path + zip_info.file_name;
 
-      std::string full_path = path + info.file_name;
+    std::string addon_path =
+        path +
+        zip_info.file_name.substr(0, zip_info.file_name.find_first_of("\\/"));
 
-      std::string addon_path =
-          path + info.file_name.substr(0, info.file_name.find_first_of("\\/"));
+    std::string relative_path =
+        full_path.substr(0, full_path.find_last_of("\\/"));
 
-      std::string relative_path =
-          full_path.substr(0, full_path.find_last_of("\\/"));
+    string_util::ReplaceAll(&full_path, R"(/)", R"(\)");
+    string_util::ReplaceAll(&addon_path, R"(/)", R"(\)");
+    string_util::ReplaceAll(&relative_path, R"(/)", R"(\)");
 
-      string_util::ReplaceAll(&full_path, R"(/)", R"(\)");
-      string_util::ReplaceAll(&addon_path, R"(/)", R"(\)");
-      string_util::ReplaceAll(&relative_path, R"(/)", R"(\)");
+    std::remove(full_path.c_str());
 
-      std::remove(full_path.c_str());
-
-      if (!std::filesystem::exists(relative_path)) {
-        std::filesystem::create_directories(relative_path);
-      }
-
-      install_paths->insert(addon_path);
-
-      mz_zip_reader_extract_to_file(archive, i, full_path.c_str(), 0);
+    if (!OsDirectoryExists(relative_path)) {
+      std::filesystem::create_directories(relative_path);
     }
-  }
+
+    install_paths->insert(addon_path);
+
+    mz_zip_reader_extract_to_file(std::move(this->GetArchive()),
+                                  zip_info.file_index, full_path.c_str(), 0);
+
+    return true;
+  });
+
   return true;
 }
 
@@ -141,5 +140,4 @@ ZipInfo ZipFile::GetInfo(const uint32_t index) {
       mz_zip_reader_is_file_a_directory(archive_.get(), stat.m_file_index);
   return zip_info;
 }
-
 }

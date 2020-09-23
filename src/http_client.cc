@@ -8,26 +8,16 @@ namespace addon_updater {
 namespace {
 constexpr auto kHttpVersion = 11;
 constexpr auto kSslPort = "443";
-
-inline void DumpError(const beast::error_code& error_code) {
-  std::cerr << __FILE__ << " : " << __LINE__ << std::endl
-            << error_code.message() << std::endl;
-}
-
 }  // namespace
 
 AsyncHttpClient::AsyncHttpClient(const net::any_io_executor& ex,
                                  ssl::context& ctx)
-    : resolver_(ex),
-      stream_(ex, ctx),
-      bytes_read_(0),
-      content_size_(0)
-      {
+    : resolver_(ex), stream_(ex, ctx), bytes_read_(0), content_size_(0) {
   res_.emplace();
-  (*res_).body_limit(std::numeric_limits<std::uint64_t>::max());
+  res_->body_limit(std::numeric_limits<size_t>::max());
 }
 
-void AsyncHttpClient::GetImpl(std::string_view url, const Headers& headers) {
+void AsyncHttpClient::GetImpl(std::string_view url) {
   const auto uri = network::uri{url.data()};
 
   const auto host = std::string{uri.host().data(), uri.host().length()};
@@ -35,8 +25,9 @@ void AsyncHttpClient::GetImpl(std::string_view url, const Headers& headers) {
   const auto query = std::string{uri.query().data(), uri.query().length()};
 
   if (!SSL_set_tlsext_host_name(stream_.native_handle(), host.c_str())) {
-    beast::error_code ec{static_cast<int>(::ERR_get_error()),
-                         net::error::get_ssl_category()};
+    this->Callback(beast::error_code{static_cast<int>(::ERR_get_error()),
+                                     net::error::get_ssl_category()},
+                   RequestState::kStateError);
     return;
   }
 
@@ -46,10 +37,7 @@ void AsyncHttpClient::GetImpl(std::string_view url, const Headers& headers) {
   req_.target(path + "?" + query);
   req_.set(http::field::host, host);
   req_.set(http::field::user_agent, BOOST_BEAST_VERSION_STRING);
-
-  for (const auto& header : headers) {
-    req_.set(http::string_to_field(header.first), header.second);
-  }
+  req_.set(http::field::proxy_connection, "Keep-Alive");
 
   if (verbose_enabled_) {
     std::cout << "\n[REQUEST]\n" << req_.base() << std::endl;
@@ -57,31 +45,29 @@ void AsyncHttpClient::GetImpl(std::string_view url, const Headers& headers) {
 
   resolver_.async_resolve(
       host, kSslPort,
-      beast::bind_front_handler(&AsyncHttpClient::Resolve, shared_from_this()));
+      beast::bind_front_handler(&AsyncHttpClient::Resolve,
+                                std::move(shared_from_this())));
 }
 
 void AsyncHttpClient::Get(std::string_view url,
-                          const RequestCallback& request_callback,
-                          const Headers& headers) {
+                          const RequestCallback& request_callback) {
   if (url.empty()) return;
   request_callback_ = request_callback;
-  GetImpl(std::move(url), headers);
+  GetImpl(std::move(url));
 }
 
 void AsyncHttpClient::Download(std::string_view url,
-                               const DownloadCallback& download_callback,
-                               const Headers& headers) {
+                               const DownloadCallback& download_callback) {
   download_callback_ = (download_callback);
-  GetImpl(std::move(url), headers);
+  GetImpl(std::move(url));
 }
 
 void AsyncHttpClient::Download(std::string_view url,
                                const RequestCallback& request_callback,
-                               const ProgressCallback& progress_callback,
-                               const Headers& headers) {
+                               const ProgressCallback& progress_callback) {
   request_callback_ = request_callback;
   progress_callback_ = progress_callback;
-  GetImpl(std::move(url), headers);
+  GetImpl(std::move(url));
 }
 
 void AsyncHttpClient::Verbose(bool enable) { verbose_enabled_ = enable; }
@@ -90,62 +76,58 @@ void AsyncHttpClient::Resolve(beast::error_code ec,
                               const tcp::resolver::results_type& results) {
   if (ec) {
     this->Callback(ec, RequestState::kStateError);
-    if (verbose_enabled_) DumpError(ec);
     return;
   }
 
   stream_.set_verify_mode(boost::asio::ssl::verify_none);
   beast::get_lowest_layer(stream_).async_connect(
-      results,
-      beast::bind_front_handler(&AsyncHttpClient::Connect, shared_from_this()));
+      results, beast::bind_front_handler(&AsyncHttpClient::Connect,
+                                         std::move(shared_from_this())));
 }
 
 void AsyncHttpClient::Connect(beast::error_code ec,
                               tcp::resolver::results_type::endpoint_type) {
   if (ec) {
     this->Callback(ec, RequestState::kStateError);
-    if (verbose_enabled_) DumpError(ec);
     return;
   }
 
-  tcp::no_delay option(true);
-  stream_.next_layer().socket().set_option(option);
-  stream_.async_handshake(boost::asio::ssl::stream_base::client,
-                          beast::bind_front_handler(&AsyncHttpClient::Handshake,
-                                                    shared_from_this()));
+  beast::get_lowest_layer(stream_).socket().set_option(
+      net::ip::tcp::no_delay{true});
+  stream_.async_handshake(
+      boost::asio::ssl::stream_base::client,
+      beast::bind_front_handler(&AsyncHttpClient::Handshake,
+                                std::move(shared_from_this())));
 }
 
 void AsyncHttpClient::Handshake(beast::error_code ec) {
   if (ec) {
     this->Callback(ec, RequestState::kStateError);
-    if (verbose_enabled_) DumpError(ec);
+
     return;
   }
 
-  http::async_write(
-      stream_, req_,
-      beast::bind_front_handler(&AsyncHttpClient::Write, shared_from_this()));
+  http::async_write(stream_, req_,
+                    beast::bind_front_handler(&AsyncHttpClient::Write,
+                                              std::move(shared_from_this())));
 }
 
 void AsyncHttpClient::Write(beast::error_code ec,
                             std::size_t bytes_transferred) {
   if (ec) {
     this->Callback(ec, RequestState::kStateError);
-    if (verbose_enabled_) DumpError(ec);
     return;
   }
 
   boost::ignore_unused(bytes_transferred);
   http::async_read_header(
-      stream_, buffer_, (*res_),
+      stream_, buffer_, *res_,
       beast::bind_front_handler(&AsyncHttpClient::ReadHeader,
-                                shared_from_this()));
+                                std::move(shared_from_this())));
 }
 
 void AsyncHttpClient::Read(beast::error_code ec,
                            std::size_t bytes_transferred) {
-  if (!res_.has_value()) return;
-
   auto progress = static_cast<uint32_t>((bytes_read_ += bytes_transferred) *
                                         (100.0F / content_size_));
 
@@ -157,8 +139,9 @@ void AsyncHttpClient::Read(beast::error_code ec,
 
   if (!res_->is_done()) {
     if (!this->Callback(ec, RequestState::kStatePending, bytes_transferred,
-                        progress))
+                        progress)) {
       goto shutdown;
+    }
 
     res_->release();
     http::async_read_some(
@@ -170,9 +153,10 @@ void AsyncHttpClient::Read(beast::error_code ec,
     stream_.async_shutdown(beast::bind_front_handler(&AsyncHttpClient::Shutdown,
                                                      shared_from_this()));
 
-    if (ec && ec != boost::system::errc::not_connected) {
+    if (ec && ec != boost::asio::error::eof) {
       this->Callback(ec, RequestState::kStateError, 0, 0);
     } else {
+      ec = {};
       this->Callback(ec, RequestState::kStateFinish, bytes_transferred,
                      progress);
     }
@@ -187,7 +171,6 @@ void AsyncHttpClient::ReadHeader(beast::error_code ec,
 
   if (ec) {
     this->Callback(ec, RequestState::kStateError);
-    if (verbose_enabled_) DumpError(ec);
     return;
   }
 
@@ -251,22 +234,20 @@ ClientFactory::~ClientFactory() {
 std::shared_ptr<AsyncHttpClient> ClientFactory::NewAsyncClient() {
   ssl::context ctx{ssl::context::tlsv12_client};
   ctx.set_verify_mode(ssl::verify_none);
-  return std::move(
-      std::make_shared<AsyncHttpClient>(net::make_strand(ioc_), ctx));
+  return std::make_shared<AsyncHttpClient>(net::make_strand(ioc_), ctx);
 }
 
 std::shared_ptr<SyncHttpClient> ClientFactory::NewSyncClient() {
   ssl::context ctx{ssl::context::tlsv12_client};
   ctx.set_verify_mode(ssl::verify_none);
-  return std::move(
-      std::make_shared<SyncHttpClient>(net::make_strand(ioc_), ctx));
+  return std::make_shared<SyncHttpClient>(net::make_strand(ioc_), ctx);
 }
 
 SyncHttpClient::SyncHttpClient(const net::any_io_executor& ex,
                                ssl::context& ctx)
     : stream_(ex, ctx), resolver_(ex) {}
 
-HttpResponse SyncHttpClient::Get(std::string_view url, const Headers& headers) {
+HttpResponse SyncHttpClient::Get(std::string_view url) {
   auto uri = network::uri{std::move(url.data())};
 
   const auto host = std::string{uri.host().data(), uri.host().length()};
@@ -282,8 +263,9 @@ HttpResponse SyncHttpClient::Get(std::string_view url, const Headers& headers) {
   beast::get_lowest_layer(stream_).connect(
       std::move(resolver_.resolve(host, kSslPort)));
 
-  tcp::no_delay option(true);
-  stream_.next_layer().socket().set_option(option);
+  beast::get_lowest_layer(stream_).socket().set_option(
+      net::ip::tcp::no_delay{true});
+
   stream_.handshake(ssl::stream_base::client);
 
   http::request<http::string_body> req{http::verb::get, path + "?" + query,
@@ -291,19 +273,16 @@ HttpResponse SyncHttpClient::Get(std::string_view url, const Headers& headers) {
 
   req.set(http::field::host, host);
   req.set(http::field::user_agent, BOOST_BEAST_VERSION_STRING);
-
-  for (const auto& header : headers) {
-    req.set(http::string_to_field(header.first), header.second);
-  }
+  req.set(http::field::proxy_connection, "Keep-Alive");
 
   http::write(stream_, req);
 
-  boost::optional<http::response_parser<http::string_body>> result;
+  std::optional<http::response_parser<http::string_body>> result;
   result.emplace();
-  (*result).body_limit(std::numeric_limits<std::uint64_t>::max());
+  result->body_limit(std::numeric_limits<std::uint64_t>::max());
 
   beast::flat_buffer buffer;
-  http::read(stream_, buffer, (*result));
+  http::read(stream_, buffer, *result);
 
   beast::error_code ec;
   stream_.shutdown(ec);
@@ -312,11 +291,8 @@ HttpResponse SyncHttpClient::Get(std::string_view url, const Headers& headers) {
     ec = {};
   }
 
-  const auto body = (*result).get().body();
-
-  (*result).release();
-
-  return {body, ec};
+  defer { result->release(); };
+  return {std::move(result->get().body()), ec};
 }
 void SyncHttpClient::Reset() {}
 }  // namespace http_client

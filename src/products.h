@@ -19,9 +19,11 @@ struct WowInstallation {
   std::string wtf_path;
 };
 
+using WowInstallations = std::vector<WowInstallation>;
+
 std::optional<ProductDb> GetProductDb(std::string_view product_db_path);
 void GetWowInstallations(const ProductDb& product_db,
-                         std::vector<WowInstallation>* installs);
+                         WowInstallations* installs);
 
 
 }  // namespace addon_updater_products

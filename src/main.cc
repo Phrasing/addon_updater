@@ -13,6 +13,7 @@
 #include "toc_parser.h"
 #include "resource_loader.h"
 #include "windows_error_message.h"
+
 #include "../data/resource/resource.h"
 // clang-format on
 
@@ -24,7 +25,7 @@ constexpr auto kTukuiApiUrl = "https://www.tukui.org/api.php?addons=all";
 
 constexpr auto kCurseApiUrl =
     "https://addons-ecs.forgesvc.net/api/v2/addon/"
-    "search?gameId=1&searchFilter=&pageSize=500";
+    "search?gameId=1&searchFilter=&pageSize=1000";
 
 constexpr auto kTukuiClassicApiUrl =
     "https://www.tukui.org/api.php?classic-addons=all";
@@ -34,9 +35,9 @@ constexpr auto kTukuiClassicApiUrl =
 int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
   //#ifdef _DEBUG
   if (AllocConsole()) {
-    FILE* dummy{};
-    freopen_s(&dummy, "CONOUT$", "w", stdout);
-    freopen_s(&dummy, "CONOUT$", "w", stderr);
+    FILE* output = nullptr;
+    freopen_s(&output, "CONOUT$", "w", stdout);
+    freopen_s(&output, "CONOUT$", "w", stderr);
   }
   //#endif  // !DEBUG
 
@@ -47,12 +48,12 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
         addon_updater::WindowsErrorMessage(GetLastError()));
   }
 
-  std::vector<addon_updater::WowInstallation> wow_installs{};
-  auto products = addon_updater::GetProductDb(
+  const auto products = addon_updater::GetProductDb(
       *drive_prefix + R"(ProgramData\Battle.net\Agent\product.db)");
 
-  if (products != std::nullopt) {
-    GetWowInstallations((products.value()), &wow_installs);
+  addon_updater::WowInstallations installations{};
+  if (products.has_value()) {
+    GetWowInstallations(*products, &installations);
   }
 
   addon_updater::Slugs addon_slugs{};
@@ -73,14 +74,12 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
   boost::asio::thread_pool thd_pool(std::thread::hardware_concurrency());
 
-  auto window = addon_updater::Window("Test", {kWindowWidth, kWindowHeight});
-  auto gui = addon_updater::Gui(thd_pool);
-
-  addon_updater::Addons addons{};
+  addon_updater::Window window("", {kWindowWidth, kWindowHeight});
+  addon_updater::Gui gui(thd_pool);
 
   auto curse_client =
       addon_updater::ClientFactory::GetInstance().NewAsyncClient();
-
+  addon_updater::Addons addons{};
   curse_client->Get(kCurseApiUrl,
                     [&](const beast::error_code& ec, std::string_view result) {
                       if (!addon_updater::DeserializeAddons(
@@ -103,7 +102,7 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
                       }
                     });
 
-  const auto tukui_classic_client =
+  /*const auto tukui_classic_client =
       addon_updater::ClientFactory::GetInstance().NewAsyncClient();
   tukui_classic_client->Get(
       kTukuiClassicApiUrl,
@@ -114,7 +113,7 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
           addon_updater::WindowsErrorMessageBox(
               "Error: failed to deserialize classic tukui addons.");
         }
-      });
+      });*/
 
   bool is_loading = true;
 
@@ -122,18 +121,16 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
   window.Render([&](const addon_updater::WindowSize& window_size) {
     {
       const auto requests_done = curse_client->Finished() &&
-                                 tukui_client->Finished() &&
-                                 tukui_classic_client->Finished();
+                                 tukui_client->Finished();
 
       if (is_loading && requests_done) {
-        for (auto& install : wow_installs) {
+        for (auto& install : installations) {
           if (install.client_type == addon_updater::ClientType::kRetail) {
             auto result = addon_updater::DetectInstalledAddons(
                 install.addons_path, addon_updater::AddonFlavor::kRetail,
                 addon_slugs, addons, installed_addons);
           }
         }
-
         is_loading = false;
       }
 
@@ -142,7 +139,5 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
   });
 
   thd_pool.join();
-
-  // system("pause");
   return 0;
 }

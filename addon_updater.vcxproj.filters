@@ -44,6 +44,7 @@
     </ClInclude>
     <ClInclude Include="src\zip_file.h" />
     <ClInclude Include="src\windows_error_message.h" />
+    <ClInclude Include="src\defer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\rapidjson_util.inl" />

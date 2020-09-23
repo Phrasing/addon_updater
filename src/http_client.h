@@ -15,6 +15,7 @@ enum class RequestState {
 struct HttpResponse {
   std::string data;
   beast::error_code ec;
+  bool Ok() { return !data.empty(); }
 };
 
 struct DownloadStatus {
@@ -35,10 +36,6 @@ using ProgressCallback = std::function<bool(const DownloadStatus&)>;
 using DownloadCallback = std::function<void(
     const beast::error_code&, const DownloadStatus&, std::string_view)>;
 
-using Parameters = std::vector<std::pair<std::string, std::string>>;
-
-using Headers = std::vector<std::pair<std::string, std::string>>;
-
 class AsyncHttpClient : public std::enable_shared_from_this<AsyncHttpClient> {
  public:
   explicit AsyncHttpClient(const net::any_io_executor& ex, ssl::context& ctx);
@@ -49,15 +46,13 @@ class AsyncHttpClient : public std::enable_shared_from_this<AsyncHttpClient> {
   AsyncHttpClient(AsyncHttpClient&&) = delete;
   AsyncHttpClient& operator=(AsyncHttpClient&&) = delete;
 
-  void Get(std::string_view url, const RequestCallback& request_callback,
-           const Headers& headers = Headers());
+  void Get(std::string_view url, const RequestCallback& request_callback);
 
-  void Download(std::string_view url, const DownloadCallback& download_callback,
-                const Headers& headers = Headers());
+  void Download(std::string_view url,
+                const DownloadCallback& download_callback);
 
   void Download(std::string_view url, const RequestCallback& request_callback,
-                const ProgressCallback& progress_callback,
-                const Headers& headers = Headers());
+                const ProgressCallback& progress_callback);
 
   void Verbose(bool enable);
 
@@ -76,7 +71,7 @@ class AsyncHttpClient : public std::enable_shared_from_this<AsyncHttpClient> {
 
   bool Callback(const beast::error_code& ec, RequestState request_state,
                 size_t bytes_transferred = 0u, uint32_t progress = 0u);
-  void GetImpl(std::string_view url, const Headers& headers = Headers());
+  void GetImpl(std::string_view url);
 
  private:
   DownloadCallback download_callback_;
@@ -87,7 +82,7 @@ class AsyncHttpClient : public std::enable_shared_from_this<AsyncHttpClient> {
 
   beast::ssl_stream<beast::tcp_stream> stream_;
   beast::flat_buffer buffer_;
-  http::request<http::empty_body> req_;
+  http::request<http::string_body> req_;
   boost::optional<http::response_parser<http::string_body>> res_;
 
   std::string response_;
@@ -103,7 +98,7 @@ class SyncHttpClient {
   SyncHttpClient(const net::any_io_executor& ex, ssl::context& ctx);
   ~SyncHttpClient() = default;
 
-  HttpResponse Get(std::string_view url, const Headers& headers = Headers());
+  HttpResponse Get(std::string_view url);
 
   void Reset();
 

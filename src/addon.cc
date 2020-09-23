@@ -3,6 +3,7 @@
 #include "addon.h"
 #include "toc_parser.h"
 #include "rapidjson_util.h"
+#include "file.h"
 // clang-format on
 
 namespace addon_updater {
@@ -66,7 +67,7 @@ bool DeserializeCurse(const rj::Value::ConstObject& object, Addon* addon) {
         string_util::StripNonDigits(addon->readable_version);
     addon->numeric_version =
         string_util::StringToNumber(addon->stripped_version);
-    addon->download_url = beta.value().download_url;
+    addon->download_url = beta->download_url;
   }
 
   if (addon->download_url.empty()) return false;
@@ -206,7 +207,7 @@ bool InstalledAddon::Update() { return false; }
 bool DetectInstalledAddons(std::string_view addons_path, AddonFlavor flavor,
                            const Slugs& slugs, const Addons& addons,
                            InstalledAddons& installed_addons) {
-  if (!std::filesystem::exists(addons_path)) return false;
+  if (!OsDirectoryExists(addons_path)) return false;
 
   for (auto& addon : std::filesystem::directory_iterator(addons_path)) {
     const auto addon_name = addon.path().filename().string();
@@ -232,7 +233,7 @@ bool DetectInstalledAddons(std::string_view addons_path, AddonFlavor flavor,
       const auto toc_file = addon.path().string() + R"(\)" +
                             addon.path().filename().string() + ".toc";
 
-      if (!std::filesystem::exists(toc_file)) continue;
+      if (!OsFileExists(toc_file)) continue;
 
       TocParser toc_parser(toc_file);
       if (!toc_parser.Ok()) return false;
@@ -240,7 +241,7 @@ bool DetectInstalledAddons(std::string_view addons_path, AddonFlavor flavor,
       const auto result = toc_parser.ParseTocFile();
       if (!result.has_value()) continue;
 
-      if (result.value().readable_version.empty()) {
+      if (result->readable_version.empty()) {
         continue;
       }
 
@@ -266,11 +267,6 @@ bool DetectInstalledAddons(std::string_view addons_path, AddonFlavor flavor,
       }
     }
   }
-
-  /*std::sort(installed_addons.begin(), installed_addons.end());
-  installed_addons.erase(
-      std::unique(installed_addons.begin(), installed_addons.end()),
-      installed_addons.end());*/
 
   return true;
 }

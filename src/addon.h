@@ -104,7 +104,7 @@ constexpr auto kField_IsDefault = "isDefault";
 
 }
 
-enum class AddonType { kTukui, kCurse };
+enum class AddonType { kCurse, kTukui };
 enum class AddonReleaseType { kStable = 1, kBeta = 2, kAlpha = 3 };
 enum class AddonFlavor { kRetail, kRetailPtr, kClassic, kClassicPtr, kBeta };
 

@@ -207,27 +207,28 @@ void Gui::RenderBrowseTab(std::vector<addon_updater::Addon>& addons) {
         const auto response = ClientFactory::GetInstance().NewSyncClient()->Get(
             addon.screenshot_url);
 
-        if (response.ec) {
-          const auto buffer_size = response.data.size();
-          auto buffer = std::make_unique<uint8_t[]>(buffer_size);
-          std::memcpy(buffer.get(), response.data.data(), buffer_size);
+        if (response.data.empty()) return;
 
-          int width, height, channels;
-          auto* texture = LoadTexture(buffer.get(), buffer_size, &width,
-                                      &height, &channels);
+        const auto buffer_size = response.data.size();
+        auto buffer = std::make_unique<uint8_t[]>(buffer_size);
+        std::memcpy(buffer.get(), response.data.data(), buffer_size);
 
-          if (texture != nullptr) {
-            auto* resized_texture =
-                ResizeTexture(texture, width, height, kThumbnailWidth,
-                              kThumbnailHeight, channels);
-            if (resized_texture != nullptr) {
-              addon.thumbnail.pixels = resized_texture;
-              addon.thumbnail.width = kThumbnailWidth;
-              addon.thumbnail.height = kThumbnailHeight;
-              addon.thumbnail.channels = channels;
-            }
+        int width, height, channels;
+        auto* texture =
+            LoadTexture(buffer.get(), buffer_size, &width, &height, &channels);
+
+        if (texture != nullptr) {
+          auto* resized_texture =
+              ResizeTexture(texture, width, height, kThumbnailWidth,
+                            kThumbnailHeight, channels);
+          if (resized_texture != nullptr) {
+            addon.thumbnail.pixels = resized_texture;
+            addon.thumbnail.width = kThumbnailWidth;
+            addon.thumbnail.height = kThumbnailHeight;
+            addon.thumbnail.channels = channels;
           }
         }
+
         addon.thumbnail.is_loaded = true;
         addon.thumbnail.in_progress = false;
       });

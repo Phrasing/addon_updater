@@ -4,15 +4,14 @@
 
 namespace addon_updater {
 
-ImTextureID UploadTexture(uint8_t* texture_data, int32_t width, int32_t height,
-                          int32_t channels);
+ImTextureID UploadTexture(uint8_t* texture_data, int width, int height,
+                          int channels);
 
-uint8_t* LoadTexture(uint8_t* input_data, size_t input_size, int32_t* output_w,
-                     int32_t* output_h, int32_t* output_channels);
+uint8_t* LoadTexture(uint8_t* image_data, size_t image_size, int* out_width,
+                     int* out_height, int* output_channels);
 
-uint8_t* ResizeTexture(uint8_t* texture_data, int32_t actual_w,
-                       int32_t acutual_h, int32_t resize_w, int32_t resize_h,
-                       int32_t channels);
+uint8_t* ResizeTexture(uint8_t* texture_data, int width, int height,
+                       int resized_width, int resized_height, int channels);
 
 void DestroyTexture(uint8_t* texture);
 
