@@ -14,7 +14,7 @@ TocParser::TocParser(std::string_view file_path)
 TocParser::~TocParser() {}
 
 void TocParser::Load(std::string_view file_path) noexcept {
-  auto result = ReadFile(file_path);
+  auto result = ReadFile(file_path.data());
   if (result.Ok()) {
     contents_ = std::move(result.content);
   }
@@ -22,11 +22,11 @@ void TocParser::Load(std::string_view file_path) noexcept {
 
 std::optional<TocFile> TocParser::ParseTocFile() {
   TocFile toc_file{};
-  toc_file.author = std::move(GetValue("Author"));
-  toc_file.title = std::move(GetValue("Title"));
-  toc_file.notes = std::move(GetValue("Notes"));
+  toc_file.author = std::move(this->GetValue("Author"));
+  toc_file.title = std::move(this->GetValue("Title"));
+  toc_file.notes = std::move(this->GetValue("Notes"));
 
-  toc_file.readable_version = std::move(GetValue("Version"));
+  toc_file.readable_version = std::move(this->GetValue("Version"));
   toc_file.stripped_version =
       string_util::StripNonDigits(toc_file.readable_version);
 

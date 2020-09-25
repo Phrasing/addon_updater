@@ -17,6 +17,7 @@ inline bool Search(std::string_view target, std::string_view base_string);
 inline std::string_view RemoveSuffixIfPresent(std::string_view s,
                                               std::string_view suffix);
 
+inline std::string UrlEncodeWhitespace(std::string_view str);
 inline std::string StripNonDigits(std::string_view str);
 inline size_t StringToNumber(std::string_view str);
 

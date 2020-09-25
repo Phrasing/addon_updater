@@ -51,9 +51,24 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
   const auto products = addon_updater::GetProductDb(
       *drive_prefix + R"(ProgramData\Battle.net\Agent\product.db)");
 
-  addon_updater::WowInstallations installations{};
-  if (products.has_value()) {
-    GetWowInstallations(*products, &installations);
+  if (!products.has_value()) {
+    std::fprintf(stderr, "Error: failed to detect wow installations.\n");
+    return 1;
+  }
+
+  const auto installations = addon_updater::GetWowInstallations(*products);
+
+  const auto lambda =
+      [&](const addon_updater::DirectoryResult& directory_result) -> bool {
+    std::fprintf(stdout, "Full Path: %s\n", directory_result.path.c_str());
+    std::fprintf(stdout, "Parent Path: %s\n",
+                 directory_result.parent_path.c_str());
+    std::fprintf(stdout, "Directory: %s\n", directory_result.directory.c_str());
+    return true;
+  };
+
+  if (addon_updater::IterateDirectory(installations->retail.addons_path,
+                                      lambda)) {
   }
 
   addon_updater::Slugs addon_slugs{};
@@ -79,6 +94,7 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
   auto curse_client =
       addon_updater::ClientFactory::GetInstance().NewAsyncClient();
+
   addon_updater::Addons addons{};
   curse_client->Get(kCurseApiUrl,
                     [&](const beast::error_code& ec, std::string_view result) {
@@ -102,35 +118,20 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
                       }
                     });
 
-  /*const auto tukui_classic_client =
-      addon_updater::ClientFactory::GetInstance().NewAsyncClient();
-  tukui_classic_client->Get(
-      kTukuiClassicApiUrl,
-      [&](const beast::error_code& ec, std::string_view result) {
-        if (!addon_updater::DeserializeAddons(
-                result, addon_updater::AddonType::kTukui,
-                addon_updater::AddonFlavor::kClassic, &addons)) {
-          addon_updater::WindowsErrorMessageBox(
-              "Error: failed to deserialize classic tukui addons.");
-        }
-      });*/
-
   bool is_loading = true;
 
   addon_updater::InstalledAddons installed_addons{};
   window.Render([&](const addon_updater::WindowSize& window_size) {
     {
-      const auto requests_done = curse_client->Finished() &&
-                                 tukui_client->Finished();
+      const auto requests_done =
+          curse_client->Finished() && tukui_client->Finished();
 
       if (is_loading && requests_done) {
-        for (auto& install : installations) {
-          if (install.client_type == addon_updater::ClientType::kRetail) {
-            auto result = addon_updater::DetectInstalledAddons(
-                install.addons_path, addon_updater::AddonFlavor::kRetail,
-                addon_slugs, addons, installed_addons);
-          }
-        }
+        auto result = addon_updater::DetectInstalledAddons(
+            installations->retail.addons_path,
+            addon_updater::AddonFlavor::kRetail, addon_slugs, addons,
+            installed_addons);
+
         is_loading = false;
       }
 

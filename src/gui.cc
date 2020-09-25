@@ -150,19 +150,22 @@ void Gui::RenderBrowseTab(std::vector<addon_updater::Addon>& addons) {
 
     ImGui::Text(addon.name);
 
+    for (auto& latest : addon.latest_file.modules) {
+      ImGui::Text(latest.folder_name + " | " +
+                  std::to_string(latest.finger_print));
+    }
+
     if (addon.download_status.state != RequestState::kStatePending &&
         addon.download_status.state != RequestState::kStateFinish) {
       ImGui::SameLine();
-      if (ImGui::Button(
-              (std::string(ICON_FA_DOWNLOAD "##") + addon.readable_version)
-                  .c_str())) {
+      if (ImGui::Button((std::string(ICON_FA_DOWNLOAD "##") +
+                         addon.remote_version.readable_version)
+                            .c_str())) {
         addon.download_status.state = RequestState::kStatePending;
         ClientFactory::GetInstance().NewAsyncClient()->Download(
             addon.download_url,
             [&](const beast::error_code& ec, std::string_view response) {
-              auto result =
-                  WriteFile(R"(C:\Users\User\Desktop\)" + addon.name + ".zip",
-                            response, true);
+
             },
             [&](const DownloadStatus& download_status) {
               if (addon.download_status.state == RequestState::kStateCancel) {
@@ -181,9 +184,9 @@ void Gui::RenderBrowseTab(std::vector<addon_updater::Addon>& addons) {
                           addon.download_status.progress / 100.F,
                           ImVec2(200, 6));
       ImGui::SameLine();
-      if (ImGui::Button(
-              (std::string(ICON_FA_STOP_CIRCLE "##") + addon.readable_version)
-                  .c_str())) {
+      if (ImGui::Button((std::string(ICON_FA_STOP_CIRCLE "##") +
+                         addon.remote_version.readable_version)
+                            .c_str())) {
         addon.download_status.state = RequestState::kStateCancel;
       }
     }
@@ -244,30 +247,19 @@ void Gui::RenderInstalledTab(std::vector<InstalledAddon>& addons) {
     }
 
     ImGui::Text(addon.name);
+    ImGui::Text("Local: " + addon.local_version.readable_version);
+    ImGui::Text("Remote: " + addon.remote_version.readable_version);
+
+    ImGui::NewLine();
 
     if (addon.download_status.state != RequestState::kStatePending &&
         addon.download_status.state != RequestState::kStateFinish &&
         !addon.up_to_date) {
       ImGui::SameLine();
-      if (ImGui::Button(
-              (std::string(ICON_FA_DOWNLOAD "##") + addon.readable_version)
-                  .c_str())) {
-        addon.download_status.state = RequestState::kStatePending;
-        ClientFactory::GetInstance().NewAsyncClient()->Download(
-            addon.download_url,
-            [&](const beast::error_code& ec, std::string_view response) {
-              addon.up_to_date = true;
-              auto result = WriteFile(
-                  R"(C:\Users\User\Desktop\)" + addon.readable_version + ".zip",
-                  response, true);
-            },
-            [&](const DownloadStatus& download_status) {
-              if (addon.download_status.state == RequestState::kStateCancel) {
-                return false;
-              }
-              addon.download_status = download_status;
-              return true;
-            });
+      if (ImGui::Button((std::string(ICON_FA_DOWNLOAD "##") +
+                         addon.remote_version.readable_version)
+                            .c_str())) {
+        addon.Update();
       }
     }
 
@@ -279,7 +271,8 @@ void Gui::RenderInstalledTab(std::vector<InstalledAddon>& addons) {
                           ImVec2(200, 6));
       ImGui::SameLine();
       if (ImGui::Button(
-              (std::string("Cancel ##") + addon.readable_version).c_str())) {
+              (std::string("Cancel ##") + addon.local_version.readable_version)
+                  .c_str())) {
         addon.download_status.state = RequestState::kStateCancel;
       }
     }

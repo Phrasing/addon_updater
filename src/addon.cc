@@ -4,6 +4,7 @@
 #include "toc_parser.h"
 #include "rapidjson_util.h"
 #include "file.h"
+#include "zip_file.h"
 // clang-format on
 
 namespace addon_updater {
@@ -17,6 +18,7 @@ std::optional<CurseLatestFile> CheckForRelease(AddonReleaseType release_type,
         !latest_file.is_alternate &&
         latest_file.game_version_flavor == flavor) {
       string_util::ReplaceAll(&latest_file.download_url, "edge", "media");
+
       return latest_file;
     }
   }
@@ -53,21 +55,23 @@ bool DeserializeCurse(const rj::Value::ConstObject& object, Addon* addon) {
   if (auto stable = CheckForRelease(AddonReleaseType::kStable, addon->flavor,
                                     latest_files);
       stable.has_value()) {
-    addon->readable_version = stable.value().display_name;
-    addon->stripped_version =
-        string_util::StripNonDigits(addon->readable_version);
-    addon->numeric_version =
-        string_util::StringToNumber(addon->stripped_version);
+    addon->remote_version.readable_version = stable.value().display_name;
+    addon->remote_version.stripped_version =
+        string_util::StripNonDigits(addon->remote_version.readable_version);
+    addon->remote_version.numeric_version =
+        string_util::StringToNumber(addon->remote_version.stripped_version);
     addon->download_url = stable.value().download_url;
+    addon->latest_file = *stable;
   } else if (auto beta = CheckForRelease(AddonReleaseType::kBeta, addon->flavor,
                                          latest_files);
              beta.has_value()) {
-    addon->readable_version = beta.value().display_name;
-    addon->stripped_version =
-        string_util::StripNonDigits(addon->readable_version);
-    addon->numeric_version =
-        string_util::StringToNumber(addon->stripped_version);
+    addon->remote_version.readable_version = beta.value().display_name;
+    addon->remote_version.stripped_version =
+        string_util::StripNonDigits(addon->remote_version.readable_version);
+    addon->remote_version.numeric_version =
+        string_util::StringToNumber(addon->remote_version.stripped_version);
     addon->download_url = beta->download_url;
+    addon->latest_file = *beta;
   }
 
   if (addon->download_url.empty()) return false;
@@ -98,11 +102,12 @@ bool DeserializeTukui(const rj::Value::ConstObject& object, Addon* addon) {
       std::move(rj_util::GetStringDef(object, tukui_fields::kField_SmallDesc));
   addon->author =
       std::move(rj_util::GetStringDef(object, tukui_fields::kField_Author));
-  addon->readable_version =
+  addon->remote_version.readable_version =
       std::move(rj_util::GetStringDef(object, tukui_fields::kField_Version));
-  addon->stripped_version =
-      string_util::StripNonDigits(addon->readable_version);
-  addon->numeric_version = string_util::StringToNumber(addon->stripped_version);
+  addon->remote_version.stripped_version =
+      string_util::StripNonDigits(addon->remote_version.readable_version);
+  addon->remote_version.numeric_version =
+      string_util::StringToNumber(addon->remote_version.stripped_version);
   addon->screenshot_url = std::move(
       rj_util::GetStringDef(object, tukui_fields::kField_ScreenshotUrl));
   addon->download_url = std::move(
@@ -138,7 +143,7 @@ InstalledAddon Addon::Install() const {
   installed_addon.slug = this->slug;
   installed_addon.flavor = this->flavor;
   installed_addon.type = this->type;
-  installed_addon.readable_version = this->readable_version;
+  installed_addon.local_version = this->remote_version;
 
   return installed_addon;
 }
@@ -157,9 +162,8 @@ InstalledAddon& InstalledAddon::operator=(const Addon& addon) {
   this->thumbnail.is_uploaded = false;
   this->thumbnail.pixels = nullptr;
   this->thumbnail.in_progress = false;
-
   this->screenshot_url = addon.screenshot_url;
-
+  this->remote_version = addon.remote_version;
   return *this;
 }
 
@@ -181,7 +185,7 @@ void InstalledAddon::Serialize(
   writer->String("type");
   writer->Int(static_cast<int32_t>(this->type));
   writer->String("version");
-  writer->String(this->readable_version);
+  writer->String(this->local_version.readable_version);
   if (!this->directories.empty()) {
     writer->String("directories");
     writer->StartArray();
@@ -202,12 +206,42 @@ void InstalledAddon::Uninstall() {
   }
 }
 
-bool InstalledAddon::Update() { return false; }
+bool InstalledAddon::Update() {
+  ClientFactory::GetInstance().NewAsyncClient()->Download(
+      this->download_url,
+      [&](const beast::error_code& ec, std::string_view response) {
+        this->Uninstall();
+
+        const auto buffer =
+            std::vector<uint8_t>(response.begin(), response.end());
+
+        ZipFile zip(buffer);
+        if (!zip.Good()) {
+          std::fprintf(stderr, "Error: failed to open zip file %s\n",
+                       this->name.c_str());
+          return;
+        }
+
+        if (!zip.Unzip(this->addons_directory, &this->directories)) {
+          std::fprintf(stderr, "Error: failed to extract zip file %s\n",
+                       this->name.c_str());
+        }
+
+        this->up_to_date = true;
+      },
+      [&](const DownloadStatus& status) -> bool {
+        if (this->download_status.state == RequestState::kStateCancel)
+          return false;
+        this->download_status = status;
+        return true;
+      });
+  return false;
+}
 
 bool DetectInstalledAddons(std::string_view addons_path, AddonFlavor flavor,
                            const Slugs& slugs, const Addons& addons,
                            InstalledAddons& installed_addons) {
-  if (!OsDirectoryExists(addons_path)) return false;
+  if (!OsDirectoryExists(addons_path.data())) return false;
 
   for (auto& addon : std::filesystem::directory_iterator(addons_path)) {
     const auto addon_name = addon.path().filename().string();
@@ -219,6 +253,7 @@ bool DetectInstalledAddons(std::string_view addons_path, AddonFlavor flavor,
 
     if (is_addon != slugs.end()) {
       InstalledAddon installed_addon{};
+      installed_addon.addons_directory = addons_path;
 
       bool check_next = true;
       for (auto& installed_addon : installed_addons) {
@@ -233,7 +268,7 @@ bool DetectInstalledAddons(std::string_view addons_path, AddonFlavor flavor,
       const auto toc_file = addon.path().string() + R"(\)" +
                             addon.path().filename().string() + ".toc";
 
-      if (!OsFileExists(toc_file)) continue;
+      if (!OsFileExists(toc_file.c_str())) continue;
 
       TocParser toc_parser(toc_file);
       if (!toc_parser.Ok()) return false;
@@ -252,13 +287,15 @@ bool DetectInstalledAddons(std::string_view addons_path, AddonFlavor flavor,
                        });
 
       if (is_detected != addons.end()) {
-        installed_addon.readable_version = result->readable_version;
-        installed_addon.numeric_version = result->numeric_version;
-        installed_addon.stripped_version = result->stripped_version;
+        installed_addon.local_version =
+            AddonVersion{result->readable_version, result->stripped_version,
+                         result->numeric_version};
+
         installed_addon.directories.push_back(addon.path().string());
 
-        if (installed_addon.stripped_version.find(
-                is_detected->stripped_version) == std::string::npos) {
+        if (installed_addon.local_version.stripped_version.find(
+                is_detected->remote_version.stripped_version) ==
+            std::string::npos) {
           installed_addon.up_to_date = false;
         }
 
@@ -322,6 +359,15 @@ bool Slug::Deserialize(const rj::Value::ConstMemberIterator& iterator) {
   return true;
 }
 
+bool CurseModule::Deserialize(const rj::Value::ConstObject& object) {
+  this->folder_name = std::move(rj_util::GetStringDef(object, "foldername"));
+  this->finger_print =
+      rj_util::GetField<size_t>(object, "fingerprint", rj::kNumberType);
+
+  this->type = rj_util::GetField<int>(object, "type", rj::kNumberType);
+  return true;
+}
+
 }  // namespace addon_updater
 
 bool addon_updater::CurseAttachment::Deserialize(
@@ -353,5 +399,20 @@ bool addon_updater::CurseLatestFile::Deserialize(
   this->is_alternate = rj_util::GetBoolDef(object, "isAlternate");
   this->release_type =
       rj_util::GetField<uint32_t>(object, "releaseType", rj::kNumberType);
+
+  if (rj_util::HasMemberOfType(object, curse_fields::kField_Modules,
+                               rj::kArrayType)) {
+    const auto addon_modules = object[curse_fields::kField_Modules].GetArray();
+    for (const auto* it = addon_modules.Begin(); it != addon_modules.End();
+         ++it) {
+      if (!it->IsObject()) continue;
+
+      CurseModule module{};
+      if (module.Deserialize(std::move(it->GetObject()))) {
+        this->modules.push_back(module);
+      }
+    }
+  }
+
   return true;
 }

@@ -20,8 +20,7 @@ class ZipFile {
 
   void Load(const std::vector<uint8_t>& bytes);
 
-  bool Unzip( std::string& path,
-             std::unordered_set<std::string>* install_paths);
+  bool Unzip(std::string_view path, std::vector<std::string>* install_paths);
 
   bool Good() const;
   void Reset();

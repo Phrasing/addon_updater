@@ -52,6 +52,13 @@ struct CurseGameVersionLatestFile {
   std::string game_version_flavor;
 };
 
+struct CurseModule {
+  bool Deserialize(const rj::Value::ConstObject& object);
+  std::string folder_name;
+  size_t finger_print;
+  int type;
+};
+
 struct CurseLatestFile {
   bool Deserialize(const rj::Value::ConstObject& object);
   std::string display_name;
@@ -59,8 +66,11 @@ struct CurseLatestFile {
   std::string download_url;
   std::string game_version_flavor;
   uint32_t release_type;
+  std::vector<CurseModule> modules;
   bool is_alternate;
 };
+
+
 
 namespace curse_fields {
 
@@ -92,6 +102,7 @@ constexpr auto kField_DateCreated = "dateCreated";
 constexpr auto kField_DateReleased = "dateReleased";
 constexpr auto kField_IsAvailable = "isAvailable";
 constexpr auto kField_IsExperimental = "isExperimental";
+constexpr auto kField_Modules = "modules";
 
 namespace attachments {
 constexpr auto kField_Id = "id";
@@ -118,6 +129,12 @@ inline std::string FlavorToString(AddonFlavor flavor) {
       return {};
   }
 }
+
+struct AddonVersion {
+  std::string readable_version;
+  std::string stripped_version;
+  size_t numeric_version;
+};
 
 struct AddonThumbnail {
   uint8_t* pixels;
@@ -153,14 +170,13 @@ struct Addon {
   std::string slug;
   std::string author;
   std::string description;
-  std::string readable_version;
-  std::string stripped_version;
-
-  int64_t numeric_version;
 
   bool is_ignored = false;
 
+ CurseLatestFile latest_file;
+
   DownloadStatus download_status;
+  AddonVersion remote_version;
   AddonThumbnail thumbnail;
   AddonFlavor flavor;
   AddonType type;
@@ -177,6 +193,10 @@ struct InstalledAddon : Addon {
   bool Update();
 
   bool up_to_date = true;
+
+  AddonVersion local_version;
+
+  std::string addons_directory;
   std::vector<std::string> directories;
 };
 
@@ -190,6 +210,7 @@ using LatestFiles = std::vector<CurseLatestFile>;
 using Addons = std::vector<Addon>;
 using Slugs = std::vector<Slug>;
 using InstalledAddons = std::vector<InstalledAddon>;
+
 
 bool DetectInstalledAddons(std::string_view addons_path, AddonFlavor flavor,
                            const Slugs& slugs, const Addons& addons,

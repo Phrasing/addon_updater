@@ -17,7 +17,8 @@ bool UpdaterConfig::SerializeToFile() {
   }
   writer.EndArray();
 
-  if (!WriteFile(this->config_file_path_, string_buffer.GetString(), true)) {
+  if (!WriteFile(this->config_file_path_.data(), string_buffer.GetString(),
+                 true)) {
     return false;
   }
 

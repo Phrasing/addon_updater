@@ -11,6 +11,8 @@ ImTextureID UploadTexture(uint8_t* texture_data, int width, int height,
     return nullptr;
   }
 
+  defer { DestroyTexture(texture_data); };
+
   uint32_t texture;
   glGenTextures(1, &texture);
   glBindTexture(GL_TEXTURE_2D, texture);
@@ -27,7 +29,7 @@ ImTextureID UploadTexture(uint8_t* texture_data, int width, int height,
       glDeleteTextures(1, &texture);
       fprintf(stderr, "Error: failed to upload texture %p\n", &texture_data);
       return nullptr;
-    } break;
+    }
   }
 
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -37,8 +39,6 @@ ImTextureID UploadTexture(uint8_t* texture_data, int width, int height,
   glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
   glTexImage2D(GL_TEXTURE_2D, 0, internal_format, width, height, 0,
                internal_format, GL_UNSIGNED_BYTE, texture_data);
-
-  defer { DestroyTexture(texture_data); };
 
   return reinterpret_cast<void*>(static_cast<uintptr_t>(texture));
 }
@@ -64,6 +64,8 @@ uint8_t* ResizeTexture(uint8_t* texture_data, int width, int height,
                        int resized_width, int resized_height, int channels) {
   if (!texture_data) return nullptr;
 
+  defer { DestroyTexture(texture_data); };
+
   auto* output_pixels = reinterpret_cast<uint8_t*>(
       malloc(resized_width * resized_height * channels * sizeof(uint8_t)));
 
@@ -72,8 +74,6 @@ uint8_t* ResizeTexture(uint8_t* texture_data, int width, int height,
     fprintf(stderr, "Error: failed to resize texture %p\n", &texture_data);
     return nullptr;
   }
-
-  defer { DestroyTexture(texture_data); };
 
   return output_pixels;
 }

@@ -1,7 +1,6 @@
 // clang-format off
 #include "pch.h"
 #include "http_client.h"
-
 // clang-format on
 
 namespace addon_updater {
@@ -18,7 +17,8 @@ AsyncHttpClient::AsyncHttpClient(const net::any_io_executor& ex,
 }
 
 void AsyncHttpClient::GetImpl(std::string_view url) {
-  const auto uri = network::uri{url.data()};
+  const auto uri =
+      network::uri{std::move(string_util::UrlEncodeWhitespace(url))};
 
   const auto host = std::string{uri.host().data(), uri.host().length()};
   const auto path = std::string{uri.path().data(), uri.path().length()};

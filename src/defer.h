@@ -6,13 +6,14 @@ namespace addon_updater {
 #define CONCAT(x, y) CONCAT_INTERNAL(x, y)
 
 template <typename T>
-struct ExitScope {
-  T lambda;
-  ExitScope(T lambda) : lambda(lambda) {}
-  ~ExitScope() { lambda(); }
+class ExitScope {
+ public:
+  ExitScope(T lambda) : lambda_(lambda) {}
+  ~ExitScope() { this->lambda_(); }
   ExitScope(const ExitScope&);
 
  private:
+  T lambda_;
   ExitScope& operator=(const ExitScope&);
 };
 

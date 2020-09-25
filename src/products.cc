@@ -4,8 +4,13 @@
 #include "string_util.h"
 #include "file.h"
 // clang-format on
+
 namespace addon_updater {
 namespace {
+constexpr auto kFieldCount = 3;
+constexpr auto kProductFlavor = 2;
+constexpr auto kFieldFlavorId = 13;
+
 inline std::string_view ClientTypeToString(ClientType client_type) {
   switch (client_type) {
     case ClientType::kBeta:
@@ -53,32 +58,61 @@ std::optional<ProductDb> GetProductDb(std::string_view product_db_path) {
   return product_db;
 }
 
-void GetWowInstallations(const ProductDb& product_db,
-                         WowInstallations* detected_installations) {
-  for (const auto& installs : product_db.product_installs()) {
-    const auto& settings = installs.settings();
-    if (installs.product_code().find("wow") != std::string::npos) {
-      const auto* reflection = UserSettings::GetReflection();
+std::optional<WowInstallations> GetWowInstallations(
+    const ProductDb& product_db) {
+  WowInstallations installs{};
 
-      if (reflection->GetUnknownFields(settings).empty()) continue;
-      if (reflection->GetUnknownFields(settings).field_count() != 3) continue;
+  if (product_db.product_installs().empty()) return std::nullopt;
 
-      const auto product_flavor =
-          reflection->GetUnknownFields(settings).field(2);
+  for (const auto& product_install : product_db.product_installs()) {
+    const auto& settings = product_install.settings();
 
-      if (product_flavor.type() ==
-              google::protobuf::UnknownField::Type::TYPE_LENGTH_DELIMITED &&
-          product_flavor.number() == 13) {
-        const auto& flavor_string = product_flavor.length_delimited();
+    if (product_install.product_code().find("wow") == std::string::npos)
+      continue;
 
-        auto base_path = settings.install_path() + '/' + flavor_string;
-        string_util::ReplaceAll(&base_path, "/", R"(\)");
+    const auto* reflection = UserSettings::GetReflection();
+    if (reflection->GetUnknownFields(settings).empty() ||
+        reflection->GetUnknownFields(settings).field_count() != kFieldCount)
+      continue;
 
-        detected_installations->push_back(
-            {StringToClientType(flavor_string), base_path,
-             base_path + R"(\Interface\Addons\)", base_path + R"(\WTF\)"});
-      }
+    const auto product_flavor =
+        reflection->GetUnknownFields(settings).field(kProductFlavor);
+
+    if (product_flavor.type() !=
+            google::protobuf::UnknownField::Type::TYPE_LENGTH_DELIMITED ||
+        product_flavor.number() != kFieldFlavorId)
+      continue;
+
+    const auto& flavor_string = product_flavor.length_delimited();
+
+    auto base_path = settings.install_path() + '/' + flavor_string;
+    string_util::ReplaceAll(&base_path, "/", R"(\)");
+
+    const auto addons_path = base_path + R"(\Interface\Addons\)";
+    const auto wtf_path = base_path + R"(\WTF\)";
+
+    const auto client_type = StringToClientType(flavor_string);
+    switch (client_type) {
+      case ClientType::kRetail: {
+        installs.retail = {client_type, base_path, addons_path, wtf_path};
+      } break;
+      case ClientType::kClassic: {
+        installs.classic = {client_type, base_path, addons_path, wtf_path};
+      } break;
+      case ClientType::kRetailPtr: {
+        installs.retail_ptr = {client_type, base_path, addons_path, wtf_path};
+      } break;
+      case ClientType::kBeta: {
+        installs.beta = {client_type, base_path, addons_path, wtf_path};
+      } break;
+      case ClientType::kClassicPtr: {
+        installs.classic_ptr = {client_type, base_path, addons_path, wtf_path};
+      } break;
+      default:
+        break;
     }
   }
+  return installs;
 }
+
 }

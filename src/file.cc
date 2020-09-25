@@ -8,6 +8,8 @@ namespace addon_updater {
 namespace {
 
 constexpr auto kBufferSize = 1024;
+constexpr auto kOpenFileFlags =
+    FILE_SHARE_DELETE | FILE_SHARE_READ | FILE_SHARE_WRITE;
 
 class WindowsHandleFile {
  public:
@@ -18,7 +20,7 @@ class WindowsHandleFile {
 
   ~WindowsHandleFile() {
     if (!::CloseHandle(this->handle_)) {
-      std::fprintf(stderr, "Error: failed to close file\n");
+      std::fprintf(stderr, "Error: failed to close file %p\n", &handle_);
     }
   }
 
@@ -135,11 +137,9 @@ ReadFileResult ReadEntireFile(const char *path, WindowsHandleFile &file) {
                                   kBufferSize);
 }
 
-bool WriteFile(std::string_view path, std::string_view buffer, bool truncate) {
-  const auto handle =
-      ::CreateFileA(path.data(), GENERIC_WRITE,
-                    FILE_SHARE_DELETE | FILE_SHARE_READ | FILE_SHARE_WRITE,
-                    nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+bool WriteFile(const char *file_path, std::string_view buffer, bool truncate) {
+  auto handle = ::CreateFileA(file_path, GENERIC_WRITE, kOpenFileFlags, nullptr,
+                              OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 
   if (handle == INVALID_HANDLE_VALUE) {
     return false;
@@ -149,41 +149,70 @@ bool WriteFile(std::string_view path, std::string_view buffer, bool truncate) {
   return WriteFileBuffered(file, buffer, truncate);
 }
 
-bool OsFileExists(std::string_view file_name) {
-  const auto attrib = ::GetFileAttributesA(file_name.data());
+bool OsFileExists(const char *file) {
+  const auto file_attributes = ::GetFileAttributesA(file);
 
-  if (attrib == INVALID_FILE_ATTRIBUTES) return false;
-  if (attrib & FILE_ATTRIBUTE_DIRECTORY) return false;
-
-  return true;
-}
-
-bool OsDirectoryExists(std::string_view directory_name) {
-  const auto attrib = ::GetFileAttributesA(directory_name.data());
-
-  if (attrib == INVALID_FILE_ATTRIBUTES) return false;
-  if (attrib & FILE_ATTRIBUTE_DIRECTORY) return true;
+  if (file_attributes == INVALID_FILE_ATTRIBUTES) return false;
+  if (file_attributes & FILE_ATTRIBUTE_DIRECTORY) return false;
 
   return true;
 }
 
-ReadFileResult ReadFile(std::string_view path) {
-  const auto handle =
-      ::CreateFileA(path.data(), GENERIC_READ,
-                    FILE_SHARE_DELETE | FILE_SHARE_READ | FILE_SHARE_WRITE,
-                    nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+bool OsDirectoryExists(const char *directory) {
+  const auto file_attributes = ::GetFileAttributesA(directory);
+
+  if (file_attributes == INVALID_FILE_ATTRIBUTES) return false;
+  if (file_attributes & FILE_ATTRIBUTE_DIRECTORY) return true;
+
+  return true;
+}
+
+ReadFileResult ReadFile(const char *file_path) {
+  auto handle = ::CreateFileA(file_path, GENERIC_READ, kOpenFileFlags, nullptr,
+                              OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
   if (handle == INVALID_HANDLE_VALUE) {
     const auto error = ::GetLastError();
-    return ReadFileResult::Failure(std::string("failed to open ") +
-                                   path.data() + ": " +
-                                   WindowsErrorMessage(error));
+    return ReadFileResult::Failure(std::string("failed to open ") + file_path +
+                                   ": " + WindowsErrorMessage(error));
   }
   WindowsHandleFile file(handle);
-  return ReadEntireFile(path.data(), file);
+  return ReadEntireFile(file_path, file);
+}
+
+bool IterateDirectory(std::string_view directory,
+                      const DirectoryCallback &directory_callback) {
+  if (directory.empty()) return false;
+  auto directory_copy = std::string{directory.begin(), directory.end()};
+  if (directory_copy.back() != '\\') {
+    directory_copy += '\\';
+  }
+  directory_copy += '*';
+
+  WIN32_FIND_DATAA find_data{};
+  auto handle = ::FindFirstFileA(directory_copy.c_str(), &find_data);
+  if (handle == INVALID_HANDLE_VALUE) return false;
+  directory_copy.pop_back();
+  for (;;) {
+    if ((find_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
+        find_data.cFileName[0] != '.') {
+      DirectoryResult result{};
+      result.parent_path = directory_copy;
+      result.path = directory_copy + find_data.cFileName;
+      result.directory = find_data.cFileName;
+      if (!directory_callback(result)) {
+        break;
+      }
+    }
+    if (!::FindNextFileA(handle, &find_data)) {
+      break;
+    }
+  }
+
+  return true;
 }
 
 std::optional<std::string> GetWindowsDriveLetterPrefix() {
-  std::vector<char> buffer(MAX_PATH);
+  std::vector<char> buffer(MAX_PATH + 1);
   auto result = ::GetWindowsDirectoryA(buffer.data(), buffer.size());
   buffer.resize(result);
   if (buffer.empty()) return {};

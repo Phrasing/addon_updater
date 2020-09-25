@@ -12,19 +12,24 @@ enum class ClientType {
   kBeta,
 };
 
-struct WowInstallation {
+struct WowInstall {
   ClientType client_type;
   std::string base_path;
   std::string addons_path;
   std::string wtf_path;
 };
 
-using WowInstallations = std::vector<WowInstallation>;
+struct WowInstallations {
+  WowInstall retail;
+  WowInstall classic;
+  WowInstall beta;
+  WowInstall retail_ptr;
+  WowInstall classic_ptr;
+};
 
 std::optional<ProductDb> GetProductDb(std::string_view product_db_path);
-void GetWowInstallations(const ProductDb& product_db,
-                         WowInstallations* installs);
-
+std::optional<WowInstallations> GetWowInstallations(
+    const ProductDb& product_db);
 
 }  // namespace addon_updater_products
 

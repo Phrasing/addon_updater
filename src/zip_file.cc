@@ -12,19 +12,24 @@ ZipFile::ZipFile(const std::vector<uint8_t>& bytes) : ZipFile() { Load(bytes); }
 
 ZipFile::~ZipFile() { Reset(); }
 
-bool ZipFile::Unzip(std::string& path,
-                    std::unordered_set<std::string>* install_paths) {
-  if (path.empty()) return false;
+bool ZipFile::Unzip(std::string_view path,
+                    std::vector<std::string>* install_paths) {
+  auto path_copy = std::string{path.data(), path.length()};
 
-  if (path.back() != '\\') path += '\\';
+  if (path_copy.empty()) {
+    return false;
+  }
+
+
+  if (path_copy.back() != '\\') path_copy += '\\';
 
   this->ForEach([&](const ZipInfo& zip_info) -> bool {
     if (zip_info.is_directory) return true;
 
-    std::string full_path = path + zip_info.file_name;
+    std::string full_path = path_copy + zip_info.file_name;
 
     std::string addon_path =
-        path +
+        path_copy +
         zip_info.file_name.substr(0, zip_info.file_name.find_first_of("\\/"));
 
     std::string relative_path =
@@ -36,11 +41,11 @@ bool ZipFile::Unzip(std::string& path,
 
     std::remove(full_path.c_str());
 
-    if (!OsDirectoryExists(relative_path)) {
+    if (!OsDirectoryExists(relative_path.c_str())) {
       std::filesystem::create_directories(relative_path);
     }
 
-    install_paths->insert(addon_path);
+    install_paths->push_back(addon_path);
 
     mz_zip_reader_extract_to_file(std::move(this->GetArchive()),
                                   zip_info.file_index, full_path.c_str(), 0);
