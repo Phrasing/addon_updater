@@ -68,21 +68,21 @@ class AsyncHttpClient : public std::enable_shared_from_this<AsyncHttpClient> {
   bool Finished() const { return request_done_; }
 
  private:
-  void Resolve(beast::error_code ec,
-               const tcp::resolver::results_type& results);
+  void OnResolve(beast::error_code ec,
+                 const tcp::resolver::results_type& results);
 
-  void Connect(beast::error_code ec,
-               tcp::resolver::results_type::endpoint_type);
+  void OnConnect(beast::error_code ec,
+                 tcp::resolver::results_type::endpoint_type);
 
-  void Handshake(beast::error_code ec);
+  void OnHandshake(beast::error_code ec);
 
-  void Write(beast::error_code ec, std::size_t bytes_transferred);
+  void OnWrite(beast::error_code ec, std::size_t bytes_transferred);
 
-  void Read(beast::error_code ec, std::size_t bytes_transferred);
+  void OnRead(beast::error_code ec, std::size_t bytes_transferred);
 
-  void ReadHeader(beast::error_code ec, std::size_t bytes_transferred);
+  void OnReadHeader(beast::error_code ec, std::size_t bytes_transferred);
 
-  void Shutdown(beast::error_code ec);
+  void OnShutdown(beast::error_code ec);
 
   bool Callback(const beast::error_code& ec, RequestState request_state,
                 size_t bytes_transferred = 0u, uint32_t progress = 0u);

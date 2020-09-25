@@ -25,7 +25,7 @@ inline std::string GzipDecompress(const std::string& data) {
 
 inline std::string zLibDecompress(const std::string& data) {
   boost::iostreams::filtering_streambuf<boost::iostreams::input> out;
-  out.push(boost::iostreams::zlib_decompressor(-kMaxWBits));
+  out.push(boost::iostreams::zlib_decompressor{-kMaxWBits});
   out.push(boost::iostreams::array_source{data.data(), data.size()});
 
   std::stringstream decompressed{};
@@ -76,7 +76,7 @@ void AsyncHttpClient::GetImpl(std::string_view url,
 
   resolver_.async_resolve(
       host, kSslPort,
-      beast::bind_front_handler(&AsyncHttpClient::Resolve,
+      beast::bind_front_handler(&AsyncHttpClient::OnResolve,
                                 std::move(shared_from_this())));
 }
 
@@ -106,8 +106,8 @@ void AsyncHttpClient::Download(std::string_view url,
 
 void AsyncHttpClient::Verbose(bool enable) { verbose_enabled_ = enable; }
 
-void AsyncHttpClient::Resolve(beast::error_code ec,
-                              const tcp::resolver::results_type& results) {
+void AsyncHttpClient::OnResolve(beast::error_code ec,
+                                const tcp::resolver::results_type& results) {
   if (ec) {
     this->Callback(ec, RequestState::kStateError);
     return;
@@ -115,12 +115,12 @@ void AsyncHttpClient::Resolve(beast::error_code ec,
 
   stream_.set_verify_mode(boost::asio::ssl::verify_none);
   beast::get_lowest_layer(stream_).async_connect(
-      results, beast::bind_front_handler(&AsyncHttpClient::Connect,
+      results, beast::bind_front_handler(&AsyncHttpClient::OnConnect,
                                          std::move(shared_from_this())));
 }
 
-void AsyncHttpClient::Connect(beast::error_code ec,
-                              tcp::resolver::results_type::endpoint_type) {
+void AsyncHttpClient::OnConnect(beast::error_code ec,
+                                tcp::resolver::results_type::endpoint_type) {
   if (ec) {
     this->Callback(ec, RequestState::kStateError);
     return;
@@ -130,24 +130,23 @@ void AsyncHttpClient::Connect(beast::error_code ec,
       net::ip::tcp::no_delay{true});
   stream_.async_handshake(
       boost::asio::ssl::stream_base::client,
-      beast::bind_front_handler(&AsyncHttpClient::Handshake,
+      beast::bind_front_handler(&AsyncHttpClient::OnHandshake,
                                 std::move(shared_from_this())));
 }
 
-void AsyncHttpClient::Handshake(beast::error_code ec) {
+void AsyncHttpClient::OnHandshake(beast::error_code ec) {
   if (ec) {
     this->Callback(ec, RequestState::kStateError);
-
     return;
   }
 
   http::async_write(stream_, req_,
-                    beast::bind_front_handler(&AsyncHttpClient::Write,
+                    beast::bind_front_handler(&AsyncHttpClient::OnWrite,
                                               std::move(shared_from_this())));
 }
 
-void AsyncHttpClient::Write(beast::error_code ec,
-                            std::size_t bytes_transferred) {
+void AsyncHttpClient::OnWrite(beast::error_code ec,
+                              std::size_t bytes_transferred) {
   if (ec) {
     this->Callback(ec, RequestState::kStateError);
     return;
@@ -156,12 +155,12 @@ void AsyncHttpClient::Write(beast::error_code ec,
   boost::ignore_unused(bytes_transferred);
   http::async_read_header(
       stream_, buffer_, *res_,
-      beast::bind_front_handler(&AsyncHttpClient::ReadHeader,
+      beast::bind_front_handler(&AsyncHttpClient::OnReadHeader,
                                 std::move(shared_from_this())));
 }
 
-void AsyncHttpClient::Read(beast::error_code ec,
-                           std::size_t bytes_transferred) {
+void AsyncHttpClient::OnRead(beast::error_code ec,
+                             std::size_t bytes_transferred) {
   auto progress = static_cast<uint32_t>((bytes_read_ += bytes_transferred) *
                                         (100.0F / content_size_));
 
@@ -178,14 +177,14 @@ void AsyncHttpClient::Read(beast::error_code ec,
     }
 
     res_->release();
-    http::async_read_some(
-        stream_, buffer_, *res_,
-        beast::bind_front_handler(&AsyncHttpClient::Read, shared_from_this()));
+    http::async_read_some(stream_, buffer_, *res_,
+                          beast::bind_front_handler(&AsyncHttpClient::OnRead,
+                                                    shared_from_this()));
 
   } else {
   shutdown:
-    stream_.async_shutdown(beast::bind_front_handler(&AsyncHttpClient::Shutdown,
-                                                     shared_from_this()));
+    stream_.async_shutdown(beast::bind_front_handler(
+        &AsyncHttpClient::OnShutdown, shared_from_this()));
 
     if (ec && ec != boost::asio::error::eof) {
       this->Callback(ec, RequestState::kStateError, 0, 0);
@@ -199,8 +198,8 @@ void AsyncHttpClient::Read(beast::error_code ec,
   }
 }
 
-void AsyncHttpClient::ReadHeader(beast::error_code ec,
-                                 std::size_t bytes_transferred) {
+void AsyncHttpClient::OnReadHeader(beast::error_code ec,
+                                   std::size_t bytes_transferred) {
   boost::ignore_unused(bytes_transferred);
 
   if (ec) {
@@ -212,17 +211,8 @@ void AsyncHttpClient::ReadHeader(beast::error_code ec,
     content_size_ = *res_->content_length();
   }
 
-  if (res_->get()["Content-Encoding"] == "gzip") {
-    if (res_->content_length().is_initialized()) {
-      std::cout << *res_->content_length() << std::endl;
-    }
- 
-    is_gzip_ = true;
-  }
-
-  if (res_->get()["Content-Encoding"] == "deflate") {
-    is_deflate_ = true;
-  }
+  is_gzip_ = (res_->get()["Content-Encoding"] == "gzip");
+  is_deflate_ = (res_->get()["Content-Encoding"] == "deflate");
 
   this->Callback(ec, RequestState::kStatePending, bytes_transferred, 0);
 
@@ -232,10 +222,10 @@ void AsyncHttpClient::ReadHeader(beast::error_code ec,
 
   http::async_read_some(
       stream_, buffer_, *res_,
-      beast::bind_front_handler(&AsyncHttpClient::Read, shared_from_this()));
+      beast::bind_front_handler(&AsyncHttpClient::OnRead, shared_from_this()));
 }
 
-void AsyncHttpClient::Shutdown(beast::error_code ec) {
+void AsyncHttpClient::OnShutdown(beast::error_code ec) {
   if (ec == boost::asio::error::eof) {
     ec = {};
   }
@@ -345,6 +335,7 @@ HttpResponse SyncHttpClient::Get(std::string_view url,
   std::optional<http::response_parser<http::string_body>> result;
   result.emplace();
   result->body_limit(std::numeric_limits<std::uint64_t>::max());
+  defer { result->release(); };
 
   beast::flat_buffer buffer;
   http::read(stream_, buffer, *result);
@@ -355,8 +346,15 @@ HttpResponse SyncHttpClient::Get(std::string_view url,
   if (ec == net::error::eof) {
     ec = {};
   }
+  
+  if (result->get()["Content-Encoding"] == "gzip") {
+    return {std::move(GzipDecompress(result->get().body())), ec};
+  }
 
-  defer { result->release(); };
+  if (result->get()["Content-Encoding"] == "deflate") {
+    return {std::move(zLibDecompress(result->get().body())), ec};
+  }
+
   return {std::move(result->get().body()), ec};
 }
 void SyncHttpClient::Reset() {}
