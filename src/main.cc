@@ -25,7 +25,7 @@ constexpr auto kTukuiApiUrl = "https://www.tukui.org/api.php?addons=all";
 
 constexpr auto kCurseApiUrl =
     "https://addons-ecs.forgesvc.net/api/v2/addon/"
-    "search?gameId=1&searchFilter=&pageSize=500";
+    "search?gameId=1&searchFilter=&pageSize=10000";
 
 constexpr auto kTukuiClassicApiUrl =
     "https://www.tukui.org/api.php?classic-addons=all";
@@ -104,11 +104,12 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
                         addon_updater::WindowsErrorMessageBox(
                             "Error: failed to deserialize curse addons.");
                       }
+                      std::cout << addons.size() << std::endl;
                     },
                     {{"Accept", "application/json"},
                      {"Accept-Encoding", "gzip, deflate, br"}});
 
-  auto tukui_client =
+  /*auto tukui_client =
       addon_updater::ClientFactory::GetInstance().NewAsyncClient();
   tukui_client->Get(kTukuiApiUrl,
                     [&](const beast::error_code& ec, std::string_view result) {
@@ -120,15 +121,14 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
                       }
                     },
                     {{"Accept", "application/json"},
-                     {"Accept-Encoding", "gzip, deflate, br"}});
+                     {"Accept-Encoding", "gzip, deflate, br"}});*/
 
   bool is_loading = true;
 
   addon_updater::InstalledAddons installed_addons{};
   window.Render([&](const addon_updater::WindowSize& window_size) {
     {
-      const auto requests_done =
-          curse_client->Finished() && tukui_client->Finished();
+      const auto requests_done = curse_client->Finished();
 
       if (is_loading && requests_done) {
         auto result = addon_updater::DetectInstalledAddons(

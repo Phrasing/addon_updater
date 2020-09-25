@@ -12,7 +12,7 @@ constexpr auto kUserAgent =
 
 constexpr auto kMaxWBits = 15;
 
-inline static std::string GzipDecompress(const std::string& data) {
+inline std::string GzipDecompress(const std::string& data) {
   boost::iostreams::filtering_streambuf<boost::iostreams::input> out;
   out.push(boost::iostreams::gzip_decompressor());
   out.push(boost::iostreams::array_source{data.data(), data.size()});
@@ -20,10 +20,10 @@ inline static std::string GzipDecompress(const std::string& data) {
   std::stringstream decompressed{};
   boost::iostreams::copy(out, decompressed);
 
-  return std::move(decompressed.str());
+  return decompressed.str();
 }
 
-inline static std::string zLibDecompress(const std::string& data) {
+inline std::string zLibDecompress(const std::string& data) {
   boost::iostreams::filtering_streambuf<boost::iostreams::input> out;
   out.push(boost::iostreams::zlib_decompressor(-kMaxWBits));
   out.push(boost::iostreams::array_source{data.data(), data.size()});
@@ -31,7 +31,7 @@ inline static std::string zLibDecompress(const std::string& data) {
   std::stringstream decompressed{};
   boost::iostreams::copy(out, decompressed);
 
-  return std::move(decompressed.str());
+  return decompressed.str();
 }
 
 }  // namespace
@@ -65,7 +65,6 @@ void AsyncHttpClient::GetImpl(std::string_view url,
   req_.target(path + "?" + query);
   req_.set(http::field::host, host);
   req_.set(http::field::user_agent, kUserAgent);
-  req_.set(http::field::proxy_connection, "Keep-Alive");
 
   for (auto& field : request_fields) {
     req_.set(http::string_to_field(field.field_name), field.field_value);
@@ -214,6 +213,10 @@ void AsyncHttpClient::ReadHeader(beast::error_code ec,
   }
 
   if (res_->get()["Content-Encoding"] == "gzip") {
+    if (res_->content_length().is_initialized()) {
+      std::cout << *res_->content_length() << std::endl;
+    }
+ 
     is_gzip_ = true;
   }
 
@@ -332,7 +335,6 @@ HttpResponse SyncHttpClient::Get(std::string_view url,
 
   req.set(http::field::host, host);
   req.set(http::field::user_agent, kUserAgent);
-  req.set(http::field::proxy_connection, "Keep-Alive");
 
   for (auto& field : request_fields) {
     req.set(http::string_to_field(field.field_name), field.field_value);

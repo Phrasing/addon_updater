@@ -42,6 +42,7 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
         ADDON_SLUGS_RESOURCE TEXT "..\\slugs.json"
         DEFAULT_FONT_RESOURCE BINARY "..\\fonts\\ArchivoNarrow-Medium.ttf"
         FONT_AWESOME_RESOURCE BINARY "..\\fonts\\fontawesome-webfont.ttf"
+        DEFAULT_ADDON_ICON BINARY "..\\images\\curse-client.png"
 
 
 #endif  // English (United States) resources

@@ -4,6 +4,8 @@
 #include "texture.h"
 #include "file.h"
 #include "http_client.h"
+#include "resource_loader.h"
+#include "../data/resource/resource.h"
 // clang-format on
 
 namespace ImGui {
@@ -109,7 +111,14 @@ void RenderLoadingScreen(const WindowSize& window_size) {
 
 }  // namespace
 
-Gui::Gui(boost::asio::thread_pool& thd_pool) : thd_pool_(&thd_pool) {}
+Gui::Gui(boost::asio::thread_pool& thd_pool) : thd_pool_(&thd_pool) {
+  if (const auto curse_resource = addon_updater::GetResource(
+          DEFAULT_ADDON_ICON, addon_updater::ResourceType::kBinary);
+      curse_resource.has_value()) {
+    this->curse_icon_ = curse_resource->data;
+    this->curse_icon_size_ = curse_resource->size;
+  }
+}
 
 void Gui::DrawGui(Addons& addons, std::vector<InstalledAddon>& installed_addons,
                   const WindowSize& window_size, bool is_loading) {
@@ -148,16 +157,19 @@ void Gui::RenderBrowseTab(std::vector<addon_updater::Addon>& addons) {
       ImGui::SameLine();
     }
 
-    ImGui::Text(addon.name);
-
-    for (auto& latest : addon.latest_file.modules) {
-      ImGui::Text(latest.folder_name + " | " +
-                  std::to_string(latest.finger_print));
+    if (ImGui::TreeNode(
+            (addon.name + "##" + std::to_string(addon.id)).c_str())) {
+      for (auto& latest : addon.latest_file.modules) {
+        ImGui::Text(latest.folder_name + " | " +
+                    std::to_string(latest.finger_print));
+      }
+      ImGui::TreePop();
     }
 
     if (addon.download_status.state != RequestState::kStatePending &&
         addon.download_status.state != RequestState::kStateFinish) {
       ImGui::SameLine();
+      ImGui::SetCursorPosX(ImGui::GetContentRegionMax().x - 50);
       if (ImGui::Button((std::string(ICON_FA_DOWNLOAD "##") +
                          addon.remote_version.readable_version)
                             .c_str())) {
@@ -184,6 +196,8 @@ void Gui::RenderBrowseTab(std::vector<addon_updater::Addon>& addons) {
                           addon.download_status.progress / 100.F,
                           ImVec2(200, 6));
       ImGui::SameLine();
+      ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 50);
+      ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 10);
       if (ImGui::Button((std::string(ICON_FA_STOP_CIRCLE "##") +
                          addon.remote_version.readable_version)
                             .c_str())) {
@@ -207,6 +221,28 @@ void Gui::RenderBrowseTab(std::vector<addon_updater::Addon>& addons) {
         !addon.thumbnail.in_progress) {
       addon.thumbnail.in_progress = true;
       boost::asio::post(*thd_pool_, [&]() {
+        if (addon.screenshot_url.empty()) {
+          int width, height, channels;
+          auto* texture = LoadTexture(curse_icon_, curse_icon_size_, &width,
+                                      &height, &channels);
+
+          if (texture != nullptr) {
+            auto* resized_texture =
+                ResizeTexture(texture, width, height, kThumbnailWidth,
+                              kThumbnailHeight, channels);
+            if (resized_texture != nullptr) {
+              addon.thumbnail.pixels = resized_texture;
+              addon.thumbnail.width = kThumbnailWidth;
+              addon.thumbnail.height = kThumbnailHeight;
+              addon.thumbnail.channels = channels;
+            }
+          }
+
+          addon.thumbnail.is_loaded = true;
+          addon.thumbnail.in_progress = false;
+          return;
+        }
+
         const auto response = ClientFactory::GetInstance().NewSyncClient()->Get(
             addon.screenshot_url);
 
@@ -246,16 +282,23 @@ void Gui::RenderInstalledTab(std::vector<InstalledAddon>& addons) {
       ImGui::SameLine();
     }
 
-    ImGui::Text(addon.name);
-    ImGui::Text("Local: " + addon.local_version.readable_version);
-    ImGui::Text("Remote: " + addon.remote_version.readable_version);
+    if (ImGui::TreeNode(
+            (addon.name + "##" + std::to_string(addon.id)).c_str())) {
+      ImGui::TextColored(
+          ImVec4(1.0f, 0.0f, 1.0f, 1.0f),
+          ("Local: " + addon.local_version.readable_version).c_str());
+      ImGui::TextColored(
+          ImVec4(1.0f, 1.0f, 0.0f, 1.0f),
+          ("Remote: " + addon.remote_version.readable_version).c_str());
 
-    ImGui::NewLine();
+      ImGui::TreePop();
+    }
 
     if (addon.download_status.state != RequestState::kStatePending &&
         addon.download_status.state != RequestState::kStateFinish &&
         !addon.up_to_date) {
       ImGui::SameLine();
+      ImGui::SetCursorPosX(ImGui::GetContentRegionMax().x - 25);
       if (ImGui::Button((std::string(ICON_FA_DOWNLOAD "##") +
                          addon.remote_version.readable_version)
                             .c_str())) {
@@ -270,6 +313,8 @@ void Gui::RenderInstalledTab(std::vector<InstalledAddon>& addons) {
                           addon.download_status.progress / 100.F,
                           ImVec2(200, 6));
       ImGui::SameLine();
+      ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 50);
+      ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 10);
       if (ImGui::Button(
               (std::string("Cancel ##") + addon.local_version.readable_version)
                   .c_str())) {
@@ -293,6 +338,29 @@ void Gui::RenderInstalledTab(std::vector<InstalledAddon>& addons) {
         !addon.thumbnail.in_progress) {
       addon.thumbnail.in_progress = true;
       boost::asio::post(*thd_pool_, [&]() {
+        if (addon.screenshot_url.empty()) {
+        load_default:
+          int width, height, channels;
+          auto* texture = LoadTexture(curse_icon_, curse_icon_size_, &width,
+                                      &height, &channels);
+
+          if (texture != nullptr) {
+            auto* resized_texture =
+                ResizeTexture(texture, width, height, kThumbnailWidth,
+                              kThumbnailHeight, channels);
+            if (resized_texture != nullptr) {
+              addon.thumbnail.pixels = resized_texture;
+              addon.thumbnail.width = kThumbnailWidth;
+              addon.thumbnail.height = kThumbnailHeight;
+              addon.thumbnail.channels = channels;
+            }
+          }
+
+          addon.thumbnail.is_loaded = true;
+          addon.thumbnail.in_progress = false;
+          return;
+        }
+
         const auto response = ClientFactory::GetInstance().NewSyncClient()->Get(
             addon.screenshot_url);
 
@@ -314,7 +382,11 @@ void Gui::RenderInstalledTab(std::vector<InstalledAddon>& addons) {
               addon.thumbnail.width = kThumbnailWidth;
               addon.thumbnail.height = kThumbnailHeight;
               addon.thumbnail.channels = channels;
+            } else {
+              goto load_default;
             }
+          } else {
+            goto load_default;
           }
         }
         addon.thumbnail.is_loaded = true;
