@@ -10,16 +10,28 @@ constexpr auto kSslPort = "443";
 constexpr auto kUserAgent =
     R"(Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36)";
 
-inline static std::string GzipDecompress(const std::string& data) {
-  std::stringstream compressed{data};
-  std::stringstream decompressed{};
+constexpr auto kMaxWBits = 15;
 
+inline static std::string GzipDecompress(const std::string& data) {
   boost::iostreams::filtering_streambuf<boost::iostreams::input> out;
   out.push(boost::iostreams::gzip_decompressor());
-  out.push(compressed);
+  out.push(boost::iostreams::array_source{data.data(), data.size()});
+
+  std::stringstream decompressed{};
   boost::iostreams::copy(out, decompressed);
 
-  return decompressed.str();
+  return std::move(decompressed.str());
+}
+
+inline static std::string zLibDecompress(const std::string& data) {
+  boost::iostreams::filtering_streambuf<boost::iostreams::input> out;
+  out.push(boost::iostreams::zlib_decompressor(-kMaxWBits));
+  out.push(boost::iostreams::array_source{data.data(), data.size()});
+
+  std::stringstream decompressed{};
+  boost::iostreams::copy(out, decompressed);
+
+  return std::move(decompressed.str());
 }
 
 }  // namespace
@@ -74,14 +86,14 @@ void AsyncHttpClient::Get(std::string_view url,
                           const RequestFields& request_fields) {
   if (url.empty()) return;
   request_callback_ = request_callback;
-  GetImpl(std::move(url), std::move(request_fields));
+  GetImpl(std::move(url), request_fields);
 }
 
 void AsyncHttpClient::Download(std::string_view url,
                                const DownloadCallback& download_callback,
                                const RequestFields& request_fields) {
   download_callback_ = (download_callback);
-  GetImpl(std::move(url), std::move(request_fields));
+  GetImpl(std::move(url), request_fields);
 }
 
 void AsyncHttpClient::Download(std::string_view url,
@@ -90,7 +102,7 @@ void AsyncHttpClient::Download(std::string_view url,
                                const RequestFields& request_fields) {
   request_callback_ = request_callback;
   progress_callback_ = progress_callback;
-  GetImpl(std::move(url), std::move(request_fields));
+  GetImpl(std::move(url), request_fields);
 }
 
 void AsyncHttpClient::Verbose(bool enable) { verbose_enabled_ = enable; }
@@ -205,6 +217,10 @@ void AsyncHttpClient::ReadHeader(beast::error_code ec,
     is_gzip_ = true;
   }
 
+  if (res_->get()["Content-Encoding"] == "deflate") {
+    is_deflate_ = true;
+  }
+
   this->Callback(ec, RequestState::kStatePending, bytes_transferred, 0);
 
   if (verbose_enabled_) {
@@ -231,6 +247,8 @@ bool AsyncHttpClient::Callback(const beast::error_code& ec,
       response_ += res_->get().body();
       if (is_gzip_) {
         request_callback_(ec, std::move(GzipDecompress(response_)));
+      } else if (is_deflate_) {
+        request_callback_(ec, std::move(zLibDecompress(response_)));
       } else {
         request_callback_(ec, response_);
       }
@@ -238,9 +256,19 @@ bool AsyncHttpClient::Callback(const beast::error_code& ec,
   }
 
   if (download_callback_) {
-    download_callback_(
-        ec, {content_size_, bytes_transferred, progress, request_state},
-        std::move(res_->get().body()));
+    if (is_gzip_) {
+      download_callback_(
+          ec, {content_size_, bytes_transferred, progress, request_state},
+          std::move(GzipDecompress(res_->get().body())));
+    } else if (is_deflate_) {
+      download_callback_(
+          ec, {content_size_, bytes_transferred, progress, request_state},
+          std::move(zLibDecompress(res_->get().body())));
+    } else {
+      download_callback_(
+          ec, {content_size_, bytes_transferred, progress, request_state},
+          std::move(res_->get().body()));
+    }
   }
 
   if (progress_callback_) {

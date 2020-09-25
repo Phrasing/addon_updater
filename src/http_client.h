@@ -23,7 +23,6 @@ struct HttpField {
   std::string field_value;
 };
 
-
 struct DownloadStatus {
   size_t content_size;
   size_t bytes_transferred;
@@ -107,6 +106,7 @@ class AsyncHttpClient : public std::enable_shared_from_this<AsyncHttpClient> {
   size_t bytes_read_;
 
   bool is_gzip_ = false;
+  bool is_deflate_ = false;
   bool request_done_ = false;
   bool verbose_enabled_ = false;
 };

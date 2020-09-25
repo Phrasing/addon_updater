@@ -164,16 +164,16 @@ void Gui::RenderBrowseTab(std::vector<addon_updater::Addon>& addons) {
         addon.download_status.state = RequestState::kStatePending;
         ClientFactory::GetInstance().NewAsyncClient()->Download(
             addon.download_url,
-            [&](const beast::error_code& ec, std::string_view response) {
-
-            },
-            [&](const DownloadStatus& download_status) {
+            [&](const beast::error_code& ec, const DownloadStatus& status,
+                std::string_view data) {
               if (addon.download_status.state == RequestState::kStateCancel) {
-                return false;
+                return;
               }
-              addon.download_status = download_status;
-              return true;
-            });
+              addon.download_status = status;
+              return;
+            },
+            {{"Accept-Encoding", "gzip, deflate, br"},
+             {"Accept", "application/zip"}});
       }
     }
 
@@ -208,9 +208,7 @@ void Gui::RenderBrowseTab(std::vector<addon_updater::Addon>& addons) {
       addon.thumbnail.in_progress = true;
       boost::asio::post(*thd_pool_, [&]() {
         const auto response = ClientFactory::GetInstance().NewSyncClient()->Get(
-            addon.screenshot_url,
-            {{"Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"},
-             {"Accept-Encoding", "gzip, deflate, br"}});
+            addon.screenshot_url);
 
         if (response.data.empty()) return;
 
@@ -296,9 +294,7 @@ void Gui::RenderInstalledTab(std::vector<InstalledAddon>& addons) {
       addon.thumbnail.in_progress = true;
       boost::asio::post(*thd_pool_, [&]() {
         const auto response = ClientFactory::GetInstance().NewSyncClient()->Get(
-            addon.screenshot_url,
-            {{"Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"},
-             {"Accept-Encoding", "gzip, deflate, br"}});
+            addon.screenshot_url);
 
         if (response.ec) {
           const auto buffer_size = response.data.size();

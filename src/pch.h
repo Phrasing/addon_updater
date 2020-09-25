@@ -67,6 +67,7 @@
 #include <boost/asio/thread_pool.hpp>
 #include <boost/iostreams/filtering_stream.hpp>
 #include <boost/iostreams/filter/gzip.hpp>
+#include <boost/iostreams/filter/zlib.hpp>
 #include <boost/iostreams/copy.hpp>
 #include <boost/beast/core/detail/base64.hpp>
 
