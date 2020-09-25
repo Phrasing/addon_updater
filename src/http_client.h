@@ -18,6 +18,12 @@ struct HttpResponse {
   bool Ok() { return !data.empty(); }
 };
 
+struct HttpField {
+  std::string field_name;
+  std::string field_value;
+};
+
+
 struct DownloadStatus {
   size_t content_size;
   size_t bytes_transferred;
@@ -36,6 +42,8 @@ using ProgressCallback = std::function<bool(const DownloadStatus&)>;
 using DownloadCallback = std::function<void(
     const beast::error_code&, const DownloadStatus&, std::string_view)>;
 
+using RequestFields = std::vector<HttpField>;
+
 class AsyncHttpClient : public std::enable_shared_from_this<AsyncHttpClient> {
  public:
   explicit AsyncHttpClient(const net::any_io_executor& ex, ssl::context& ctx);
@@ -46,13 +54,15 @@ class AsyncHttpClient : public std::enable_shared_from_this<AsyncHttpClient> {
   AsyncHttpClient(AsyncHttpClient&&) = delete;
   AsyncHttpClient& operator=(AsyncHttpClient&&) = delete;
 
-  void Get(std::string_view url, const RequestCallback& request_callback);
+  void Get(std::string_view url, const RequestCallback& request_callback,
+           const RequestFields& request_fields = {});
 
-  void Download(std::string_view url,
-                const DownloadCallback& download_callback);
+  void Download(std::string_view url, const DownloadCallback& download_callback,
+                const RequestFields& request_fields = {});
 
   void Download(std::string_view url, const RequestCallback& request_callback,
-                const ProgressCallback& progress_callback);
+                const ProgressCallback& progress_callback,
+                const RequestFields& request_fields = {});
 
   void Verbose(bool enable);
 
@@ -61,17 +71,24 @@ class AsyncHttpClient : public std::enable_shared_from_this<AsyncHttpClient> {
  private:
   void Resolve(beast::error_code ec,
                const tcp::resolver::results_type& results);
+
   void Connect(beast::error_code ec,
                tcp::resolver::results_type::endpoint_type);
+
   void Handshake(beast::error_code ec);
+
   void Write(beast::error_code ec, std::size_t bytes_transferred);
+
   void Read(beast::error_code ec, std::size_t bytes_transferred);
+
   void ReadHeader(beast::error_code ec, std::size_t bytes_transferred);
+
   void Shutdown(beast::error_code ec);
 
   bool Callback(const beast::error_code& ec, RequestState request_state,
                 size_t bytes_transferred = 0u, uint32_t progress = 0u);
-  void GetImpl(std::string_view url);
+
+  void GetImpl(std::string_view url, const RequestFields& request_fields = {});
 
  private:
   DownloadCallback download_callback_;
@@ -89,6 +106,7 @@ class AsyncHttpClient : public std::enable_shared_from_this<AsyncHttpClient> {
   size_t content_size_;
   size_t bytes_read_;
 
+  bool is_gzip_ = false;
   bool request_done_ = false;
   bool verbose_enabled_ = false;
 };
@@ -98,7 +116,8 @@ class SyncHttpClient {
   SyncHttpClient(const net::any_io_executor& ex, ssl::context& ctx);
   ~SyncHttpClient() = default;
 
-  HttpResponse Get(std::string_view url);
+  HttpResponse Get(std::string_view url,
+                   const RequestFields& request_fields = {});
 
   void Reset();
 

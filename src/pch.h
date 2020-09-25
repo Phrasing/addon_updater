@@ -65,6 +65,9 @@
 #include <boost/beast/version.hpp>
 #include <boost/asio/strand.hpp>
 #include <boost/asio/thread_pool.hpp>
+#include <boost/iostreams/filtering_stream.hpp>
+#include <boost/iostreams/filter/gzip.hpp>
+#include <boost/iostreams/copy.hpp>
 #include <boost/beast/core/detail/base64.hpp>
 
 namespace beast = boost::beast;    // from <boost/beast.hpp>

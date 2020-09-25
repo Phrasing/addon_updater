@@ -25,7 +25,7 @@ constexpr auto kTukuiApiUrl = "https://www.tukui.org/api.php?addons=all";
 
 constexpr auto kCurseApiUrl =
     "https://addons-ecs.forgesvc.net/api/v2/addon/"
-    "search?gameId=1&searchFilter=&pageSize=1000";
+    "search?gameId=1&searchFilter=&pageSize=500";
 
 constexpr auto kTukuiClassicApiUrl =
     "https://www.tukui.org/api.php?classic-addons=all";
@@ -88,7 +88,6 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
   }
 
   boost::asio::thread_pool thd_pool(std::thread::hardware_concurrency());
-
   addon_updater::Window window("", {kWindowWidth, kWindowHeight});
   addon_updater::Gui gui(thd_pool);
 
@@ -96,6 +95,7 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
       addon_updater::ClientFactory::GetInstance().NewAsyncClient();
 
   addon_updater::Addons addons{};
+  curse_client->Verbose(true);
   curse_client->Get(kCurseApiUrl,
                     [&](const beast::error_code& ec, std::string_view result) {
                       if (!addon_updater::DeserializeAddons(
@@ -104,7 +104,8 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
                         addon_updater::WindowsErrorMessageBox(
                             "Error: failed to deserialize curse addons.");
                       }
-                    });
+                    },
+                    {{"Accept-Encoding", "gzip, deflate, br"}});
 
   auto tukui_client =
       addon_updater::ClientFactory::GetInstance().NewAsyncClient();
@@ -116,7 +117,12 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
                         addon_updater::WindowsErrorMessageBox(
                             "Error: failed to deserialize tukui addons.");
                       }
-                    });
+                    },
+                    {{"Accept",
+                      "text/html,application/xhtml+xml,application/"
+                      "xml;q=0.9,image/avif,image/webp,image/apng,*/"
+                      "*;q=0.8,application/signed-exchange;v=b3;q=0.9"},
+                     {"Accept-Encoding", "gzip, deflate, br"}});
 
   bool is_loading = true;
 

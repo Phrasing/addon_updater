@@ -7,6 +7,21 @@ namespace addon_updater {
 namespace {
 constexpr auto kHttpVersion = 11;
 constexpr auto kSslPort = "443";
+constexpr auto kUserAgent =
+    R"(Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36)";
+
+inline static std::string GzipDecompress(const std::string& data) {
+  std::stringstream compressed{data};
+  std::stringstream decompressed{};
+
+  boost::iostreams::filtering_streambuf<boost::iostreams::input> out;
+  out.push(boost::iostreams::gzip_decompressor());
+  out.push(compressed);
+  boost::iostreams::copy(out, decompressed);
+
+  return decompressed.str();
+}
+
 }  // namespace
 
 AsyncHttpClient::AsyncHttpClient(const net::any_io_executor& ex,
@@ -16,7 +31,8 @@ AsyncHttpClient::AsyncHttpClient(const net::any_io_executor& ex,
   res_->body_limit(std::numeric_limits<size_t>::max());
 }
 
-void AsyncHttpClient::GetImpl(std::string_view url) {
+void AsyncHttpClient::GetImpl(std::string_view url,
+                              const RequestFields& request_fields) {
   const auto uri =
       network::uri{std::move(string_util::UrlEncodeWhitespace(url))};
 
@@ -36,8 +52,12 @@ void AsyncHttpClient::GetImpl(std::string_view url) {
 
   req_.target(path + "?" + query);
   req_.set(http::field::host, host);
-  req_.set(http::field::user_agent, BOOST_BEAST_VERSION_STRING);
+  req_.set(http::field::user_agent, kUserAgent);
   req_.set(http::field::proxy_connection, "Keep-Alive");
+
+  for (auto& field : request_fields) {
+    req_.set(http::string_to_field(field.field_name), field.field_value);
+  }
 
   if (verbose_enabled_) {
     std::cout << "\n[REQUEST]\n" << req_.base() << std::endl;
@@ -50,24 +70,27 @@ void AsyncHttpClient::GetImpl(std::string_view url) {
 }
 
 void AsyncHttpClient::Get(std::string_view url,
-                          const RequestCallback& request_callback) {
+                          const RequestCallback& request_callback,
+                          const RequestFields& request_fields) {
   if (url.empty()) return;
   request_callback_ = request_callback;
-  GetImpl(std::move(url));
+  GetImpl(std::move(url), std::move(request_fields));
 }
 
 void AsyncHttpClient::Download(std::string_view url,
-                               const DownloadCallback& download_callback) {
+                               const DownloadCallback& download_callback,
+                               const RequestFields& request_fields) {
   download_callback_ = (download_callback);
-  GetImpl(std::move(url));
+  GetImpl(std::move(url), std::move(request_fields));
 }
 
 void AsyncHttpClient::Download(std::string_view url,
                                const RequestCallback& request_callback,
-                               const ProgressCallback& progress_callback) {
+                               const ProgressCallback& progress_callback,
+                               const RequestFields& request_fields) {
   request_callback_ = request_callback;
   progress_callback_ = progress_callback;
-  GetImpl(std::move(url));
+  GetImpl(std::move(url), std::move(request_fields));
 }
 
 void AsyncHttpClient::Verbose(bool enable) { verbose_enabled_ = enable; }
@@ -175,7 +198,11 @@ void AsyncHttpClient::ReadHeader(beast::error_code ec,
   }
 
   if (res_->content_length().is_initialized()) {
-    content_size_ = res_->content_length().value();
+    content_size_ = *res_->content_length();
+  }
+
+  if (res_->get()["Content-Encoding"] == "gzip") {
+    is_gzip_ = true;
   }
 
   this->Callback(ec, RequestState::kStatePending, bytes_transferred, 0);
@@ -199,11 +226,14 @@ bool AsyncHttpClient::Callback(const beast::error_code& ec,
                                RequestState request_state,
                                size_t bytes_transferred, uint32_t progress) {
   if (request_callback_) {
-    if (request_state == RequestState::kStatePending) {
-      response_ += std::move(res_->get().body());
-    } else if (request_state == RequestState::kStateFinish) {
-      response_ += std::move(res_->get().body());
-      request_callback_(ec, response_);
+    response_ += res_->get().body();
+    if (request_state == RequestState::kStateFinish) {
+      response_ += res_->get().body();
+      if (is_gzip_) {
+        request_callback_(ec, std::move(GzipDecompress(response_)));
+      } else {
+        request_callback_(ec, response_);
+      }
     }
   }
 
@@ -247,8 +277,9 @@ SyncHttpClient::SyncHttpClient(const net::any_io_executor& ex,
                                ssl::context& ctx)
     : stream_(ex, ctx), resolver_(ex) {}
 
-HttpResponse SyncHttpClient::Get(std::string_view url) {
-  auto uri = network::uri{std::move(url.data())};
+HttpResponse SyncHttpClient::Get(std::string_view url,
+                                 const RequestFields& request_fields) {
+  auto uri = network::uri{std::move(string_util::UrlEncodeWhitespace(url))};
 
   const auto host = std::string{uri.host().data(), uri.host().length()};
   const auto path = std::string{uri.path().data(), uri.path().length()};
@@ -272,8 +303,12 @@ HttpResponse SyncHttpClient::Get(std::string_view url) {
                                        kHttpVersion};
 
   req.set(http::field::host, host);
-  req.set(http::field::user_agent, BOOST_BEAST_VERSION_STRING);
+  req.set(http::field::user_agent, kUserAgent);
   req.set(http::field::proxy_connection, "Keep-Alive");
+
+  for (auto& field : request_fields) {
+    req.set(http::string_to_field(field.field_name), field.field_value);
+  }
 
   http::write(stream_, req);
 

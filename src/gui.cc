@@ -208,7 +208,9 @@ void Gui::RenderBrowseTab(std::vector<addon_updater::Addon>& addons) {
       addon.thumbnail.in_progress = true;
       boost::asio::post(*thd_pool_, [&]() {
         const auto response = ClientFactory::GetInstance().NewSyncClient()->Get(
-            addon.screenshot_url);
+            addon.screenshot_url,
+            {{"Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"},
+             {"Accept-Encoding", "gzip, deflate, br"}});
 
         if (response.data.empty()) return;
 
@@ -294,7 +296,9 @@ void Gui::RenderInstalledTab(std::vector<InstalledAddon>& addons) {
       addon.thumbnail.in_progress = true;
       boost::asio::post(*thd_pool_, [&]() {
         const auto response = ClientFactory::GetInstance().NewSyncClient()->Get(
-            addon.screenshot_url);
+            addon.screenshot_url,
+            {{"Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"},
+             {"Accept-Encoding", "gzip, deflate, br"}});
 
         if (response.ec) {
           const auto buffer_size = response.data.size();

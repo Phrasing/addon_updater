@@ -94,19 +94,19 @@ std::optional<WowInstallations> GetWowInstallations(
     const auto client_type = StringToClientType(flavor_string);
     switch (client_type) {
       case ClientType::kRetail: {
-        installs.retail = {client_type, base_path, addons_path, wtf_path};
+        installs.retail = {base_path, addons_path, wtf_path};
       } break;
       case ClientType::kClassic: {
-        installs.classic = {client_type, base_path, addons_path, wtf_path};
+        installs.classic = {base_path, addons_path, wtf_path};
       } break;
       case ClientType::kRetailPtr: {
-        installs.retail_ptr = {client_type, base_path, addons_path, wtf_path};
+        installs.retail_ptr = {base_path, addons_path, wtf_path};
       } break;
       case ClientType::kBeta: {
-        installs.beta = {client_type, base_path, addons_path, wtf_path};
+        installs.beta = {base_path, addons_path, wtf_path};
       } break;
       case ClientType::kClassicPtr: {
-        installs.classic_ptr = {client_type, base_path, addons_path, wtf_path};
+        installs.classic_ptr = {base_path, addons_path, wtf_path};
       } break;
       default:
         break;

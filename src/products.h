@@ -13,7 +13,6 @@ enum class ClientType {
 };
 
 struct WowInstall {
-  ClientType client_type;
   std::string base_path;
   std::string addons_path;
   std::string wtf_path;
