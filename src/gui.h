@@ -23,9 +23,9 @@ class Gui {
  private:
   void RenderBrowseTab(std::vector<addon_updater::Addon>& addons);
   void RenderInstalledTab(std::vector<addon_updater::InstalledAddon>& addons);
-
-  uint8_t* curse_icon_;
-  size_t curse_icon_size_;
+   
+  uint8_t* curse_icon_ = nullptr;
+  size_t curse_icon_size_ = 0u;
 };
 }  // namespace addon_updater_gui
 

@@ -215,14 +215,14 @@ bool InstalledAddon::Update() {
         const auto buffer =
             std::vector<uint8_t>(response.begin(), response.end());
 
-        ZipFile zip(buffer);
-        if (!zip.Good()) {
+        auto zip_file = std::make_unique<ZipFile>(buffer);
+        if (!zip_file->Good()) {
           std::fprintf(stderr, "Error: failed to open zip file %s\n",
                        this->name.c_str());
           return;
         }
 
-        if (!zip.Unzip(this->addons_directory, &this->directories)) {
+        if (!zip_file->Unzip(this->addons_directory, &this->directories)) {
           std::fprintf(stderr, "Error: failed to extract zip file %s\n",
                        this->name.c_str());
         }

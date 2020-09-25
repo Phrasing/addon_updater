@@ -19,7 +19,7 @@ struct HttpResponse {
 };
 
 struct HttpField {
-  std::string field_name;
+  http::field field_name;
   std::string field_value;
 };
 

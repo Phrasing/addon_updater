@@ -67,7 +67,7 @@ void AsyncHttpClient::GetImpl(std::string_view url,
   req_.set(http::field::user_agent, kUserAgent);
 
   for (auto& field : request_fields) {
-    req_.set(http::string_to_field(field.field_name), field.field_value);
+    req_.set(field.field_name, field.field_value);
   }
 
   if (verbose_enabled_) {
@@ -211,7 +211,9 @@ void AsyncHttpClient::OnReadHeader(beast::error_code ec,
     content_size_ = *res_->content_length();
   }
 
-  is_gzip_ = (res_->get()["Content-Encoding"] == "gzip");
+  is_gzip_ = (res_->get()["Content-Encoding"] == "gzip" ||
+              res_->get()["Content-Encoding"] == "x-gzip");
+
   is_deflate_ = (res_->get()["Content-Encoding"] == "deflate");
 
   this->Callback(ec, RequestState::kStatePending, bytes_transferred, 0);
@@ -252,11 +254,11 @@ bool AsyncHttpClient::Callback(const beast::error_code& ec,
     if (is_gzip_) {
       download_callback_(
           ec, {content_size_, bytes_transferred, progress, request_state},
-          std::move(GzipDecompress(res_->get().body())));
+          std::move(GzipDecompress(std::move(res_->get().body()))));
     } else if (is_deflate_) {
       download_callback_(
           ec, {content_size_, bytes_transferred, progress, request_state},
-          std::move(zLibDecompress(res_->get().body())));
+          std::move(zLibDecompress(std::move(res_->get().body()))));
     } else {
       download_callback_(
           ec, {content_size_, bytes_transferred, progress, request_state},
@@ -326,8 +328,8 @@ HttpResponse SyncHttpClient::Get(std::string_view url,
   req.set(http::field::host, host);
   req.set(http::field::user_agent, kUserAgent);
 
-  for (auto& field : request_fields) {
-    req.set(http::string_to_field(field.field_name), field.field_value);
+  for (const auto& field : request_fields) {
+    req.set(field.field_name, field.field_value);
   }
 
   http::write(stream_, req);
@@ -346,8 +348,9 @@ HttpResponse SyncHttpClient::Get(std::string_view url,
   if (ec == net::error::eof) {
     ec = {};
   }
-  
-  if (result->get()["Content-Encoding"] == "gzip") {
+
+  if (result->get()["Content-Encoding"] == "gzip" ||
+      result->get()["Content-Encoding"] == "x-gzip") {
     return {std::move(GzipDecompress(result->get().body())), ec};
   }
 

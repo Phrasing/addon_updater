@@ -184,8 +184,8 @@ void Gui::RenderBrowseTab(std::vector<addon_updater::Addon>& addons) {
               addon.download_status = status;
               return;
             },
-            {{"Accept-Encoding", "gzip, deflate, br"},
-             {"Accept", "application/zip"}});
+            {{http::field::accept_encoding, "gzip, deflate, br"},
+             {http::field::accept, "application/zip"}});
       }
     }
 

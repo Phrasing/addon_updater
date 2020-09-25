@@ -58,19 +58,6 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
   const auto installations = addon_updater::GetWowInstallations(*products);
 
-  const auto lambda =
-      [&](const addon_updater::DirectoryResult& directory_result) -> bool {
-    std::fprintf(stdout, "Full Path: %s\n", directory_result.path.c_str());
-    std::fprintf(stdout, "Parent Path: %s\n",
-                 directory_result.parent_path.c_str());
-    std::fprintf(stdout, "Directory: %s\n", directory_result.directory.c_str());
-    return true;
-  };
-
-  if (addon_updater::IterateDirectory(installations->retail.addons_path,
-                                      lambda)) {
-  }
-
   addon_updater::Slugs addon_slugs{};
   if (auto resource = addon_updater::GetResource(
           ADDON_SLUGS_RESOURCE, addon_updater::ResourceType::kText);
@@ -106,8 +93,8 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
                       }
                       std::cout << addons.size() << std::endl;
                     },
-                    {{"Accept", "application/json"},
-                     {"Accept-Encoding", "gzip, deflate, br"}});
+                    {{http::field::accept, "application/json"},
+                     {http::field::accept_encoding, "gzip, deflate, br"}});
 
   /*auto tukui_client =
       addon_updater::ClientFactory::GetInstance().NewAsyncClient();
