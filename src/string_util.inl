@@ -45,17 +45,6 @@ inline size_t StringToNumber(std::string_view str) {
   return std::stoull(str.data());
 }
 
-inline std::string UrlEncodeWhitespace(std::string_view str) {
-  std::string copy;
-  for (size_t i = 0; i < str.length(); i++) {
-    if (str[i] != ' ')
-      copy += str[i];
-    else
-      copy += "%20";
-  }
-  return copy;
-}
-
 inline std::string StripNonDigits(std::string_view str) {
   auto string_copy = std::string(str.begin(), str.end());
 

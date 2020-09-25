@@ -81,8 +81,8 @@
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)bin\build\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)-$(Configuration)</TargetName>
-    <IncludePath>C:\Libraries\boost_1_74_0;$(SolutionDir)third_party\openssl\include;$(SolutionDir)third_party\uri\include;$(SolutionDir)third_party\protobuf\$(Configuration)\include;$(SolutionDir)third_party\rapidjson\include;$(SolutionDir)third_party\imgui\include;$(SolutionDir)third_party\glew\include;$(SolutionDir)third_party\glfw\include;$(SolutionDir)third_party\miniz\include;$(SolutionDir)third_party\iconfont_cpp_headers\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Libraries\boost_1_74_0\lib64-msvc-14.2;$(SolutionDir)third_party\openssl\lib\$(Platform)\$(Configuration);$(SolutionDir)third_party\uri\lib\$(Platform)\$(Configuration);$(SolutionDir)third_party\protobuf\$(Configuration);$(SolutionDir)third_party\imgui\lib\$(Configuration);$(SolutionDir)third_party\glfw\lib\$(Configuration);$(SoltutionDir)third_party\glew\lib\$(Configuration);$(SolutionDir)third_party\miniz\lib\$(Configuration);$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Libraries\boost_1_74_0;$(SolutionDir)third_party\openssl\include;$(SolutionDir)third_party\protobuf\$(Configuration)\include;$(SolutionDir)third_party\rapidjson\include;$(SolutionDir)third_party\imgui\include;$(SolutionDir)third_party\glew\include;$(SolutionDir)third_party\glfw\include;$(SolutionDir)third_party\miniz\include;$(SolutionDir)third_party\iconfont_cpp_headers\include;$(SolutionDir)third_party\skyr-url\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Libraries\boost_1_74_0\lib64-msvc-14.2;$(SolutionDir)third_party\openssl\lib\$(Platform)\$(Configuration);$(SolutionDir)third_party\protobuf\$(Configuration);$(SolutionDir)third_party\imgui\lib\$(Configuration);$(SolutionDir)third_party\glfw\lib\$(Configuration);$(SoltutionDir)third_party\glew\lib\$(Configuration);$(SolutionDir)third_party\miniz\lib\$(Configuration);$(SolutionDir)third_party\skyr-url\lib\$(Configuration);$(LibraryPath)</LibraryPath>
     <EnableMicrosoftCodeAnalysis>true</EnableMicrosoftCodeAnalysis>
     <EnableClangTidyCodeAnalysis>false</EnableClangTidyCodeAnalysis>
   </PropertyGroup>
@@ -91,10 +91,16 @@
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)bin\build\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)-$(Configuration)</TargetName>
-    <IncludePath>C:\Libraries\boost_1_74_0;$(SolutionDir)third_party\openssl\include;$(SolutionDir)third_party\uri\include;$(SolutionDir)third_party\protobuf\$(Configuration)\include;$(SolutionDir)third_party\rapidjson\include;$(SolutionDir)third_party\imgui\include;$(SolutionDir)third_party\glew\include;$(SolutionDir)third_party\glfw\include;$(SolutionDir)third_party\miniz\include;$(SolutionDir)third_party\iconfont_cpp_headers\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Libraries\boost_1_74_0\lib64-msvc-14.2;$(SolutionDir)third_party\openssl\lib\$(Platform)\$(Configuration);$(SolutionDir)third_party\uri\lib\$(Platform)\$(Configuration);$(SolutionDir)third_party\protobuf\$(Configuration);$(SolutionDir)third_party\imgui\lib\$(Configuration);$(SolutionDir)third_party\glfw\lib\$(Configuration);$(SoltutionDir)third_party\glew\lib\$(Configuration);$(SolutionDir)third_party\miniz\lib\$(Configuration);$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Libraries\boost_1_74_0;$(SolutionDir)third_party\openssl\include;$(SolutionDir)third_party\protobuf\$(Configuration)\include;$(SolutionDir)third_party\rapidjson\include;$(SolutionDir)third_party\imgui\include;$(SolutionDir)third_party\glew\include;$(SolutionDir)third_party\glfw\include;$(SolutionDir)third_party\miniz\include;$(SolutionDir)third_party\iconfont_cpp_headers\include;$(SolutionDir)third_party\skyr-url\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Libraries\boost_1_74_0\lib64-msvc-14.2;$(SolutionDir)third_party\openssl\lib\$(Platform)\$(Configuration);$(SolutionDir)third_party\protobuf\$(Configuration);$(SolutionDir)third_party\imgui\lib\$(Configuration);$(SolutionDir)third_party\glfw\lib\$(Configuration);$(SoltutionDir)third_party\glew\lib\$(Configuration);$(SolutionDir)third_party\miniz\lib\$(Configuration);$(SolutionDir)third_party\skyr-url\lib\$(Configuration);$(LibraryPath)</LibraryPath>
     <EnableMicrosoftCodeAnalysis>true</EnableMicrosoftCodeAnalysis>
     <EnableClangTidyCodeAnalysis>false</EnableClangTidyCodeAnalysis>
+  </PropertyGroup>
+  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <VcpkgEnabled>false</VcpkgEnabled>
+  </PropertyGroup>
+  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <VcpkgEnabled>false</VcpkgEnabled>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -143,7 +149,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>libcrypto.lib;libssl.lib;network-uri.lib;libprotobuf.lib;imgui.lib;glfw3.lib;opengl32.lib;crypt32.lib;miniz.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcrypto.lib;libssl.lib;libprotobuf.lib;imgui.lib;glfw3.lib;opengl32.lib;crypt32.lib;miniz.lib;skyr-url.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions> /ignore:4099 /NODEFAULTLIB:MSVCRTD /ignore:4217 %(AdditionalOptions)</AdditionalOptions>
       <Profile>false</Profile>
     </Link>
@@ -175,7 +181,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>libcrypto.lib;libssl.lib;network-uri.lib;libprotobuf.lib;imgui.lib;glfw3.lib;opengl32.lib;crypt32.lib;miniz.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcrypto.lib;libssl.lib;libprotobuf.lib;imgui.lib;glfw3.lib;opengl32.lib;crypt32.lib;miniz.lib;skyr-url.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions> /ignore:4099 /NODEFAULTLIB:MSVCRT /ignore:4217 %(AdditionalOptions)</AdditionalOptions>
       <Profile>false</Profile>
     </Link>

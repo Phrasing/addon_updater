@@ -45,14 +45,10 @@ AsyncHttpClient::AsyncHttpClient(const net::any_io_executor& ex,
 
 void AsyncHttpClient::GetImpl(std::string_view url,
                               const RequestFields& request_fields) {
-  const auto uri =
-      network::uri{std::move(string_util::UrlEncodeWhitespace(url))};
+  auto encoded_url = skyr::url(url);
 
-  const auto host = std::string{uri.host().data(), uri.host().length()};
-  const auto path = std::string{uri.path().data(), uri.path().length()};
-  const auto query = std::string{uri.query().data(), uri.query().length()};
-
-  if (!SSL_set_tlsext_host_name(stream_.native_handle(), host.c_str())) {
+  if (!SSL_set_tlsext_host_name(stream_.native_handle(),
+                                encoded_url.hostname().c_str())) {
     this->Callback(beast::error_code{static_cast<int>(::ERR_get_error()),
                                      net::error::get_ssl_category()},
                    RequestState::kStateError);
@@ -62,8 +58,8 @@ void AsyncHttpClient::GetImpl(std::string_view url,
   req_.version(kHttpVersion);
   req_.method(http::verb::get);
 
-  req_.target(path + "?" + query);
-  req_.set(http::field::host, host);
+  req_.target(encoded_url.pathname() + encoded_url.search());
+  req_.set(http::field::host, encoded_url.hostname());
   req_.set(http::field::user_agent, kUserAgent);
 
   for (auto& field : request_fields) {
@@ -75,7 +71,7 @@ void AsyncHttpClient::GetImpl(std::string_view url,
   }
 
   resolver_.async_resolve(
-      host, kSslPort,
+      encoded_url.hostname(), kSslPort,
       beast::bind_front_handler(&AsyncHttpClient::OnResolve,
                                 std::move(shared_from_this())));
 }
@@ -239,7 +235,6 @@ bool AsyncHttpClient::Callback(const beast::error_code& ec,
   if (request_callback_) {
     response_ += res_->get().body();
     if (request_state == RequestState::kStateFinish) {
-      response_ += res_->get().body();
       if (is_gzip_) {
         request_callback_(ec, std::move(GzipDecompress(response_)));
       } else if (is_deflate_) {
@@ -302,30 +297,28 @@ SyncHttpClient::SyncHttpClient(const net::any_io_executor& ex,
 
 HttpResponse SyncHttpClient::Get(std::string_view url,
                                  const RequestFields& request_fields) {
-  auto uri = network::uri{std::move(string_util::UrlEncodeWhitespace(url))};
+  auto encoded_url = skyr::url(url);
 
-  const auto host = std::string{uri.host().data(), uri.host().length()};
-  const auto path = std::string{uri.path().data(), uri.path().length()};
-  const auto query = std::string{uri.query().data(), uri.query().length()};
-
-  if (!SSL_set_tlsext_host_name(stream_.native_handle(), host.c_str())) {
+  if (!SSL_set_tlsext_host_name(stream_.native_handle(),
+                                encoded_url.hostname().c_str())) {
     beast::error_code ec{static_cast<int>(::ERR_get_error()),
                          net::error::get_ssl_category()};
     return {"", ec};
   }
 
   beast::get_lowest_layer(stream_).connect(
-      std::move(resolver_.resolve(host, kSslPort)));
+      std::move(resolver_.resolve(encoded_url.hostname(), kSslPort)));
 
   beast::get_lowest_layer(stream_).socket().set_option(
       net::ip::tcp::no_delay{true});
 
   stream_.handshake(ssl::stream_base::client);
 
-  http::request<http::string_body> req{http::verb::get, path + "?" + query,
-                                       kHttpVersion};
+  http::request<http::string_body> req{
+      http::verb::get, encoded_url.pathname() + encoded_url.search(),
+      kHttpVersion};
 
-  req.set(http::field::host, host);
+  req.set(http::field::host, encoded_url.hostname());
   req.set(http::field::user_agent, kUserAgent);
 
   for (const auto& field : request_fields) {
