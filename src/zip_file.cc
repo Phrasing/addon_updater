@@ -20,7 +20,6 @@ bool ZipFile::Unzip(std::string_view path,
     return false;
   }
 
-
   if (path_copy.back() != '\\') path_copy += '\\';
 
   this->ForEach([&](const ZipInfo& zip_info) -> bool {
@@ -45,10 +44,12 @@ bool ZipFile::Unzip(std::string_view path,
       std::filesystem::create_directories(relative_path);
     }
 
-    install_paths->push_back(addon_path);
-
     mz_zip_reader_extract_to_file(std::move(this->GetArchive()),
                                   zip_info.file_index, full_path.c_str(), 0);
+
+    if (install_paths != nullptr) {
+      install_paths->push_back(addon_path);
+    }
 
     return true;
   });

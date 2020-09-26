@@ -9,11 +9,12 @@
 // clang-format on
 
 namespace ImGui {
+
 bool BufferingBar(const char* label, float value, const ImVec2& size_arg) {
   auto* window = GetCurrentWindow();
   if (window->SkipItems) return false;
 
-  const ImU32 fg_col = ImGui::GetColorU32(ImGuiCol_ButtonHovered);
+  const ImU32 fg_col = ImGui::GetColorU32(ImGuiCol_ButtonActive);
   const ImU32 bg = ImGui::GetColorU32(ImGuiCol_Button);
 
   auto& ctx = *GImGui;
@@ -78,8 +79,8 @@ bool Spinner(const char* label, const ImVec2& radius, int thickness) {
                centre.y + ImSin(a + ctx.Time * 8) * radius.y));
   }
 
-  window->DrawList->PathStroke(ImGui::GetColorU32(ImGuiCol_ButtonHovered),
-                               false, thickness);
+  window->DrawList->PathStroke(ImGui::GetColorU32(ImGuiCol_ButtonActive), false,
+                               thickness);
   return true;
 }
 }
@@ -104,14 +105,16 @@ void RenderLoadingScreen(const WindowSize& window_size) {
   {
     const auto spinner_size = ImVec2(100, 100);
     ImGui::SetCursorPos((ImGui::GetWindowSize() - spinner_size) * 0.35F);
-    ImGui::Spinner("##loading_spinner", spinner_size, 25);
+    ImGui::Spinner("##loading_spinner", spinner_size, 20);
   }
   ImGui::End();
 }
 
 }  // namespace
 
-Gui::Gui(boost::asio::thread_pool& thd_pool) : thd_pool_(&thd_pool) {
+Gui::Gui(boost::asio::thread_pool& thd_pool,
+         const WowInstallations& installations)
+    : thd_pool_(&thd_pool), installations_(installations) {
   if (const auto curse_resource = addon_updater::GetResource(
           DEFAULT_ADDON_ICON, addon_updater::ResourceType::kBinary);
       curse_resource.has_value()) {
@@ -130,16 +133,18 @@ void Gui::DrawGui(Addons& addons, std::vector<InstalledAddon>& installed_addons,
     return;
   }
 
-  ImGui::Begin("##MAIN", nullptr,
-               ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
+  static bool is_open = true;
+  ImGui::Begin("Addon Updater v1.0.1", &is_open,
+               ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+                   ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_Minimize);
   {
     if (ImGui::BeginTabBar("##MAIN_TAB_BAR")) {
       if (ImGui::BeginTabItem("Browse  " ICON_FA_SEARCH)) {
-        this->RenderBrowseTab(addons);
+        this->RenderBrowseTab(addons, installed_addons);
         ImGui::EndTabItem();
       }
 
-      if (ImGui::BeginTabItem("Installed")) {
+      if (ImGui::BeginTabItem("Installed  " ICON_FA_FOLDER)) {
         this->RenderInstalledTab(installed_addons);
         ImGui::EndTabItem();
       }
@@ -149,14 +154,40 @@ void Gui::DrawGui(Addons& addons, std::vector<InstalledAddon>& installed_addons,
   }
 }
 
-void Gui::RenderBrowseTab(std::vector<addon_updater::Addon>& addons) {
+void Gui::RenderBrowseTab(
+    std::vector<addon_updater::Addon>& addons,
+    std::vector<addon_updater::InstalledAddon>& installed_addons) {
   for (auto& addon : addons) {
+    const auto found =
+        std::find_if(installed_addons.begin(), installed_addons.end(),
+                     [&addon](const InstalledAddon& installed_addon) -> bool {
+                       return installed_addon.id == addon.id;
+                     });
+    if (found != installed_addons.end()) {
+      // If the addon is currently being downloaded we don't want to remove it
+      // just yet.
+      addon.is_ignored =
+          !(addon.download_status.state == RequestState::kStatePending);
+    } else {
+      // Assume that the addon has been uninstalled and check to see if we need
+      // to change the request state to allow downloading the addon again.
+      addon.is_ignored = false;
+      if (addon.download_status.state == RequestState::kStateCancel ||
+          addon.download_status.state == RequestState::kStateFinish) {
+        addon.download_status.state = RequestState::kStateNone;
+      }
+    }
+
+    if (addon.is_ignored) continue;
+
     if (addon.thumbnail.is_uploaded) {
       ImGui::Image(addon.thumbnail.pixels,
                    ImVec2(addon.thumbnail.width, addon.thumbnail.height));
       ImGui::SameLine();
     }
 
+    ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0, 0, 0, 0));
+    ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0, 0, 0, 0));
     if (ImGui::TreeNode(
             (addon.name + "##" + std::to_string(addon.id)).c_str())) {
       for (auto& latest : addon.latest_file.modules) {
@@ -165,6 +196,7 @@ void Gui::RenderBrowseTab(std::vector<addon_updater::Addon>& addons) {
       }
       ImGui::TreePop();
     }
+    ImGui::PopStyleColor(2);
 
     if (addon.download_status.state != RequestState::kStatePending &&
         addon.download_status.state != RequestState::kStateFinish) {
@@ -173,19 +205,9 @@ void Gui::RenderBrowseTab(std::vector<addon_updater::Addon>& addons) {
       if (ImGui::Button((std::string(ICON_FA_DOWNLOAD "##") +
                          addon.remote_version.readable_version)
                             .c_str())) {
-        addon.download_status.state = RequestState::kStatePending;
-        ClientFactory::GetInstance().NewAsyncClient()->Download(
-            addon.download_url,
-            [&](const beast::error_code& ec, const DownloadStatus& status,
-                std::string_view data) {
-              if (addon.download_status.state == RequestState::kStateCancel) {
-                return;
-              }
-              addon.download_status = status;
-              return;
-            },
-            {{http::field::accept_encoding, "gzip, deflate, br"},
-             {http::field::accept, "application/zip"}});
+        const auto installed_addon =
+            addon.Install(installations_.retail.addons_path);
+        installed_addons.push_back(installed_addon);
       }
     }
 
@@ -219,58 +241,61 @@ void Gui::RenderBrowseTab(std::vector<addon_updater::Addon>& addons) {
 
     if (ImGui::IsItemVisible() && !addon.thumbnail.is_loaded &&
         !addon.thumbnail.in_progress) {
-      addon.thumbnail.in_progress = true;
-      boost::asio::post(*thd_pool_, [&]() {
-        if (addon.screenshot_url.empty()) {
-          int width, height, channels;
-          auto* texture = LoadTexture(curse_icon_, curse_icon_size_, &width,
-                                      &height, &channels);
+      AsyncLoadAddonThumbnail(&addon.thumbnail, addon.screenshot_url);
+      /*     addon.thumbnail.in_progress = true;
+           boost::asio::post(*thd_pool_, [&]() {
+             if (addon.screenshot_url.empty()) {
+               int width, height, channels;
+               auto* texture = LoadTexture(curse_icon_, curse_icon_size_,
+         &width, &height, &channels);
 
-          if (texture != nullptr) {
-            auto* resized_texture =
-                ResizeTexture(texture, width, height, kThumbnailWidth,
-                              kThumbnailHeight, channels);
-            if (resized_texture != nullptr) {
-              addon.thumbnail.pixels = resized_texture;
-              addon.thumbnail.width = kThumbnailWidth;
-              addon.thumbnail.height = kThumbnailHeight;
-              addon.thumbnail.channels = channels;
-            }
-          }
+               if (texture != nullptr) {
+                 auto* resized_texture =
+                     ResizeTexture(texture, width, height, kThumbnailWidth,
+                                   kThumbnailHeight, channels);
+                 if (resized_texture != nullptr) {
+                   addon.thumbnail.pixels = resized_texture;
+                   addon.thumbnail.width = kThumbnailWidth;
+                   addon.thumbnail.height = kThumbnailHeight;
+                   addon.thumbnail.channels = channels;
+                 }
+               }
 
-          addon.thumbnail.is_loaded = true;
-          addon.thumbnail.in_progress = false;
-          return;
-        }
+               addon.thumbnail.is_loaded = true;
+               addon.thumbnail.in_progress = false;
+               return;
+             }
 
-        const auto response = ClientFactory::GetInstance().NewSyncClient()->Get(
-            addon.screenshot_url);
+             const auto response =
+         ClientFactory::GetInstance().NewSyncClient()->Get(
+                 addon.screenshot_url);
 
-        if (response.data.empty()) return;
+             if (response.data.empty()) return;
 
-        const auto buffer_size = response.data.size();
-        auto buffer = std::make_unique<uint8_t[]>(buffer_size);
-        std::memcpy(buffer.get(), response.data.data(), buffer_size);
+             const auto buffer_size = response.data.size();
+             auto buffer = std::make_unique<uint8_t[]>(buffer_size);
+             std::memcpy(buffer.get(), response.data.data(), buffer_size);
 
-        int width, height, channels;
-        auto* texture =
-            LoadTexture(buffer.get(), buffer_size, &width, &height, &channels);
+             int width, height, channels;
+             auto* texture =
+                 LoadTexture(buffer.get(), buffer_size, &width, &height,
+         &channels);
 
-        if (texture != nullptr) {
-          auto* resized_texture =
-              ResizeTexture(texture, width, height, kThumbnailWidth,
-                            kThumbnailHeight, channels);
-          if (resized_texture != nullptr) {
-            addon.thumbnail.pixels = resized_texture;
-            addon.thumbnail.width = kThumbnailWidth;
-            addon.thumbnail.height = kThumbnailHeight;
-            addon.thumbnail.channels = channels;
-          }
-        }
+             if (texture != nullptr) {
+               auto* resized_texture =
+                   ResizeTexture(texture, width, height, kThumbnailWidth,
+                                 kThumbnailHeight, channels);
+               if (resized_texture != nullptr) {
+                 addon.thumbnail.pixels = resized_texture;
+                 addon.thumbnail.width = kThumbnailWidth;
+                 addon.thumbnail.height = kThumbnailHeight;
+                 addon.thumbnail.channels = channels;
+               }
+             }
 
-        addon.thumbnail.is_loaded = true;
-        addon.thumbnail.in_progress = false;
-      });
+             addon.thumbnail.is_loaded = true;
+             addon.thumbnail.in_progress = false;
+           });*/
     }
   }
 }
@@ -290,6 +315,17 @@ void Gui::RenderInstalledTab(std::vector<InstalledAddon>& addons) {
       ImGui::TextColored(
           ImVec4(1.0f, 1.0f, 0.0f, 1.0f),
           ("Remote: " + addon.remote_version.readable_version).c_str());
+
+      if (ImGui::Button("Uninstall")) {
+        addon.Uninstall();
+        std::vector<InstalledAddon>::iterator position =
+            std::find(addons.begin(), addons.end(), addon);
+        if (position != addons.end()) {
+          addons.erase(position);
+        }
+        ImGui::TreePop();
+        continue;
+      }
 
       ImGui::TreePop();
     }
@@ -336,63 +372,127 @@ void Gui::RenderInstalledTab(std::vector<InstalledAddon>& addons) {
 
     if (ImGui::IsItemVisible() && !addon.thumbnail.is_loaded &&
         !addon.thumbnail.in_progress) {
-      addon.thumbnail.in_progress = true;
-      boost::asio::post(*thd_pool_, [&]() {
-        if (addon.screenshot_url.empty()) {
-        load_default:
-          int width, height, channels;
-          auto* texture = LoadTexture(curse_icon_, curse_icon_size_, &width,
-                                      &height, &channels);
+      AsyncLoadAddonThumbnail(&addon.thumbnail, addon.screenshot_url);
+      /*  addon.thumbnail.in_progress = true;
+        boost::asio::post(*thd_pool_, [&]() {
+          if (addon.screenshot_url.empty()) {
+          load_default:
+            int width, height, channels;
+            auto* texture = LoadTexture(curse_icon_, curse_icon_size_, &width,
+                                        &height, &channels);
 
-          if (texture != nullptr) {
-            auto* resized_texture =
-                ResizeTexture(texture, width, height, kThumbnailWidth,
-                              kThumbnailHeight, channels);
-            if (resized_texture != nullptr) {
-              addon.thumbnail.pixels = resized_texture;
-              addon.thumbnail.width = kThumbnailWidth;
-              addon.thumbnail.height = kThumbnailHeight;
-              addon.thumbnail.channels = channels;
+            if (texture != nullptr) {
+              auto* resized_texture =
+                  ResizeTexture(texture, width, height, kThumbnailWidth,
+                                kThumbnailHeight, channels);
+              if (resized_texture != nullptr) {
+                addon.thumbnail.pixels = resized_texture;
+                addon.thumbnail.width = kThumbnailWidth;
+                addon.thumbnail.height = kThumbnailHeight;
+                addon.thumbnail.channels = channels;
+              }
             }
+
+            addon.thumbnail.is_loaded = true;
+            addon.thumbnail.in_progress = false;
+            return;
           }
 
-          addon.thumbnail.is_loaded = true;
-          addon.thumbnail.in_progress = false;
-          return;
-        }
+          const auto response =
+        ClientFactory::GetInstance().NewSyncClient()->Get(
+              addon.screenshot_url);
 
-        const auto response = ClientFactory::GetInstance().NewSyncClient()->Get(
-            addon.screenshot_url);
+          if (response.ec) {
+            const auto buffer_size = response.data.size();
+            auto buffer = std::make_unique<uint8_t[]>(buffer_size);
+            std::memcpy(buffer.get(), response.data.data(), buffer_size);
 
-        if (response.ec) {
-          const auto buffer_size = response.data.size();
-          auto buffer = std::make_unique<uint8_t[]>(buffer_size);
-          std::memcpy(buffer.get(), response.data.data(), buffer_size);
+            int width, height, channels;
+            auto* texture = LoadTexture(buffer.get(), buffer_size, &width,
+                                        &height, &channels);
 
-          int width, height, channels;
-          auto* texture = LoadTexture(buffer.get(), buffer_size, &width,
-                                      &height, &channels);
-
-          if (texture != nullptr) {
-            auto* resized_texture =
-                ResizeTexture(texture, width, height, kThumbnailWidth,
-                              kThumbnailHeight, channels);
-            if (resized_texture != nullptr) {
-              addon.thumbnail.pixels = resized_texture;
-              addon.thumbnail.width = kThumbnailWidth;
-              addon.thumbnail.height = kThumbnailHeight;
-              addon.thumbnail.channels = channels;
+            if (texture != nullptr) {
+              auto* resized_texture =
+                  ResizeTexture(texture, width, height, kThumbnailWidth,
+                                kThumbnailHeight, channels);
+              if (resized_texture != nullptr) {
+                addon.thumbnail.pixels = resized_texture;
+                addon.thumbnail.width = kThumbnailWidth;
+                addon.thumbnail.height = kThumbnailHeight;
+                addon.thumbnail.channels = channels;
+              } else {
+                goto load_default;
+              }
             } else {
               goto load_default;
             }
-          } else {
-            goto load_default;
           }
-        }
-        addon.thumbnail.is_loaded = true;
-        addon.thumbnail.in_progress = false;
-      });
+          addon.thumbnail.is_loaded = true;
+          addon.thumbnail.in_progress = false;
+        });*/
     }
   }
+}
+
+void Gui::AsyncLoadAddonThumbnail(AddonThumbnail* thumbnail,
+                                  std::string_view screenshot_url) {
+  thumbnail->in_progress = true;
+  boost::asio::post(*thd_pool_, [screenshot_url, thumbnail, this]() {
+    if (screenshot_url.empty()) {
+    load_default:
+      int width, height, channels;
+      auto* texture = LoadTexture(curse_icon_, curse_icon_size_, &width,
+                                  &height, &channels);
+
+      if (texture != nullptr) {
+        auto* resized_texture =
+            ResizeTexture(texture, width, height, kThumbnailWidth,
+                          kThumbnailHeight, channels);
+        if (resized_texture != nullptr) {
+          thumbnail->pixels = resized_texture;
+          thumbnail->width = kThumbnailWidth;
+          thumbnail->height = kThumbnailHeight;
+          thumbnail->channels = channels;
+        }
+      }
+
+      thumbnail->is_loaded = true;
+      thumbnail->in_progress = false;
+      return;
+    }
+
+    const auto response =
+        ClientFactory::GetInstance().NewSyncClient()->Get(screenshot_url);
+
+    if (response.data.empty()) {
+      goto load_default;
+    }
+
+    const auto buffer_size = response.data.size();
+    auto buffer = std::make_unique<uint8_t[]>(buffer_size);
+    std::memcpy(buffer.get(), response.data.data(), buffer_size);
+
+    int width, height, channels;
+    auto* texture =
+        LoadTexture(buffer.get(), buffer_size, &width, &height, &channels);
+
+    if (texture != nullptr) {
+      auto* resized_texture = ResizeTexture(
+          texture, width, height, kThumbnailWidth, kThumbnailHeight, channels);
+      if (resized_texture != nullptr) {
+        thumbnail->pixels = resized_texture;
+        thumbnail->width = kThumbnailWidth;
+        thumbnail->height = kThumbnailHeight;
+        thumbnail->channels = channels;
+      } else {
+        goto load_default;
+      }
+    } else {
+      goto load_default;
+    }
+
+    thumbnail->is_loaded = true;
+    thumbnail->in_progress = false;
+  });
 }
 }  // namespace addon_updater

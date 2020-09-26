@@ -144,6 +144,7 @@ class ClientFactory : public Singleton<ClientFactory> {
   net::io_context::work work_;
   std::thread thd_;
   boost::asio::thread_pool thd_pool_;
+  ssl::context ssl_context_;
 };
 
 }  // namespace http_client

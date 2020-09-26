@@ -70,8 +70,6 @@ struct CurseLatestFile {
   bool is_alternate;
 };
 
-
-
 namespace curse_fields {
 
 constexpr auto kField_Id = "id";
@@ -158,7 +156,7 @@ struct Slug {
 
 struct Addon {
   bool Deserialize(const rj::Value::ConstObject& object);
-  InstalledAddon Install() const;
+  InstalledAddon Install(std::string_view addons_directory);
 
   bool operator==(const Addon& addon) const { return id == addon.id; }
 
@@ -173,7 +171,7 @@ struct Addon {
 
   bool is_ignored = false;
 
- CurseLatestFile latest_file;
+  CurseLatestFile latest_file;
 
   DownloadStatus download_status;
   AddonVersion remote_version;
@@ -211,9 +209,8 @@ using Addons = std::vector<Addon>;
 using Slugs = std::vector<Slug>;
 using InstalledAddons = std::vector<InstalledAddon>;
 
-
 bool DetectInstalledAddons(std::string_view addons_path, AddonFlavor flavor,
-                           const Slugs& slugs, const Addons& addons,
+                           const Slugs& slugs, Addons& addons,
                            InstalledAddons& installed_addons);
 
 bool DeserializeAddonSlugs(std::string_view json, Slugs* slugs);

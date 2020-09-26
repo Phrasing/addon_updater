@@ -25,7 +25,7 @@ constexpr auto kTukuiApiUrl = "https://www.tukui.org/api.php?addons=all";
 
 constexpr auto kCurseApiUrl =
     "https://addons-ecs.forgesvc.net/api/v2/addon/"
-    "search?gameId=1&searchFilter=&pageSize=500&index=50";
+    "search?gameId=1&searchFilter=&pageSize=1000";
 
 constexpr auto kTukuiClassicApiUrl =
     "https://www.tukui.org/api.php?classic-addons=all";
@@ -56,7 +56,7 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
     return 1;
   }
 
-  const auto installations = addon_updater::GetWowInstallations(*products);
+  auto installations = addon_updater::GetWowInstallations(*products);
 
   addon_updater::Slugs addon_slugs{};
   if (auto resource = addon_updater::GetResource(
@@ -76,7 +76,7 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
   boost::asio::thread_pool thd_pool(std::thread::hardware_concurrency());
   addon_updater::Window window("", {kWindowWidth, kWindowHeight});
-  addon_updater::Gui gui(thd_pool);
+  addon_updater::Gui gui(thd_pool, *installations);
 
   auto curse_client =
       addon_updater::ClientFactory::GetInstance().NewAsyncClient();
@@ -122,7 +122,6 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
             installations->retail.addons_path,
             addon_updater::AddonFlavor::kRetail, addon_slugs, addons,
             installed_addons);
-
         is_loading = false;
       }
 

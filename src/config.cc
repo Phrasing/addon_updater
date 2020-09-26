@@ -63,7 +63,7 @@ bool UpdaterConfig::UninstallAddon(const InstalledAddon& installed_addon) {
 }
 
 bool UpdaterConfig::InstallAddon(const Addon& addon) {
-  installed_addons_.emplace_back(std::move(addon.Install()));
+//  installed_addons_.emplace_back(std::move(addon.Install()));
   return this->UpdateConfig();
 }
 

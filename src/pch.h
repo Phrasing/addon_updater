@@ -71,6 +71,7 @@
 #include <boost/iostreams/filter/zlib.hpp>
 #include <boost/iostreams/copy.hpp>
 #include <boost/beast/core/detail/base64.hpp>
+#include <boost/iostreams/compose.hpp>
 
 namespace beast = boost::beast;    // from <boost/beast.hpp>
 namespace http = beast::http;      // from <boost/beast/http.hpp>
@@ -78,6 +79,7 @@ namespace net = boost::asio;       // from <boost/asio.hpp>
 namespace ssl = boost::asio::ssl;  // from <boost/asio/ssl.hpp>
 using tcp = boost::asio::ip::tcp;  // from <boost/asio/ip/tcp.hpp>
 namespace rj = rapidjson;
+namespace io = boost::iostreams;
 
 #include <unordered_set>
 #include <iostream>

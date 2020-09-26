@@ -115,6 +115,39 @@ bool DeserializeTukui(const rj::Value::ConstObject& object, Addon* addon) {
 
   return true;
 }
+
+template <typename T>
+void DownloadAddon(T& addon, std::string_view addons_directory) {
+  addon.download_status.state = RequestState::kStatePending;
+  ClientFactory::GetInstance().NewAsyncClient()->Download(
+      addon.download_url,
+      [&addon, addons_directory](const beast::error_code& ec,
+                                 std::string_view response) {
+        const auto buffer =
+            std::vector<uint8_t>(response.begin(), response.end());
+
+        auto zip_file = std::make_unique<ZipFile>(buffer);
+        if (!zip_file->Good()) {
+          std::fprintf(stderr, "Error: failed to open zip file %s\n",
+                       addon.name.c_str());
+          return;
+        }
+
+        if (!zip_file->Unzip(addons_directory, nullptr)) {
+          std::fprintf(stderr, "Error: failed to extract zip file %s\n",
+                       addon.name.c_str());
+        }
+      },
+      [&](const DownloadStatus& status) -> bool {
+        if (addon.download_status.state == RequestState::kStateCancel)
+          return false;
+        addon.download_status = status;
+        return true;
+      },
+      {{http::field::accept_encoding, "gzip, deflate, br"},
+       {http::field::accept, "application/zip"}});
+}
+
 }  // namespace
 
 bool Addon::Deserialize(const rj::Value::ConstObject& object) {
@@ -134,16 +167,19 @@ bool Addon::Deserialize(const rj::Value::ConstObject& object) {
   return result;
 }
 
-InstalledAddon Addon::Install() const {
-  auto installed_addon = InstalledAddon{};
-
-  installed_addon.hash = this->hash;
-  installed_addon.name = this->name;
-  installed_addon.id = this->id;
-  installed_addon.slug = this->slug;
-  installed_addon.flavor = this->flavor;
-  installed_addon.type = this->type;
+InstalledAddon Addon::Install(std::string_view addons_directory) {
+  InstalledAddon installed_addon{};
+  installed_addon = *this;
   installed_addon.local_version = this->remote_version;
+
+  auto directory_copy =
+      std::string(addons_directory.data(), addons_directory.length());
+
+  for (auto& modules : this->latest_file.modules) {
+    installed_addon.directories.push_back(directory_copy + modules.folder_name);
+  }
+
+  DownloadAddon<Addon>(*this, addons_directory);
 
   return installed_addon;
 }
@@ -207,39 +243,12 @@ void InstalledAddon::Uninstall() {
 }
 
 bool InstalledAddon::Update() {
-  ClientFactory::GetInstance().NewAsyncClient()->Download(
-      this->download_url,
-      [&](const beast::error_code& ec, std::string_view response) {
-        this->Uninstall();
-
-        const auto buffer =
-            std::vector<uint8_t>(response.begin(), response.end());
-
-        auto zip_file = std::make_unique<ZipFile>(buffer);
-        if (!zip_file->Good()) {
-          std::fprintf(stderr, "Error: failed to open zip file %s\n",
-                       this->name.c_str());
-          return;
-        }
-
-        if (!zip_file->Unzip(this->addons_directory, &this->directories)) {
-          std::fprintf(stderr, "Error: failed to extract zip file %s\n",
-                       this->name.c_str());
-        }
-
-        this->up_to_date = true;
-      },
-      [&](const DownloadStatus& status) -> bool {
-        if (this->download_status.state == RequestState::kStateCancel)
-          return false;
-        this->download_status = status;
-        return true;
-      });
-  return false;
+  DownloadAddon<InstalledAddon>(*this, this->addons_directory);
+  return true;
 }
 
 bool DetectInstalledAddons(std::string_view addons_path, AddonFlavor flavor,
-                           const Slugs& slugs, const Addons& addons,
+                           const Slugs& slugs, Addons& addons,
                            InstalledAddons& installed_addons) {
   if (!OsDirectoryExists(addons_path.data())) return false;
 

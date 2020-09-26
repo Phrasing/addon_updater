@@ -12,26 +12,20 @@ constexpr auto kUserAgent =
 
 constexpr auto kMaxWBits = 15;
 
-inline std::string GzipDecompress(const std::string& data) {
-  boost::iostreams::filtering_streambuf<boost::iostreams::input> out;
-  out.push(boost::iostreams::gzip_decompressor());
-  out.push(boost::iostreams::array_source{data.data(), data.size()});
-
-  std::stringstream decompressed{};
-  boost::iostreams::copy(out, decompressed);
-
-  return decompressed.str();
+inline std::string GzipDecompress(std::string_view input) {
+  std::string decompressed{};
+  io::array_source src(input.data(), input.length());
+  io::copy(io::compose(io::gzip_decompressor{}, src),
+           io::back_inserter(decompressed));
+  return decompressed;
 }
 
-inline std::string zLibDecompress(const std::string& data) {
-  boost::iostreams::filtering_streambuf<boost::iostreams::input> out;
-  out.push(boost::iostreams::zlib_decompressor{-kMaxWBits});
-  out.push(boost::iostreams::array_source{data.data(), data.size()});
-
-  std::stringstream decompressed{};
-  boost::iostreams::copy(out, decompressed);
-
-  return decompressed.str();
+inline std::string zLibDecompress(std::string_view input) {
+  std::string decompressed{};
+  io::array_source src(input.data(), input.length());
+  io::copy(io::compose(io::zlib_decompressor{-kMaxWBits}, src),
+           io::back_inserter(decompressed));
+  return decompressed;
 }
 
 }  // namespace
@@ -270,7 +264,9 @@ bool AsyncHttpClient::Callback(const beast::error_code& ec,
   return true;
 }
 
-ClientFactory::ClientFactory() : work_(ioc_), thd_pool_(4) {
+ClientFactory::ClientFactory()
+    : work_(ioc_), thd_pool_(4), ssl_context_(ssl::context::tlsv12_client) {
+  ssl_context_.set_verify_mode(ssl::verify_none);
   thd_ = std::thread([this] { ioc_.run(); });
 }
 
@@ -280,15 +276,12 @@ ClientFactory::~ClientFactory() {
 }
 
 std::shared_ptr<AsyncHttpClient> ClientFactory::NewAsyncClient() {
-  ssl::context ctx{ssl::context::tlsv12_client};
-  ctx.set_verify_mode(ssl::verify_none);
-  return std::make_shared<AsyncHttpClient>(net::make_strand(ioc_), ctx);
+  return std::make_shared<AsyncHttpClient>(net::make_strand(ioc_),
+                                           ssl_context_);
 }
 
 std::shared_ptr<SyncHttpClient> ClientFactory::NewSyncClient() {
-  ssl::context ctx{ssl::context::tlsv12_client};
-  ctx.set_verify_mode(ssl::verify_none);
-  return std::make_shared<SyncHttpClient>(net::make_strand(ioc_), ctx);
+  return std::make_shared<SyncHttpClient>(net::make_strand(ioc_), ssl_context_);
 }
 
 SyncHttpClient::SyncHttpClient(const net::any_io_executor& ex,
