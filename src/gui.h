@@ -31,6 +31,7 @@ class Gui {
   void AsyncLoadAddonThumbnail(AddonThumbnail* thumbnail,
                                std::string_view screenshot_url);
 
+  WowInstall selected_installation_;
   WowInstallations installations_;
 
   uint8_t* curse_icon_ = nullptr;

@@ -15,7 +15,7 @@ constexpr auto kMaxWBits = 15;
 inline std::string GzipDecompress(std::string_view input) {
   std::string decompressed{};
   io::array_source src(input.data(), input.length());
-  io::copy(io::compose(io::gzip_decompressor{}, src),
+  io::copy(io::compose(io::gzip_decompressor{}, std::move(src)),
            io::back_inserter(decompressed));
   return decompressed;
 }
@@ -23,7 +23,7 @@ inline std::string GzipDecompress(std::string_view input) {
 inline std::string zLibDecompress(std::string_view input) {
   std::string decompressed{};
   io::array_source src(input.data(), input.length());
-  io::copy(io::compose(io::zlib_decompressor{-kMaxWBits}, src),
+  io::copy(io::compose(io::zlib_decompressor{-kMaxWBits}, std::move(src)),
            io::back_inserter(decompressed));
   return decompressed;
 }
@@ -41,7 +41,7 @@ void AsyncHttpClient::GetImpl(std::string_view url,
                               const RequestFields& request_fields) {
   auto encoded_url = skyr::url(url);
 
-  if (!SSL_set_tlsext_host_name(stream_.native_handle(),
+  if (!SSL_set_tlsext_host_name(std::move(stream_.native_handle()),
                                 encoded_url.hostname().c_str())) {
     this->Callback(beast::error_code{static_cast<int>(::ERR_get_error()),
                                      net::error::get_ssl_category()},
@@ -65,7 +65,7 @@ void AsyncHttpClient::GetImpl(std::string_view url,
   }
 
   resolver_.async_resolve(
-      encoded_url.hostname(), kSslPort,
+      std::move(encoded_url.hostname()), kSslPort,
       beast::bind_front_handler(&AsyncHttpClient::OnResolve,
                                 std::move(shared_from_this())));
 }
@@ -234,7 +234,7 @@ bool AsyncHttpClient::Callback(const beast::error_code& ec,
       } else if (is_deflate_) {
         request_callback_(ec, std::move(zLibDecompress(response_)));
       } else {
-        request_callback_(ec, response_);
+        request_callback_(ec, std::move(response_));
       }
     }
   }

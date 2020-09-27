@@ -24,6 +24,11 @@ struct WowInstallations {
   WowInstall beta;
   WowInstall retail_ptr;
   WowInstall classic_ptr;
+
+  std::vector<WowInstall> GetContainer() {
+    return std::vector<WowInstall>{retail, classic, beta, retail_ptr,
+                                   classic_ptr};
+  }
 };
 
 std::optional<ProductDb> GetProductDb(std::string_view product_db_path);

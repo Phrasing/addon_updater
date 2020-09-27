@@ -83,6 +83,7 @@ bool Spinner(const char* label, const ImVec2& radius, int thickness) {
                                thickness);
   return true;
 }
+
 }
 
 namespace addon_updater {
@@ -121,6 +122,13 @@ Gui::Gui(boost::asio::thread_pool& thd_pool,
     this->curse_icon_ = curse_resource->data;
     this->curse_icon_size_ = curse_resource->size;
   }
+
+  for (const auto& install : this->installations_.GetContainer()) {
+    if (!install.addons_path.empty()) {
+      this->selected_installation_ = install;
+      break;
+    }
+  }
 }
 
 void Gui::DrawGui(Addons& addons, std::vector<InstalledAddon>& installed_addons,
@@ -138,18 +146,51 @@ void Gui::DrawGui(Addons& addons, std::vector<InstalledAddon>& installed_addons,
                ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
                    ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_Minimize);
   {
+    auto& style = ImGui::GetStyle();
+    ImGuiComboFlags flags = ImGuiComboFlags_NoArrowButton;
+
+    float w = ImGui::CalcItemWidth();
+    float spacing = style.ItemInnerSpacing.x;
+    float button_sz = ImGui::GetFrameHeight();
+    ImGui::PushItemWidth(w - spacing * 2.0f - button_sz * 2.0f);
+    if (ImGui::BeginCombo("##custom combo",
+                          selected_installation_.addons_path.c_str(),
+                          ImGuiComboFlags_NoArrowButton)) {
+      for (auto& install : this->installations_.GetContainer()) {
+        bool is_selected =
+            (selected_installation_.addons_path == install.addons_path);
+        if (ImGui::Selectable(install.addons_path.c_str(), is_selected))
+          selected_installation_ = install;
+        if (is_selected) ImGui::SetItemDefaultFocus();
+      }
+      ImGui::EndCombo();
+    }
+
+    ImGui::PopItemWidth();
+    ImGui::SameLine(0, spacing);
+    if (ImGui::ArrowButton("##r", ImGuiDir_Left)) {
+    }
+    ImGui::SameLine(0, spacing);
+    if (ImGui::ArrowButton("##r", ImGuiDir_Right)) {
+    }
     if (ImGui::BeginTabBar("##MAIN_TAB_BAR")) {
       if (ImGui::BeginTabItem("Browse  " ICON_FA_SEARCH)) {
         this->RenderBrowseTab(addons, installed_addons);
+
         ImGui::EndTabItem();
       }
+
+
 
       if (ImGui::BeginTabItem("Installed  " ICON_FA_FOLDER)) {
         this->RenderInstalledTab(installed_addons);
         ImGui::EndTabItem();
       }
     }
+
+
     ImGui::EndTabBar();
+
     ImGui::End();
   }
 }
@@ -271,6 +312,7 @@ void Gui::RenderInstalledTab(std::vector<InstalledAddon>& addons) {
           addons.erase(position);
         }
         ImGui::TreePop();
+        ImGui::PopStyleColor(2);
         continue;
       }
 

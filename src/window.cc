@@ -176,7 +176,7 @@ Window::Window(std::string_view window_title, const WindowSize& window_size)
 
 void Window::Render(const RenderCallback& draw_callback) {
   while (!glfwWindowShouldClose(glfw_ctx_->window)) {
-    glfwPollEvents();
+    glfwWaitEvents();
 
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();

@@ -192,6 +192,7 @@ bool IterateDirectory(std::string_view directory,
   auto handle = ::FindFirstFileA(directory_copy.c_str(), &find_data);
   if (handle == INVALID_HANDLE_VALUE) return false;
   directory_copy.pop_back();
+
   for (;;) {
     if ((find_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
         find_data.cFileName[0] != '.') {
