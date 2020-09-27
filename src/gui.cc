@@ -242,60 +242,6 @@ void Gui::RenderBrowseTab(
     if (ImGui::IsItemVisible() && !addon.thumbnail.is_loaded &&
         !addon.thumbnail.in_progress) {
       AsyncLoadAddonThumbnail(&addon.thumbnail, addon.screenshot_url);
-      /*     addon.thumbnail.in_progress = true;
-           boost::asio::post(*thd_pool_, [&]() {
-             if (addon.screenshot_url.empty()) {
-               int width, height, channels;
-               auto* texture = LoadTexture(curse_icon_, curse_icon_size_,
-         &width, &height, &channels);
-
-               if (texture != nullptr) {
-                 auto* resized_texture =
-                     ResizeTexture(texture, width, height, kThumbnailWidth,
-                                   kThumbnailHeight, channels);
-                 if (resized_texture != nullptr) {
-                   addon.thumbnail.pixels = resized_texture;
-                   addon.thumbnail.width = kThumbnailWidth;
-                   addon.thumbnail.height = kThumbnailHeight;
-                   addon.thumbnail.channels = channels;
-                 }
-               }
-
-               addon.thumbnail.is_loaded = true;
-               addon.thumbnail.in_progress = false;
-               return;
-             }
-
-             const auto response =
-         ClientFactory::GetInstance().NewSyncClient()->Get(
-                 addon.screenshot_url);
-
-             if (response.data.empty()) return;
-
-             const auto buffer_size = response.data.size();
-             auto buffer = std::make_unique<uint8_t[]>(buffer_size);
-             std::memcpy(buffer.get(), response.data.data(), buffer_size);
-
-             int width, height, channels;
-             auto* texture =
-                 LoadTexture(buffer.get(), buffer_size, &width, &height,
-         &channels);
-
-             if (texture != nullptr) {
-               auto* resized_texture =
-                   ResizeTexture(texture, width, height, kThumbnailWidth,
-                                 kThumbnailHeight, channels);
-               if (resized_texture != nullptr) {
-                 addon.thumbnail.pixels = resized_texture;
-                 addon.thumbnail.width = kThumbnailWidth;
-                 addon.thumbnail.height = kThumbnailHeight;
-                 addon.thumbnail.channels = channels;
-               }
-             }
-
-             addon.thumbnail.is_loaded = true;
-             addon.thumbnail.in_progress = false;
-           });*/
     }
   }
 }
@@ -307,6 +253,8 @@ void Gui::RenderInstalledTab(std::vector<InstalledAddon>& addons) {
       ImGui::SameLine();
     }
 
+    ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0, 0, 0, 0));
+    ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0, 0, 0, 0));
     if (ImGui::TreeNode(
             (addon.name + "##" + std::to_string(addon.id)).c_str())) {
       ImGui::TextColored(
@@ -318,9 +266,8 @@ void Gui::RenderInstalledTab(std::vector<InstalledAddon>& addons) {
 
       if (ImGui::Button("Uninstall")) {
         addon.Uninstall();
-        std::vector<InstalledAddon>::iterator position =
-            std::find(addons.begin(), addons.end(), addon);
-        if (position != addons.end()) {
+        if (auto position = std::find(addons.begin(), addons.end(), addon);
+            position != addons.end()) {
           addons.erase(position);
         }
         ImGui::TreePop();
@@ -329,6 +276,7 @@ void Gui::RenderInstalledTab(std::vector<InstalledAddon>& addons) {
 
       ImGui::TreePop();
     }
+    ImGui::PopStyleColor(2);
 
     if (addon.download_status.state != RequestState::kStatePending &&
         addon.download_status.state != RequestState::kStateFinish &&
@@ -373,63 +321,6 @@ void Gui::RenderInstalledTab(std::vector<InstalledAddon>& addons) {
     if (ImGui::IsItemVisible() && !addon.thumbnail.is_loaded &&
         !addon.thumbnail.in_progress) {
       AsyncLoadAddonThumbnail(&addon.thumbnail, addon.screenshot_url);
-      /*  addon.thumbnail.in_progress = true;
-        boost::asio::post(*thd_pool_, [&]() {
-          if (addon.screenshot_url.empty()) {
-          load_default:
-            int width, height, channels;
-            auto* texture = LoadTexture(curse_icon_, curse_icon_size_, &width,
-                                        &height, &channels);
-
-            if (texture != nullptr) {
-              auto* resized_texture =
-                  ResizeTexture(texture, width, height, kThumbnailWidth,
-                                kThumbnailHeight, channels);
-              if (resized_texture != nullptr) {
-                addon.thumbnail.pixels = resized_texture;
-                addon.thumbnail.width = kThumbnailWidth;
-                addon.thumbnail.height = kThumbnailHeight;
-                addon.thumbnail.channels = channels;
-              }
-            }
-
-            addon.thumbnail.is_loaded = true;
-            addon.thumbnail.in_progress = false;
-            return;
-          }
-
-          const auto response =
-        ClientFactory::GetInstance().NewSyncClient()->Get(
-              addon.screenshot_url);
-
-          if (response.ec) {
-            const auto buffer_size = response.data.size();
-            auto buffer = std::make_unique<uint8_t[]>(buffer_size);
-            std::memcpy(buffer.get(), response.data.data(), buffer_size);
-
-            int width, height, channels;
-            auto* texture = LoadTexture(buffer.get(), buffer_size, &width,
-                                        &height, &channels);
-
-            if (texture != nullptr) {
-              auto* resized_texture =
-                  ResizeTexture(texture, width, height, kThumbnailWidth,
-                                kThumbnailHeight, channels);
-              if (resized_texture != nullptr) {
-                addon.thumbnail.pixels = resized_texture;
-                addon.thumbnail.width = kThumbnailWidth;
-                addon.thumbnail.height = kThumbnailHeight;
-                addon.thumbnail.channels = channels;
-              } else {
-                goto load_default;
-              }
-            } else {
-              goto load_default;
-            }
-          }
-          addon.thumbnail.is_loaded = true;
-          addon.thumbnail.in_progress = false;
-        });*/
     }
   }
 }
