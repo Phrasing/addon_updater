@@ -25,7 +25,7 @@ constexpr auto kTukuiApiUrl = "https://www.tukui.org/api.php?addons=all";
 
 constexpr auto kCurseApiUrl =
     "https://addons-ecs.forgesvc.net/api/v2/addon/"
-    "search?gameId=1&searchFilter=&pageSize=1000";
+    "search?gameId=1&searchFilter=&pageSize=10000";
 
 constexpr auto kTukuiClassicApiUrl =
     "https://www.tukui.org/api.php?classic-addons=all";

@@ -33,14 +33,6 @@ struct DownloadStatus {
 using LimitedTcpStream = beast::basic_stream<net::ip::tcp, net::any_io_executor,
                                              beast::simple_rate_policy>;
 
-using RequestCallback =
-    std::function<void(const beast::error_code&, std::string_view)>;
-
-using ProgressCallback = std::function<bool(const DownloadStatus&)>;
-
-using DownloadCallback = std::function<void(
-    const beast::error_code&, const DownloadStatus&, std::string_view)>;
-
 using RequestFields = std::vector<HttpField>;
 
 class AsyncHttpClient : public std::enable_shared_from_this<AsyncHttpClient> {
@@ -52,6 +44,14 @@ class AsyncHttpClient : public std::enable_shared_from_this<AsyncHttpClient> {
   AsyncHttpClient& operator=(const AsyncHttpClient&) = delete;
   AsyncHttpClient(AsyncHttpClient&&) = delete;
   AsyncHttpClient& operator=(AsyncHttpClient&&) = delete;
+
+  using RequestCallback =
+      std::function<void(const beast::error_code&, std::string_view)>;
+
+  using ProgressCallback = std::function<bool(const DownloadStatus&)>;
+
+  using DownloadCallback = std::function<void(
+      const beast::error_code&, const DownloadStatus&, std::string_view)>;
 
   void Get(std::string_view url, const RequestCallback& request_callback,
            const RequestFields& request_fields = {});
@@ -99,7 +99,7 @@ class AsyncHttpClient : public std::enable_shared_from_this<AsyncHttpClient> {
   beast::ssl_stream<beast::tcp_stream> stream_;
   beast::flat_buffer buffer_;
   http::request<http::string_body> req_;
-  boost::optional<http::response_parser<http::string_body>> res_;
+  http::response_parser<http::string_body> res_;
 
   std::string response_;
   size_t content_size_;

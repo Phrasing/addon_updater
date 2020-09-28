@@ -79,6 +79,13 @@ Window::Window(std::string_view window_title, const WindowSize& window_size)
 
   glewInit();
 
+  if (auto* video_mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+      video_mode) {
+    glfwSetWindowPos(glfw_ctx_->window,
+                     (video_mode->width - window_size.width) * 0.5F,
+                     (video_mode->height - window_size.height) * 0.5F);
+  }
+
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
 

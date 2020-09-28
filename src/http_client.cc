@@ -32,10 +32,10 @@ inline std::string zLibDecompress(std::string_view input) {
 
 AsyncHttpClient::AsyncHttpClient(const net::any_io_executor& ex,
                                  ssl::context& ctx)
-    : resolver_(ex), stream_(ex, ctx), bytes_read_(0), content_size_(0) {
-  res_.emplace();
-  res_->body_limit(std::numeric_limits<size_t>::max());
-}
+    : resolver_(ex),
+      stream_(ex, ctx),
+      bytes_read_(0),
+      content_size_(0) {}
 
 void AsyncHttpClient::GetImpl(std::string_view url,
                               const RequestFields& request_fields) {
@@ -142,9 +142,11 @@ void AsyncHttpClient::OnWrite(beast::error_code ec,
     return;
   }
 
+  res_.body_limit(std::numeric_limits<size_t>::max());
+
   boost::ignore_unused(bytes_transferred);
   http::async_read_header(
-      stream_, buffer_, *res_,
+      stream_, buffer_, res_,
       beast::bind_front_handler(&AsyncHttpClient::OnReadHeader,
                                 std::move(shared_from_this())));
 }
@@ -160,14 +162,14 @@ void AsyncHttpClient::OnRead(beast::error_code ec,
     }
   }
 
-  if (!res_->is_done()) {
+  if (!res_.is_done()) {
     if (!this->Callback(ec, RequestState::kStatePending, bytes_transferred,
                         progress)) {
       goto shutdown;
     }
 
-    res_->release();
-    http::async_read_some(stream_, buffer_, *res_,
+    res_.release();
+    http::async_read_some(stream_, buffer_, res_,
                           beast::bind_front_handler(&AsyncHttpClient::OnRead,
                                                     shared_from_this()));
 
@@ -197,23 +199,24 @@ void AsyncHttpClient::OnReadHeader(beast::error_code ec,
     return;
   }
 
-  if (res_->content_length().is_initialized()) {
-    content_size_ = *res_->content_length();
+  if (res_.content_length().is_initialized()) {
+    content_size_ = *res_.content_length();
   }
 
-  is_gzip_ = (res_->get()["Content-Encoding"] == "gzip" ||
-              res_->get()["Content-Encoding"] == "x-gzip");
+  const auto& response = std::move(res_.get());
 
-  is_deflate_ = (res_->get()["Content-Encoding"] == "deflate");
+  auto content_encoding = response[http::field::content_encoding];
+  is_gzip_ = (content_encoding == "gzip" || content_encoding == "x-gzip");
+  is_deflate_ = (content_encoding == "deflate");
 
   this->Callback(ec, RequestState::kStatePending, bytes_transferred, 0);
 
   if (verbose_enabled_) {
-    std::cout << "\n[HEADER]\n" << res_->get().base() << std::endl;
+    std::cout << "\n[HEADER]\n" << response.base() << std::endl;
   }
 
   http::async_read_some(
-      stream_, buffer_, *res_,
+      stream_, buffer_, res_,
       beast::bind_front_handler(&AsyncHttpClient::OnRead, shared_from_this()));
 }
 
@@ -226,8 +229,9 @@ void AsyncHttpClient::OnShutdown(beast::error_code ec) {
 bool AsyncHttpClient::Callback(const beast::error_code& ec,
                                RequestState request_state,
                                size_t bytes_transferred, uint32_t progress) {
+  const auto& response = std::move(res_.get());
   if (request_callback_) {
-    response_ += res_->get().body();
+    response_ += response.body();
     if (request_state == RequestState::kStateFinish) {
       if (is_gzip_) {
         request_callback_(ec, std::move(GzipDecompress(response_)));
@@ -243,15 +247,15 @@ bool AsyncHttpClient::Callback(const beast::error_code& ec,
     if (is_gzip_) {
       download_callback_(
           ec, {content_size_, bytes_transferred, progress, request_state},
-          std::move(GzipDecompress(std::move(res_->get().body()))));
+          std::move(GzipDecompress(std::move(response.body()))));
     } else if (is_deflate_) {
       download_callback_(
           ec, {content_size_, bytes_transferred, progress, request_state},
-          std::move(zLibDecompress(std::move(res_->get().body()))));
+          std::move(zLibDecompress(std::move(response.body()))));
     } else {
       download_callback_(
           ec, {content_size_, bytes_transferred, progress, request_state},
-          std::move(res_->get().body()));
+          std::move(response.body()));
     }
   }
 

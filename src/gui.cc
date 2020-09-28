@@ -268,10 +268,8 @@ void Gui::RenderBrowseTab(
     ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0, 0, 0, 0));
     if (ImGui::TreeNode(
             (addon.name + "##" + std::to_string(addon.id)).c_str())) {
-      for (auto& latest : addon.latest_file.modules) {
-        ImGui::Text(latest.folder_name + " | " +
-                    std::to_string(latest.finger_print));
-      }
+      ImGui::TextWrapped((std::string("Description: ") + addon.description).c_str());
+      ImGui::Text("Flavor: " + FlavorToString(addon.flavor));
       ImGui::TreePop();
     }
     ImGui::PopStyleColor(2);
