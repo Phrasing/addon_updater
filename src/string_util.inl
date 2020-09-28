@@ -30,7 +30,7 @@ inline void ReplaceAll(std::string* base_string, std::string_view old_string,
   }
 }
 
-inline bool Search(std::string_view target, std::string_view base_string) {
+inline bool Search(const std::string& target, const std::string& base_string) {
   if (target.empty() || base_string.empty()) {
     return false;
   }

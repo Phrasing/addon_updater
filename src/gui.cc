@@ -144,8 +144,12 @@ void Gui::DrawGui(Addons& addons, std::vector<InstalledAddon>& installed_addons,
   static bool is_open = true;
   ImGui::Begin("Addon Updater v1.0.1", &is_open,
                ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
-                   ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_Minimize);
+                   ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_Minimize |
+                   ImGuiWindowFlags_NoScrollbar);
   {
+    auto browse = false;
+    auto installed = false;
+
     auto& style = ImGui::GetStyle();
     ImGuiComboFlags flags = ImGuiComboFlags_NoArrowButton;
 
@@ -173,26 +177,46 @@ void Gui::DrawGui(Addons& addons, std::vector<InstalledAddon>& installed_addons,
     ImGui::SameLine(0, spacing);
     if (ImGui::ArrowButton("##r", ImGuiDir_Right)) {
     }
-    if (ImGui::BeginTabBar("##MAIN_TAB_BAR")) {
-      if (ImGui::BeginTabItem("Browse  " ICON_FA_SEARCH)) {
-        this->RenderBrowseTab(addons, installed_addons);
 
+    float tab_sz = ImGui::GetFrameHeight();
+    if (ImGui::BeginTabBar("##MAIN_TAB_BAR")) {
+      if (browse = ImGui::BeginTabItem("Browse  " ICON_FA_SEARCH)) {
         ImGui::EndTabItem();
       }
 
-
-
-      if (ImGui::BeginTabItem("Installed  " ICON_FA_FOLDER)) {
-        this->RenderInstalledTab(installed_addons);
+      if (installed = ImGui::BeginTabItem("Installed  " ICON_FA_FOLDER)) {
         ImGui::EndTabItem();
       }
     }
+    ImGui::SameLine();
+    ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 2.5f);
 
+    float w_ = ImGui::CalcItemWidth();
+    float spacing_ = style.ItemInnerSpacing.x;
+    float button_sz_ = ImGui::GetFrameHeight();
 
+    ImGui::PushItemWidth(w_ - spacing_ * 1.5f - button_sz_ * 1.5f);
+
+    ImGui::InputText("##Search", &search_text_);
+    ImGui::PopItemWidth();
     ImGui::EndTabBar();
 
-    ImGui::End();
+    ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Once);
+    ImGui::BeginChild(
+        "##MAIN", ImVec2(window_size.width - 8, window_size.height - 90.F),
+        false,
+        ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+            ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_Minimize);
+    {
+      if (installed) {
+        this->RenderInstalledTab(installed_addons);
+      } else if (browse) {
+        this->RenderBrowseTab(addons, installed_addons);
+      }
+    }
+    ImGui::EndChild();
   }
+  ImGui::End();
 }
 
 void Gui::RenderBrowseTab(
@@ -217,6 +241,19 @@ void Gui::RenderBrowseTab(
           addon.download_status.state == RequestState::kStateFinish) {
         addon.download_status.state = RequestState::kStateNone;
       }
+    }
+
+    auto search_result =
+        std::search(addon.name.begin(), addon.name.end(), search_text_.begin(),
+                    search_text_.end(), [](const char a, const char b) {
+                      return std::tolower(a) == std::tolower(b);
+                    });
+
+    auto filter =
+        !this->search_text_.empty() && search_result == addon.name.end();
+
+    if (filter) {
+      continue;
     }
 
     if (addon.is_ignored) continue;
@@ -373,59 +410,64 @@ void Gui::AsyncLoadAddonThumbnail(AddonThumbnail* thumbnail,
   boost::asio::post(*thd_pool_, [screenshot_url, thumbnail, this]() {
     if (screenshot_url.empty()) {
     load_default:
-      int width, height, channels;
-      auto* texture = LoadTexture(curse_icon_, curse_icon_size_, &width,
-                                  &height, &channels);
-
-      if (texture != nullptr) {
-        auto* resized_texture =
-            ResizeTexture(texture, width, height, kThumbnailWidth,
-                          kThumbnailHeight, channels);
-        if (resized_texture != nullptr) {
-          thumbnail->pixels = resized_texture;
-          thumbnail->width = kThumbnailWidth;
-          thumbnail->height = kThumbnailHeight;
-          thumbnail->channels = channels;
-        }
+      if (this->LoadAndResizeThumbnail(curse_icon_, curse_icon_size_,
+                                       thumbnail)) {
+        thumbnail->is_loaded = true;
+        thumbnail->in_progress = false;
       }
-
-      thumbnail->is_loaded = true;
-      thumbnail->in_progress = false;
       return;
     }
 
-    const auto response =
-        ClientFactory::GetInstance().NewSyncClient()->Get(screenshot_url);
+    ClientFactory::GetInstance().NewAsyncClient()->Get(
+        screenshot_url, [this, thumbnail](const beast::error_code& ec,
+                                          std::string_view response) {
+          if (response.empty()) {
+            if (this->LoadAndResizeThumbnail(curse_icon_, curse_icon_size_,
+                                             thumbnail)) {
+              thumbnail->is_loaded = true;
+              thumbnail->in_progress = false;
+              return;
+            }
+          }
 
-    if (response.data.empty()) {
-      goto load_default;
-    }
+          const auto buffer_size = response.size();
+          auto buffer = std::make_unique<uint8_t[]>(buffer_size);
+          std::memcpy(buffer.get(), response.data(), buffer_size);
 
-    const auto buffer_size = response.data.size();
-    auto buffer = std::make_unique<uint8_t[]>(buffer_size);
-    std::memcpy(buffer.get(), response.data.data(), buffer_size);
-
-    int width, height, channels;
-    auto* texture =
-        LoadTexture(buffer.get(), buffer_size, &width, &height, &channels);
-
-    if (texture != nullptr) {
-      auto* resized_texture = ResizeTexture(
-          texture, width, height, kThumbnailWidth, kThumbnailHeight, channels);
-      if (resized_texture != nullptr) {
-        thumbnail->pixels = resized_texture;
-        thumbnail->width = kThumbnailWidth;
-        thumbnail->height = kThumbnailHeight;
-        thumbnail->channels = channels;
-      } else {
-        goto load_default;
-      }
-    } else {
-      goto load_default;
-    }
-
-    thumbnail->is_loaded = true;
-    thumbnail->in_progress = false;
+          if (LoadAndResizeThumbnail(buffer.get(), buffer_size, thumbnail)) {
+            thumbnail->is_loaded = true;
+            thumbnail->in_progress = false;
+          } else {
+            if (this->LoadAndResizeThumbnail(curse_icon_, curse_icon_size_,
+                                             thumbnail)) {
+              thumbnail->is_loaded = true;
+              thumbnail->in_progress = false;
+              return;
+            }
+          }
+        });
   });
+}
+
+bool Gui::LoadAndResizeThumbnail(uint8_t* data, size_t data_size,
+                                 addon_updater::AddonThumbnail* thumbnail) {
+  int width, height, channels;
+  auto* texture = LoadTexture(data, data_size, &width, &height, &channels);
+
+  if (!texture) return false;
+
+  auto* resized_texture =
+      ResizeTexture(texture, std::exchange<int>(width, kThumbnailWidth),
+                    std::exchange<int>(height, kThumbnailHeight),
+                    kThumbnailWidth, kThumbnailHeight, channels);
+
+  if (!resized_texture) return false;
+
+  thumbnail->pixels = resized_texture;
+  thumbnail->width = width;
+  thumbnail->height = height;
+  thumbnail->channels = channels;
+
+  return true;
 }
 }  // namespace addon_updater

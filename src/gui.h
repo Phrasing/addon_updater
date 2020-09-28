@@ -30,6 +30,10 @@ class Gui {
 
   void AsyncLoadAddonThumbnail(AddonThumbnail* thumbnail,
                                std::string_view screenshot_url);
+  bool LoadAndResizeThumbnail(uint8_t* data, size_t data_size,
+                              addon_updater::AddonThumbnail* thumbnail);
+
+  std::string search_text_;
 
   WowInstall selected_installation_;
   WowInstallations installations_;

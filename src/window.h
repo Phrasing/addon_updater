@@ -33,6 +33,7 @@ class Window {
  private:
   LRESULT WindowCallback(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
   void GlfwErrorCallback(int error_code, const char* description);
+  void ApplyTheme();
   std::shared_ptr<GlfwContext> glfw_ctx_;
 };
 }  // namespace addon_updater_window
