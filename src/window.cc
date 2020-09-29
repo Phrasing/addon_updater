@@ -1,11 +1,10 @@
 // clang-format off
-#include "pch.h"
-#include "window.h"
-#include "resource_loader.h"
-#include "windows_error_message.h"
-#include "bind_callback.h"
-#include "../data/resource/resource.h"
-
+#include <addon_updater/pch.h>
+#include <addon_updater/window.h>
+#include <addon_updater/resource_loader.h>
+#include <addon_updater/windows_error_message.h>
+#include <addon_updater/bind_callback.h>
+#include <addon_updater/resource.h>
 #include <windowsx.h>
 // clang-format on
 

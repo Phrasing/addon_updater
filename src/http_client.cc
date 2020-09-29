@@ -1,6 +1,6 @@
 // clang-format off
-#include "pch.h"
-#include "http_client.h"
+#include <addon_updater/pch.h>
+#include <addon_updater/http_client.h>
 // clang-format on
 
 namespace addon_updater {
@@ -63,14 +63,11 @@ void AsyncHttpClient::GetImpl(std::string_view url,
     std::cout << "\n[REQUEST]\n" << req_.base() << std::endl;
   }
 
-
   resolver_.async_resolve(
       encoded_url.hostname(), kSslPort,
       beast::bind_front_handler(std::move(&AsyncHttpClient::OnResolve),
                                 shared_from_this()));
 }
-
-
 
 void AsyncHttpClient::Get(std::string_view url,
                           const RequestCallback& request_callback,
@@ -195,11 +192,11 @@ void AsyncHttpClient::OnReadHeader(beast::error_code ec,
     return;
   }
 
+  const auto& response = std::move(res_->get());
+
   if (res_->content_length().is_initialized()) {
     content_size_ = res_->content_length().value();
   }
-
-  const auto& response = std::move(res_->get());
 
   auto content_encoding = response[http::field::content_encoding];
   is_gzip_ =

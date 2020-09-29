@@ -1,4 +1,4 @@
 // clang-format off
-#include "pch.h"
-#include "string_util.h"
+#include <addon_updater/pch.h>
+#include <addon_updater/string_util.h>
 // clang-format on

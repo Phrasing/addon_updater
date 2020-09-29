@@ -1,6 +1,6 @@
 // clang-format off
-#include "pch.h"
-#include "windows_error_message.h"
+#include <addon_updater/pch.h>
+#include <addon_updater/windows_error_message.h>
 // clang-format on
 
 namespace addon_updater {

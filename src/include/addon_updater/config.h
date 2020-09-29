@@ -2,7 +2,7 @@
 #define ADDON_UPDATER_CONFIG_H
 #pragma once
 
-#include "addon.h"
+#include  <addon_updater/addon.h>
 
 namespace addon_updater {
 

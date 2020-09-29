@@ -1,7 +1,8 @@
 #ifndef HTTP_CLIENT_H
 #define HTTP_CLIENT_H
 #pragma once
-#include "singleton.h"
+
+#include <addon_updater/singleton.h>
 
 namespace addon_updater {
 enum class RequestState {

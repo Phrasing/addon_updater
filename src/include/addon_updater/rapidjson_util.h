@@ -2,7 +2,7 @@
 #define RAPIDJSON_UTIL_H
 #pragma once
 
-#include "rapidjson_util.inl"
+#include  <addon_updater/rapidjson_util.inl>
 
 namespace rj_util {
 

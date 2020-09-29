@@ -1,8 +1,8 @@
 // clang-format off
-#include "pch.h"
-#include "products.h"
-#include "string_util.h"
-#include "file.h"
+#include <addon_updater/pch.h>
+#include <addon_updater/products.h>
+#include <addon_updater/string_util.h>
+#include <addon_updater/file.h>
 // clang-format on
 
 namespace addon_updater {

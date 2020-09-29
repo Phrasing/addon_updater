@@ -1,6 +1,6 @@
 // clang-format off
-#include "pch.h"
-#include "bind_callback.h"
+#include  <addon_updater/pch.h>
+#include  <addon_updater/bind_callback.h>
 // clang-format on
 
 /*

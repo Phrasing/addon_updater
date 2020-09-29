@@ -1,20 +1,17 @@
 // clang-format off
-#include "pch.h"
-#include "products.h"
-#include "http_client.h"
-#include "config.h"
-#include "window.h"
-#include "addon.h"
-#include "texture.h"
-#include "thumbnail_cache.h"
-#include "gui.h"
-#include "base64.h"
-#include "file.h"
-#include "toc_parser.h"
-#include "resource_loader.h"
-#include "windows_error_message.h"
-
-#include "../data/resource/resource.h"
+#include <addon_updater/pch.h>
+#include <addon_updater/products.h>
+#include <addon_updater/http_client.h>
+#include <addon_updater/config.h>
+#include <addon_updater/window.h>
+#include <addon_updater/addon.h>
+#include <addon_updater/texture.h>
+#include <addon_updater/gui.h>
+#include <addon_updater/file.h>
+#include <addon_updater/toc_parser.h>
+#include <addon_updater/resource_loader.h>
+#include <addon_updater/windows_error_message.h>
+#include <addon_updater/resource.h>
 // clang-format on
 
 namespace {
@@ -95,7 +92,7 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
                     },
                     {{http::field::accept, "application/json"},
                      {http::field::accept_encoding, "gzip, deflate, br"}});
-  
+
   bool is_loading = true;
 
   addon_updater::InstalledAddons installed_addons{};

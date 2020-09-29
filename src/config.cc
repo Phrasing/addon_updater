@@ -1,7 +1,7 @@
 // clang-format off
-#include "pch.h"
-#include "config.h"
-#include "file.h"
+#include  <addon_updater/pch.h>
+#include  <addon_updater/config.h>
+#include  <addon_updater/file.h>
 // clang-format on
 
 namespace addon_updater {

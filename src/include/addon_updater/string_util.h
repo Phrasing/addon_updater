@@ -2,7 +2,7 @@
 #define ADDON_UPDATER_STRING_UTIL_H
 #pragma once
 
-#include "string_util.inl"
+#include <addon_updater/string_util.inl>
 
 namespace string_util {
 

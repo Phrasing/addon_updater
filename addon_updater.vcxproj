@@ -81,7 +81,7 @@
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)bin\build\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)-$(Configuration)</TargetName>
-    <IncludePath>C:\Libraries\boost_1_74_0;$(SolutionDir)third_party\openssl\include;$(SolutionDir)third_party\protobuf\$(Configuration)\include;$(SolutionDir)third_party\rapidjson\include;$(SolutionDir)third_party\imgui\include;$(SolutionDir)third_party\glew\include;$(SolutionDir)third_party\glfw\include;$(SolutionDir)third_party\miniz\include;$(SolutionDir)third_party\iconfont_cpp_headers\include;$(SolutionDir)third_party\skyr-url\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Libraries\boost_1_74_0;$(SolutionDir)third_party\openssl\include;$(SolutionDir)third_party\protobuf\$(Configuration)\include;$(SolutionDir)third_party\rapidjson\include;$(SolutionDir)third_party\imgui\include;$(SolutionDir)third_party\glew\include;$(SolutionDir)third_party\glfw\include;$(SolutionDir)third_party\miniz\include;$(SolutionDir)third_party\iconfont_cpp_headers\include;$(SolutionDir)third_party\skyr-url\include;$(SolutionDir)src\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Libraries\boost_1_74_0\lib64-msvc-14.2;$(SolutionDir)third_party\openssl\lib\$(Platform)\$(Configuration);$(SolutionDir)third_party\protobuf\$(Configuration);$(SolutionDir)third_party\imgui\lib\$(Configuration);$(SolutionDir)third_party\glfw\lib\$(Configuration);$(SoltutionDir)third_party\glew\lib\$(Configuration);$(SolutionDir)third_party\miniz\lib\$(Configuration);$(SolutionDir)third_party\skyr-url\lib\$(Configuration);$(LibraryPath)</LibraryPath>
     <EnableMicrosoftCodeAnalysis>true</EnableMicrosoftCodeAnalysis>
     <EnableClangTidyCodeAnalysis>false</EnableClangTidyCodeAnalysis>
@@ -91,7 +91,7 @@
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)bin\build\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)-$(Configuration)</TargetName>
-    <IncludePath>C:\Libraries\boost_1_74_0;$(SolutionDir)third_party\openssl\include;$(SolutionDir)third_party\protobuf\$(Configuration)\include;$(SolutionDir)third_party\rapidjson\include;$(SolutionDir)third_party\imgui\include;$(SolutionDir)third_party\glew\include;$(SolutionDir)third_party\glfw\include;$(SolutionDir)third_party\miniz\include;$(SolutionDir)third_party\iconfont_cpp_headers\include;$(SolutionDir)third_party\skyr-url\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Libraries\boost_1_74_0;$(SolutionDir)third_party\openssl\include;$(SolutionDir)third_party\protobuf\$(Configuration)\include;$(SolutionDir)third_party\rapidjson\include;$(SolutionDir)third_party\imgui\include;$(SolutionDir)third_party\glew\include;$(SolutionDir)third_party\glfw\include;$(SolutionDir)third_party\miniz\include;$(SolutionDir)third_party\iconfont_cpp_headers\include;$(SolutionDir)third_party\skyr-url\include;$(SolutionDir)src\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Libraries\boost_1_74_0\lib64-msvc-14.2;$(SolutionDir)third_party\openssl\lib\$(Platform)\$(Configuration);$(SolutionDir)third_party\protobuf\$(Configuration);$(SolutionDir)third_party\imgui\lib\$(Configuration);$(SolutionDir)third_party\glfw\lib\$(Configuration);$(SoltutionDir)third_party\glew\lib\$(Configuration);$(SolutionDir)third_party\miniz\lib\$(Configuration);$(SolutionDir)third_party\skyr-url\lib\$(Configuration);$(LibraryPath)</LibraryPath>
     <EnableMicrosoftCodeAnalysis>true</EnableMicrosoftCodeAnalysis>
     <EnableClangTidyCodeAnalysis>false</EnableClangTidyCodeAnalysis>
@@ -137,7 +137,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>addon_updater/pch.h</PrecompiledHeaderFile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <DisableSpecificWarnings>4244</DisableSpecificWarnings>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -163,7 +163,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>addon_updater/pch.h</PrecompiledHeaderFile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <DisableSpecificWarnings>4244</DisableSpecificWarnings>
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
@@ -188,7 +188,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\addon.cc" />
-    <ClCompile Include="src\base64.cc" />
     <ClCompile Include="src\bind_callback.cc" />
     <ClCompile Include="src\config.cc" />
     <ClCompile Include="src\file.cc" />
@@ -197,9 +196,9 @@
     <ClCompile Include="src\main.cc" />
     <ClCompile Include="src\pch.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">include/addon_updater/pch.h</PrecompiledHeaderFile>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">include/addon_updater/pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="src\products.pb.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
@@ -210,7 +209,6 @@
     <ClCompile Include="src\resource_loader.cc" />
     <ClCompile Include="src\string_util.cc" />
     <ClCompile Include="src\texture.cc" />
-    <ClCompile Include="src\thumbnail_cache.cc" />
     <ClCompile Include="src\toc_parser.cc" />
     <ClCompile Include="src\window.cc" />
     <ClCompile Include="src\windows_error_message.cc" />
@@ -218,34 +216,32 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="data\resource\resource.h" />
-    <ClInclude Include="src\addon.h" />
-    <ClInclude Include="src\base64.h" />
-    <ClInclude Include="src\bind_callback.h" />
-    <ClInclude Include="src\config.h" />
-    <ClInclude Include="src\defer.h" />
-    <ClInclude Include="src\file.h" />
-    <ClInclude Include="src\gui.h" />
-    <ClInclude Include="src\http_client.h" />
-    <ClInclude Include="src\pch.h" />
-    <ClInclude Include="src\products.pb.h" />
-    <ClInclude Include="src\rapidjson_util.h" />
-    <ClInclude Include="src\resource_loader.h" />
-    <ClInclude Include="src\singleton.h" />
-    <ClInclude Include="src\products.h" />
-    <ClInclude Include="src\string_util.h" />
-    <ClInclude Include="src\texture.h" />
-    <ClInclude Include="src\thumbnail_cache.h" />
-    <ClInclude Include="src\toc_parser.h" />
-    <ClInclude Include="src\window.h" />
-    <ClInclude Include="src\windows_error_message.h" />
-    <ClInclude Include="src\zip_file.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="src\rapidjson_util.inl" />
-    <None Include="src\string_util.inl" />
+    <ClInclude Include="src\include\addon_updater\addon.h" />
+    <ClInclude Include="src\include\addon_updater\bind_callback.h" />
+    <ClInclude Include="src\include\addon_updater\config.h" />
+    <ClInclude Include="src\include\addon_updater\defer.h" />
+    <ClInclude Include="src\include\addon_updater\file.h" />
+    <ClInclude Include="src\include\addon_updater\gui.h" />
+    <ClInclude Include="src\include\addon_updater\http_client.h" />
+    <ClInclude Include="src\include\addon_updater\pch.h" />
+    <ClInclude Include="src\include\addon_updater\products.h" />
+    <ClInclude Include="src\include\addon_updater\products.pb.h" />
+    <ClInclude Include="src\include\addon_updater\rapidjson_util.h" />
+    <ClInclude Include="src\include\addon_updater\resource_loader.h" />
+    <ClInclude Include="src\include\addon_updater\singleton.h" />
+    <ClInclude Include="src\include\addon_updater\string_util.h" />
+    <ClInclude Include="src\include\addon_updater\texture.h" />
+    <ClInclude Include="src\include\addon_updater\toc_parser.h" />
+    <ClInclude Include="src\include\addon_updater\window.h" />
+    <ClInclude Include="src\include\addon_updater\windows_error_message.h" />
+    <ClInclude Include="src\include\addon_updater\zip_file.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="data\resource\resource.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\include\addon_updater\rapidjson_util.inl" />
+    <None Include="src\include\addon_updater\string_util.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

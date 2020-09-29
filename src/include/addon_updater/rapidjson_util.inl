@@ -3,7 +3,7 @@
 #pragma once
 
 // clang-format off
-#include "rapidjson_util.h"
+#include  <addon_updater/rapidjson_util.h>
 // clang-format on
 
 namespace rj_util {

@@ -93,13 +93,13 @@ namespace io = boost::iostreams;
 #include <optional>
 #include <filesystem>
 
-#include "http_client.h"
-#include "string_util.h"
-#include "singleton.h"
-#include "products.pb.h"
-#include "defer.h"
+#include <addon_updater/http_client.h>
+#include <addon_updater/string_util.h>
+#include <addon_updater/singleton.h>
+#include <addon_updater/products.pb.h>
+#include <addon_updater/defer.h>
 
-// clang-format off
+// clang-format off 
 
 #endif // !PCH_H
 

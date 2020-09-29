@@ -1,11 +1,11 @@
 // clang-format off
-#include "pch.h"
-#include "gui.h"
-#include "texture.h"
-#include "file.h"
-#include "http_client.h"
-#include "resource_loader.h"
-#include "../data/resource/resource.h"
+#include <addon_updater/pch.h>
+#include <addon_updater/gui.h>
+#include <addon_updater/texture.h>
+#include <addon_updater/file.h>
+#include <addon_updater/http_client.h>
+#include <addon_updater/resource_loader.h>
+#include <addon_updater/resource.h>
 // clang-format on
 
 namespace ImGui {

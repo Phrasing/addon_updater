@@ -2,9 +2,9 @@
 #define ADDON_UPDATER_GUI_H
 #pragma once
 
-#include "addon.h"
-#include "products.h"
-#include "window.h"
+#include  <addon_updater/addon.h>
+#include  <addon_updater/products.h>
+#include  <addon_updater/window.h>
 
 namespace addon_updater {
 class Gui {

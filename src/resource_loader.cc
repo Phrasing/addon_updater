@@ -1,6 +1,6 @@
 // clang-format off
-#include "pch.h"
-#include "resource_loader.h"
+#include <addon_updater/pch.h>
+#include <addon_updater/resource_loader.h>
 // clang-format on
 
 namespace addon_updater {

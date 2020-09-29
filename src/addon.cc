@@ -1,10 +1,10 @@
 // clang-format off
-#include "pch.h"
-#include "addon.h"
-#include "toc_parser.h"
-#include "rapidjson_util.h"
-#include "file.h"
-#include "zip_file.h"
+#include <addon_updater/pch.h>
+#include <addon_updater/addon.h>
+#include <addon_updater/toc_parser.h>
+#include <addon_updater/rapidjson_util.h>
+#include <addon_updater/file.h>
+#include <addon_updater/zip_file.h>
 // clang-format on
 
 namespace addon_updater {

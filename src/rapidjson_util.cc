@@ -1,6 +1,6 @@
 // clang-format off
-#include "pch.h"
-#include "rapidjson_util.h"
+#include <addon_updater/pch.h>
+#include <addon_updater/rapidjson_util.h>
 // clang-format on
 
 namespace rj_util {}

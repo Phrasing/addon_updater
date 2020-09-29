@@ -12,8 +12,6 @@
     <ClCompile Include="src\products.pb.cc" />
     <ClCompile Include="src\window.cc" />
     <ClCompile Include="src\texture.cc" />
-    <ClCompile Include="src\thumbnail_cache.cc" />
-    <ClCompile Include="src\base64.cc" />
     <ClCompile Include="src\gui.cc" />
     <ClCompile Include="src\file.cc" />
     <ClCompile Include="src\toc_parser.cc" />
@@ -23,34 +21,28 @@
     <ClCompile Include="src\bind_callback.cc" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\pch.h" />
-    <ClInclude Include="src\http_client.h" />
-    <ClInclude Include="src\singleton.h" />
-    <ClInclude Include="src\addon.h" />
-    <ClInclude Include="src\products.h" />
-    <ClInclude Include="src\rapidjson_util.h" />
-    <ClInclude Include="src\config.h" />
-    <ClInclude Include="src\string_util.h" />
-    <ClInclude Include="src\products.pb.h" />
-    <ClInclude Include="src\window.h" />
-    <ClInclude Include="src\texture.h" />
-    <ClInclude Include="src\thumbnail_cache.h" />
-    <ClInclude Include="src\base64.h" />
-    <ClInclude Include="src\gui.h" />
-    <ClInclude Include="src\file.h" />
-    <ClInclude Include="src\toc_parser.h" />
-    <ClInclude Include="src\resource_loader.h" />
     <ClInclude Include="data\resource\resource.h">
       <Filter>resource</Filter>
     </ClInclude>
-    <ClInclude Include="src\zip_file.h" />
-    <ClInclude Include="src\windows_error_message.h" />
-    <ClInclude Include="src\defer.h" />
-    <ClInclude Include="src\bind_callback.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="src\rapidjson_util.inl" />
-    <None Include="src\string_util.inl" />
+    <ClInclude Include="src\include\addon_updater\addon.h" />
+    <ClInclude Include="src\include\addon_updater\bind_callback.h" />
+    <ClInclude Include="src\include\addon_updater\config.h" />
+    <ClInclude Include="src\include\addon_updater\defer.h" />
+    <ClInclude Include="src\include\addon_updater\file.h" />
+    <ClInclude Include="src\include\addon_updater\gui.h" />
+    <ClInclude Include="src\include\addon_updater\http_client.h" />
+    <ClInclude Include="src\include\addon_updater\pch.h" />
+    <ClInclude Include="src\include\addon_updater\products.h" />
+    <ClInclude Include="src\include\addon_updater\products.pb.h" />
+    <ClInclude Include="src\include\addon_updater\rapidjson_util.h" />
+    <ClInclude Include="src\include\addon_updater\resource_loader.h" />
+    <ClInclude Include="src\include\addon_updater\singleton.h" />
+    <ClInclude Include="src\include\addon_updater\string_util.h" />
+    <ClInclude Include="src\include\addon_updater\texture.h" />
+    <ClInclude Include="src\include\addon_updater\toc_parser.h" />
+    <ClInclude Include="src\include\addon_updater\window.h" />
+    <ClInclude Include="src\include\addon_updater\windows_error_message.h" />
+    <ClInclude Include="src\include\addon_updater\zip_file.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="resource">
@@ -61,5 +53,9 @@
     <ResourceCompile Include="data\resource\resource.rc">
       <Filter>resource</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\include\addon_updater\rapidjson_util.inl" />
+    <None Include="src\include\addon_updater\string_util.inl" />
   </ItemGroup>
 </Project>
