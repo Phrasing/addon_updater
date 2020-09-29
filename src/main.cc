@@ -95,21 +95,7 @@ int WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
                     },
                     {{http::field::accept, "application/json"},
                      {http::field::accept_encoding, "gzip, deflate, br"}});
-
-  /*auto tukui_client =
-      addon_updater::ClientFactory::GetInstance().NewAsyncClient();
-  tukui_client->Get(kTukuiApiUrl,
-                    [&](const beast::error_code& ec, std::string_view result) {
-                      if (!addon_updater::DeserializeAddons(
-                              result, addon_updater::AddonType::kTukui,
-                              addon_updater::AddonFlavor::kRetail, &addons)) {
-                        addon_updater::WindowsErrorMessageBox(
-                            "Error: failed to deserialize tukui addons.");
-                      }
-                    },
-                    {{"Accept", "application/json"},
-                     {"Accept-Encoding", "gzip, deflate, br"}});*/
-
+  
   bool is_loading = true;
 
   addon_updater::InstalledAddons installed_addons{};

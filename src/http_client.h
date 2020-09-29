@@ -47,9 +47,7 @@ class AsyncHttpClient : public std::enable_shared_from_this<AsyncHttpClient> {
 
   using RequestCallback =
       std::function<void(const beast::error_code&, std::string_view)>;
-
   using ProgressCallback = std::function<bool(const DownloadStatus&)>;
-
   using DownloadCallback = std::function<void(
       const beast::error_code&, const DownloadStatus&, std::string_view)>;
 
@@ -89,6 +87,8 @@ class AsyncHttpClient : public std::enable_shared_from_this<AsyncHttpClient> {
 
   void GetImpl(std::string_view url, const RequestFields& request_fields = {});
 
+
+
  private:
   DownloadCallback download_callback_;
   RequestCallback request_callback_;
@@ -99,7 +99,7 @@ class AsyncHttpClient : public std::enable_shared_from_this<AsyncHttpClient> {
   beast::ssl_stream<beast::tcp_stream> stream_;
   beast::flat_buffer buffer_;
   http::request<http::string_body> req_;
-  http::response_parser<http::string_body> res_;
+  boost::optional<http::response_parser<http::string_body>> res_;
 
   std::string response_;
   size_t content_size_;
@@ -143,7 +143,6 @@ class ClientFactory : public Singleton<ClientFactory> {
   net::io_context ioc_;
   net::io_context::work work_;
   std::thread thd_;
-  boost::asio::thread_pool thd_pool_;
   ssl::context ssl_context_;
 };
 

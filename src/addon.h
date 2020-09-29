@@ -1,6 +1,6 @@
-#ifndef ADDON_H
-#define ADDON_H
-#pragma once
+#ifndef ADDON_UPDATER_ADDON_H
+#define ADDON_UPDATER_ADDON_H
+
 
 namespace addon_updater {
 namespace tukui_fields {
@@ -220,4 +220,4 @@ bool DeserializeAddons(std::string_view json, AddonType addon_type,
 
 }  // namespace addon_updater
 
-#endif  // !ADDON_H
+#endif  // !ADDON_UPDATER_ADDON_H

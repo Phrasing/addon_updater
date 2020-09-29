@@ -194,10 +194,6 @@ InstalledAddon& InstalledAddon::operator=(const Addon& addon) {
   this->slug = addon.slug;
   this->name = addon.name;
   this->thumbnail = addon.thumbnail;
-  this->thumbnail.is_loaded = false;
-  this->thumbnail.is_uploaded = false;
-  this->thumbnail.pixels = nullptr;
-  this->thumbnail.in_progress = false;
   this->screenshot_url = addon.screenshot_url;
   this->remote_version = addon.remote_version;
   return *this;

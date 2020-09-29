@@ -262,13 +262,17 @@ void Gui::RenderBrowseTab(
       ImGui::Image(addon.thumbnail.pixels,
                    ImVec2(addon.thumbnail.width, addon.thumbnail.height));
       ImGui::SameLine();
+    } else {
+      ImGui::Image(nullptr, ImVec2(kThumbnailWidth, kThumbnailHeight));
+      ImGui::SameLine();
     }
 
     ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0, 0, 0, 0));
     ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0, 0, 0, 0));
     if (ImGui::TreeNode(
             (addon.name + "##" + std::to_string(addon.id)).c_str())) {
-      ImGui::TextWrapped((std::string("Description: ") + addon.description).c_str());
+      ImGui::TextWrapped(
+          (std::string("Description: ") + addon.description).c_str());
       ImGui::Text("Flavor: " + FlavorToString(addon.flavor));
       ImGui::TreePop();
     }
@@ -432,7 +436,8 @@ void Gui::AsyncLoadAddonThumbnail(AddonThumbnail* thumbnail,
           auto buffer = std::make_unique<uint8_t[]>(buffer_size);
           std::memcpy(buffer.get(), response.data(), buffer_size);
 
-          if (LoadAndResizeThumbnail(buffer.get(), buffer_size, thumbnail)) {
+          if (this->LoadAndResizeThumbnail(buffer.get(), buffer_size,
+                                           thumbnail)) {
             thumbnail->is_loaded = true;
             thumbnail->in_progress = false;
           } else {

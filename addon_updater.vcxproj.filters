@@ -20,6 +20,7 @@
     <ClCompile Include="src\resource_loader.cc" />
     <ClCompile Include="src\zip_file.cc" />
     <ClCompile Include="src\windows_error_message.cc" />
+    <ClCompile Include="src\bind_callback.cc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.h" />
@@ -45,6 +46,7 @@
     <ClInclude Include="src\zip_file.h" />
     <ClInclude Include="src\windows_error_message.h" />
     <ClInclude Include="src\defer.h" />
+    <ClInclude Include="src\bind_callback.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\rapidjson_util.inl" />

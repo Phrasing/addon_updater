@@ -9,10 +9,12 @@ constexpr auto kHttpVersion = 11;
 constexpr auto kSslPort = "443";
 constexpr auto kUserAgent =
     R"(Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36)";
-
+constexpr auto kGzipField = "gzip";
+constexpr auto kGzipAltField = "gzip-x";
+constexpr auto kDeflateField = "deflate";
 constexpr auto kMaxWBits = 15;
 
-inline std::string GzipDecompress(std::string_view input) {
+std::string GzipDecompress(std::string_view input) {
   std::string decompressed{};
   io::array_source src(input.data(), input.length());
   io::copy(io::compose(io::gzip_decompressor{}, std::move(src)),
@@ -20,7 +22,7 @@ inline std::string GzipDecompress(std::string_view input) {
   return decompressed;
 }
 
-inline std::string zLibDecompress(std::string_view input) {
+std::string zLibDecompress(std::string_view input) {
   std::string decompressed{};
   io::array_source src(input.data(), input.length());
   io::copy(io::compose(io::zlib_decompressor{-kMaxWBits}, std::move(src)),
@@ -32,16 +34,13 @@ inline std::string zLibDecompress(std::string_view input) {
 
 AsyncHttpClient::AsyncHttpClient(const net::any_io_executor& ex,
                                  ssl::context& ctx)
-    : resolver_(ex),
-      stream_(ex, ctx),
-      bytes_read_(0),
-      content_size_(0) {}
+    : resolver_(ex), stream_(ex, ctx), bytes_read_(0), content_size_(0) {}
 
 void AsyncHttpClient::GetImpl(std::string_view url,
                               const RequestFields& request_fields) {
   auto encoded_url = skyr::url(url);
 
-  if (!SSL_set_tlsext_host_name(std::move(stream_.native_handle()),
+  if (!SSL_set_tlsext_host_name(stream_.native_handle(),
                                 encoded_url.hostname().c_str())) {
     this->Callback(beast::error_code{static_cast<int>(::ERR_get_error()),
                                      net::error::get_ssl_category()},
@@ -56,7 +55,7 @@ void AsyncHttpClient::GetImpl(std::string_view url,
   req_.set(http::field::host, encoded_url.hostname());
   req_.set(http::field::user_agent, kUserAgent);
 
-  for (auto& field : request_fields) {
+  for (const auto& field : request_fields) {
     req_.set(field.field_name, field.field_value);
   }
 
@@ -64,11 +63,14 @@ void AsyncHttpClient::GetImpl(std::string_view url,
     std::cout << "\n[REQUEST]\n" << req_.base() << std::endl;
   }
 
+
   resolver_.async_resolve(
-      std::move(encoded_url.hostname()), kSslPort,
-      beast::bind_front_handler(&AsyncHttpClient::OnResolve,
-                                std::move(shared_from_this())));
+      encoded_url.hostname(), kSslPort,
+      beast::bind_front_handler(std::move(&AsyncHttpClient::OnResolve),
+                                shared_from_this()));
 }
+
+
 
 void AsyncHttpClient::Get(std::string_view url,
                           const RequestCallback& request_callback,
@@ -106,7 +108,7 @@ void AsyncHttpClient::OnResolve(beast::error_code ec,
   stream_.set_verify_mode(boost::asio::ssl::verify_none);
   beast::get_lowest_layer(stream_).async_connect(
       results, beast::bind_front_handler(&AsyncHttpClient::OnConnect,
-                                         std::move(shared_from_this())));
+                                         shared_from_this()));
 }
 
 void AsyncHttpClient::OnConnect(beast::error_code ec,
@@ -121,7 +123,7 @@ void AsyncHttpClient::OnConnect(beast::error_code ec,
   stream_.async_handshake(
       boost::asio::ssl::stream_base::client,
       beast::bind_front_handler(&AsyncHttpClient::OnHandshake,
-                                std::move(shared_from_this())));
+                                shared_from_this()));
 }
 
 void AsyncHttpClient::OnHandshake(beast::error_code ec) {
@@ -130,9 +132,9 @@ void AsyncHttpClient::OnHandshake(beast::error_code ec) {
     return;
   }
 
-  http::async_write(stream_, req_,
-                    beast::bind_front_handler(&AsyncHttpClient::OnWrite,
-                                              std::move(shared_from_this())));
+  http::async_write(
+      stream_, req_,
+      beast::bind_front_handler(&AsyncHttpClient::OnWrite, shared_from_this()));
 }
 
 void AsyncHttpClient::OnWrite(beast::error_code ec,
@@ -142,52 +144,46 @@ void AsyncHttpClient::OnWrite(beast::error_code ec,
     return;
   }
 
-  res_.body_limit(std::numeric_limits<size_t>::max());
+  res_.emplace();
+  res_->body_limit(std::numeric_limits<uint64_t>::max());
 
   boost::ignore_unused(bytes_transferred);
   http::async_read_header(
-      stream_, buffer_, res_,
+      stream_, buffer_, *res_,
       beast::bind_front_handler(&AsyncHttpClient::OnReadHeader,
-                                std::move(shared_from_this())));
+                                shared_from_this()));
 }
 
 void AsyncHttpClient::OnRead(beast::error_code ec,
                              std::size_t bytes_transferred) {
-  auto progress = static_cast<uint32_t>((bytes_read_ += bytes_transferred) *
-                                        (100.0F / content_size_));
+  auto progress =
+      (content_size_ > 0 && ec == boost::asio::error::eof)
+          ? 100
+          : static_cast<uint32_t>((bytes_read_ += bytes_transferred) *
+                                  (100.0F / content_size_));
 
-  if (content_size_ > 0) {
-    if (ec == boost::asio::error::eof) {
-      progress = 100;
+  if (!res_->is_done()) {
+    if (this->Callback(ec, RequestState::kStatePending, bytes_transferred,
+                       progress)) {
+      res_->release();
+      http::async_read_some(stream_, buffer_, *res_,
+                            beast::bind_front_handler(&AsyncHttpClient::OnRead,
+                                                      shared_from_this()));
+      return;
     }
   }
 
-  if (!res_.is_done()) {
-    if (!this->Callback(ec, RequestState::kStatePending, bytes_transferred,
-                        progress)) {
-      goto shutdown;
-    }
+  stream_.async_shutdown(beast::bind_front_handler(&AsyncHttpClient::OnShutdown,
+                                                   shared_from_this()));
 
-    res_.release();
-    http::async_read_some(stream_, buffer_, res_,
-                          beast::bind_front_handler(&AsyncHttpClient::OnRead,
-                                                    shared_from_this()));
-
+  if (ec && ec != boost::asio::error::eof) {
+    this->Callback(ec, RequestState::kStateError, 0, 0);
   } else {
-  shutdown:
-    stream_.async_shutdown(beast::bind_front_handler(
-        &AsyncHttpClient::OnShutdown, shared_from_this()));
-
-    if (ec && ec != boost::asio::error::eof) {
-      this->Callback(ec, RequestState::kStateError, 0, 0);
-    } else {
-      ec = {};
-      this->Callback(ec, RequestState::kStateFinish, bytes_transferred,
-                     progress);
-    }
-
-    request_done_ = true;
+    ec = {};
+    this->Callback(ec, RequestState::kStateFinish, bytes_transferred, progress);
   }
+
+  this->request_done_ = true;
 }
 
 void AsyncHttpClient::OnReadHeader(beast::error_code ec,
@@ -199,15 +195,16 @@ void AsyncHttpClient::OnReadHeader(beast::error_code ec,
     return;
   }
 
-  if (res_.content_length().is_initialized()) {
-    content_size_ = *res_.content_length();
+  if (res_->content_length().is_initialized()) {
+    content_size_ = res_->content_length().value();
   }
 
-  const auto& response = std::move(res_.get());
+  const auto& response = std::move(res_->get());
 
   auto content_encoding = response[http::field::content_encoding];
-  is_gzip_ = (content_encoding == "gzip" || content_encoding == "x-gzip");
-  is_deflate_ = (content_encoding == "deflate");
+  is_gzip_ =
+      (content_encoding == kGzipField || content_encoding == kGzipAltField);
+  is_deflate_ = (content_encoding == kDeflateField);
 
   this->Callback(ec, RequestState::kStatePending, bytes_transferred, 0);
 
@@ -216,7 +213,7 @@ void AsyncHttpClient::OnReadHeader(beast::error_code ec,
   }
 
   http::async_read_some(
-      stream_, buffer_, res_,
+      stream_, buffer_, *res_,
       beast::bind_front_handler(&AsyncHttpClient::OnRead, shared_from_this()));
 }
 
@@ -229,16 +226,16 @@ void AsyncHttpClient::OnShutdown(beast::error_code ec) {
 bool AsyncHttpClient::Callback(const beast::error_code& ec,
                                RequestState request_state,
                                size_t bytes_transferred, uint32_t progress) {
-  const auto& response = std::move(res_.get());
+  const auto& response = std::move(res_->get());
   if (request_callback_) {
     response_ += response.body();
     if (request_state == RequestState::kStateFinish) {
       if (is_gzip_) {
-        request_callback_(ec, std::move(GzipDecompress(response_)));
+        request_callback_(ec, std::move(GzipDecompress(this->response_)));
       } else if (is_deflate_) {
-        request_callback_(ec, std::move(zLibDecompress(response_)));
+        request_callback_(ec, std::move(zLibDecompress(this->response_)));
       } else {
-        request_callback_(ec, std::move(response_));
+        request_callback_(ec, std::move(this->response_));
       }
     }
   }
@@ -247,15 +244,15 @@ bool AsyncHttpClient::Callback(const beast::error_code& ec,
     if (is_gzip_) {
       download_callback_(
           ec, {content_size_, bytes_transferred, progress, request_state},
-          std::move(GzipDecompress(std::move(response.body()))));
+          std::move(GzipDecompress(response.body())));
     } else if (is_deflate_) {
       download_callback_(
           ec, {content_size_, bytes_transferred, progress, request_state},
-          std::move(zLibDecompress(std::move(response.body()))));
+          std::move(zLibDecompress(response.body())));
     } else {
       download_callback_(
           ec, {content_size_, bytes_transferred, progress, request_state},
-          std::move(response.body()));
+          response.body());
     }
   }
 
@@ -269,7 +266,7 @@ bool AsyncHttpClient::Callback(const beast::error_code& ec,
 }
 
 ClientFactory::ClientFactory()
-    : work_(ioc_), thd_pool_(4), ssl_context_(ssl::context::tlsv12_client) {
+    : work_(ioc_), ssl_context_(ssl::context::tlsv12_client) {
   ssl_context_.set_verify_mode(ssl::verify_none);
   thd_ = std::thread([this] { ioc_.run(); });
 }
@@ -324,13 +321,12 @@ HttpResponse SyncHttpClient::Get(std::string_view url,
 
   http::write(stream_, req);
 
-  std::optional<http::response_parser<http::string_body>> result;
-  result.emplace();
-  result->body_limit(std::numeric_limits<std::uint64_t>::max());
-  defer { result->release(); };
+  http::response_parser<http::string_body> result;
+  result.body_limit(std::numeric_limits<std::uint64_t>::max());
+  defer { result.release(); };
 
   beast::flat_buffer buffer;
-  http::read(stream_, buffer, *result);
+  http::read(stream_, buffer, result);
 
   beast::error_code ec;
   stream_.shutdown(ec);
@@ -339,16 +335,18 @@ HttpResponse SyncHttpClient::Get(std::string_view url,
     ec = {};
   }
 
-  if (result->get()["Content-Encoding"] == "gzip" ||
-      result->get()["Content-Encoding"] == "x-gzip") {
-    return {std::move(GzipDecompress(result->get().body())), ec};
+  const auto& response = std::move(result.get());
+
+  if (response[http::field::content_encoding] == kGzipField ||
+      response[http::field::content_encoding] == kGzipAltField) {
+    return {std::move(GzipDecompress(response.body())), ec};
   }
 
-  if (result->get()["Content-Encoding"] == "deflate") {
-    return {std::move(zLibDecompress(result->get().body())), ec};
+  if (response[http::field::content_encoding] == kDeflateField) {
+    return {std::move(zLibDecompress(response.body())), ec};
   }
 
-  return {std::move(result->get().body()), ec};
+  return {std::move(response.body()), ec};
 }
 void SyncHttpClient::Reset() {}
 }  // namespace http_client

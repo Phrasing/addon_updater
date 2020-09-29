@@ -3,6 +3,7 @@
 #include "window.h"
 #include "resource_loader.h"
 #include "windows_error_message.h"
+#include "bind_callback.h"
 #include "../data/resource/resource.h"
 
 #include <windowsx.h>
@@ -10,44 +11,7 @@
 
 namespace addon_updater {
 
-namespace {
-template <typename T>
-struct ActualType {
-  using type = T;
-};
-template <typename T>
-struct ActualType<T*> {
-  using type = typename ActualType<T>::type;
-};
-
-template <typename T, uint32_t uid, typename CallerType>
-struct Callback;
-
-template <typename Ret, typename... Params, uint32_t uid, typename CallerType>
-struct Callback<Ret(Params...), uid, CallerType> {
-  using InvokeCallback = Ret (*)(Params...);
-  template <typename... Args>
-  static Ret callback(Args... args) {
-    return Function(args...);
-  }
-
-  static InvokeCallback GetCallback(std::function<Ret(Params...)> fn) {
-    Function = fn;
-    return static_cast<InvokeCallback>(
-        Callback<Ret(Params...), uid, CallerType>::callback);
-  }
-
-  static std::function<Ret(Params...)> Function;
-};
-
-template <typename Ret, typename... Params, uint32_t uid, typename CallerType>
-std::function<Ret(Params...)>
-    Callback<Ret(Params...), uid, CallerType>::Function;
-
-#define GET_CALLBACK(ptr_type, caller_type) \
-  Callback<ActualType<ptr_type>::type, __COUNTER__, caller_type>::GetCallback
-
-};  // namespace
+namespace {};  // namespace
 
 Window::Window(std::string_view window_title, const WindowSize& window_size)
     : glfw_ctx_(std::make_shared<GlfwContext>()) {
@@ -63,13 +27,13 @@ Window::Window(std::string_view window_title, const WindowSize& window_size)
 
   glfw_ctx_->native_window_handle = glfwGetWin32Window(glfw_ctx_->window);
 
-  glfwSetErrorCallback(GET_CALLBACK(GLFWerrorfun, Window)(
+  glfwSetErrorCallback(BIND_CALLBACK(GLFWerrorfun, Window)(
       std::bind(&Window::GlfwErrorCallback, this, std::placeholders::_1,
                 std::placeholders::_2)));
 
   glfw_ctx_->window_callback_ =
       SubclassWindow(glfw_ctx_->native_window_handle,
-                     GET_CALLBACK(WNDPROC, Window)(std::bind(
+                     BIND_CALLBACK(WNDPROC, Window)(std::bind(
                          &Window::WindowCallback, this, std::placeholders::_1,
                          std::placeholders::_2, std::placeholders::_3,
                          std::placeholders::_4)));

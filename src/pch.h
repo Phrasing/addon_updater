@@ -30,14 +30,12 @@
 #define STB_IMAGE_RESIZE_STATIC
 #include <stb_image_resize.h>
 
-
 #define RAPIDJSON_HAS_STDSTRING 1
 #include <rapidjson/document.h>
 #include <rapidjson/prettywriter.h>
 #include <rapidjson/stringbuffer.h>
 
 #include <skyr/url.hpp>
-
 
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN

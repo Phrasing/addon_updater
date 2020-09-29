@@ -189,6 +189,7 @@
   <ItemGroup>
     <ClCompile Include="src\addon.cc" />
     <ClCompile Include="src\base64.cc" />
+    <ClCompile Include="src\bind_callback.cc" />
     <ClCompile Include="src\config.cc" />
     <ClCompile Include="src\file.cc" />
     <ClCompile Include="src\gui.cc" />
@@ -219,6 +220,7 @@
     <ClInclude Include="data\resource\resource.h" />
     <ClInclude Include="src\addon.h" />
     <ClInclude Include="src\base64.h" />
+    <ClInclude Include="src\bind_callback.h" />
     <ClInclude Include="src\config.h" />
     <ClInclude Include="src\defer.h" />
     <ClInclude Include="src\file.h" />
