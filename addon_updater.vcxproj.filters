@@ -19,11 +19,9 @@
     <ClCompile Include="src\zip_file.cc" />
     <ClCompile Include="src\windows_error_message.cc" />
     <ClCompile Include="src\bind_callback.cc" />
+    <ClCompile Include="src\file_handle.cc" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="data\resource\resource.h">
-      <Filter>resource</Filter>
-    </ClInclude>
     <ClInclude Include="src\include\addon_updater\addon.h" />
     <ClInclude Include="src\include\addon_updater\bind_callback.h" />
     <ClInclude Include="src\include\addon_updater\config.h" />
@@ -43,6 +41,10 @@
     <ClInclude Include="src\include\addon_updater\window.h" />
     <ClInclude Include="src\include\addon_updater\windows_error_message.h" />
     <ClInclude Include="src\include\addon_updater\zip_file.h" />
+    <ClInclude Include="src\include\addon_updater\resource.h">
+      <Filter>resource</Filter>
+    </ClInclude>
+    <ClInclude Include="src\include\addon_updater\file_handle.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="resource">
@@ -50,12 +52,12 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="data\resource\resource.rc">
-      <Filter>resource</Filter>
-    </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="src\include\addon_updater\rapidjson_util.inl" />
     <None Include="src\include\addon_updater\string_util.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="src\include\addon_updater\resource.rc">
+      <Filter>resource</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

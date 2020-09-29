@@ -1,7 +1,8 @@
 // clang-format off
-#include  <addon_updater/pch.h>
-#include  <addon_updater/file.h>
-#include  <addon_updater/windows_error_message.h>
+#include <addon_updater/pch.h>
+#include <addon_updater/file.h>
+#include <addon_updater/windows_error_message.h>
+#include <addon_updater/file_handle.h>
 // clang-format on
 
 namespace addon_updater {
@@ -10,46 +11,6 @@ namespace {
 constexpr auto kBufferSize = 1024;
 constexpr auto kOpenFileFlags =
     FILE_SHARE_DELETE | FILE_SHARE_READ | FILE_SHARE_WRITE;
-
-class WindowsHandleFile {
- public:
-  explicit WindowsHandleFile(HANDLE handle) noexcept : handle_(handle) {}
-
-  WindowsHandleFile(const WindowsHandleFile &) = delete;
-  WindowsHandleFile &operator=(const WindowsHandleFile &) = delete;
-
-  ~WindowsHandleFile() {
-    if (!::CloseHandle(this->handle_)) {
-      std::fprintf(stderr, "Error: failed to close file %p\n", &handle_);
-    }
-  }
-
-  HANDLE Get() noexcept { return this->handle_; }
-
-  std::optional<int> Read(void *buffer, int buffer_size) noexcept {
-    DWORD read_size;
-    if (!::ReadFile(this->handle_, buffer, static_cast<DWORD>(buffer_size),
-                    &read_size, nullptr)) {
-      return std::nullopt;
-    }
-    return static_cast<int>(read_size);
-  }
-
-  std::optional<int> Write(const void *buffer, int buffer_size,
-                           bool truncate) noexcept {
-    DWORD write_size;
-
-    if (truncate) ::SetEndOfFile(this->handle_);
-    if (!::WriteFile(this->handle_, buffer, buffer_size, &write_size,
-                     nullptr)) {
-      return std::nullopt;
-    }
-    return static_cast<int>(write_size);
-  }
-
- private:
-  HANDLE handle_;
-};
 
 }  // namespace
 

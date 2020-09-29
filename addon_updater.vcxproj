@@ -81,7 +81,7 @@
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)bin\build\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)-$(Configuration)</TargetName>
-    <IncludePath>C:\Libraries\boost_1_74_0;$(SolutionDir)third_party\openssl\include;$(SolutionDir)third_party\protobuf\$(Configuration)\include;$(SolutionDir)third_party\rapidjson\include;$(SolutionDir)third_party\imgui\include;$(SolutionDir)third_party\glew\include;$(SolutionDir)third_party\glfw\include;$(SolutionDir)third_party\miniz\include;$(SolutionDir)third_party\iconfont_cpp_headers\include;$(SolutionDir)third_party\skyr-url\include;$(SolutionDir)src\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Libraries\boost_1_74_0;$(SolutionDir)third_party\openssl\include;$(SolutionDir)third_party\protobuf\$(Configuration)\include;$(SolutionDir)third_party\rapidjson\include;$(SolutionDir)third_party\imgui\include;$(SolutionDir)third_party\glew\include;$(SolutionDir)third_party\glfw\include;$(SolutionDir)third_party\miniz\include;$(SolutionDir)third_party\iconfont_cpp_headers\include;$(SolutionDir)third_party\skyr-url\include;$(SolutionDir)src\include;$(SolutionDir)data;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Libraries\boost_1_74_0\lib64-msvc-14.2;$(SolutionDir)third_party\openssl\lib\$(Platform)\$(Configuration);$(SolutionDir)third_party\protobuf\$(Configuration);$(SolutionDir)third_party\imgui\lib\$(Configuration);$(SolutionDir)third_party\glfw\lib\$(Configuration);$(SoltutionDir)third_party\glew\lib\$(Configuration);$(SolutionDir)third_party\miniz\lib\$(Configuration);$(SolutionDir)third_party\skyr-url\lib\$(Configuration);$(LibraryPath)</LibraryPath>
     <EnableMicrosoftCodeAnalysis>true</EnableMicrosoftCodeAnalysis>
     <EnableClangTidyCodeAnalysis>false</EnableClangTidyCodeAnalysis>
@@ -91,7 +91,7 @@
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)bin\build\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)-$(Configuration)</TargetName>
-    <IncludePath>C:\Libraries\boost_1_74_0;$(SolutionDir)third_party\openssl\include;$(SolutionDir)third_party\protobuf\$(Configuration)\include;$(SolutionDir)third_party\rapidjson\include;$(SolutionDir)third_party\imgui\include;$(SolutionDir)third_party\glew\include;$(SolutionDir)third_party\glfw\include;$(SolutionDir)third_party\miniz\include;$(SolutionDir)third_party\iconfont_cpp_headers\include;$(SolutionDir)third_party\skyr-url\include;$(SolutionDir)src\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Libraries\boost_1_74_0;$(SolutionDir)third_party\openssl\include;$(SolutionDir)third_party\protobuf\$(Configuration)\include;$(SolutionDir)third_party\rapidjson\include;$(SolutionDir)third_party\imgui\include;$(SolutionDir)third_party\glew\include;$(SolutionDir)third_party\glfw\include;$(SolutionDir)third_party\miniz\include;$(SolutionDir)third_party\iconfont_cpp_headers\include;$(SolutionDir)third_party\skyr-url\include;$(SolutionDir)src\include;$(SolutionDir)data;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Libraries\boost_1_74_0\lib64-msvc-14.2;$(SolutionDir)third_party\openssl\lib\$(Platform)\$(Configuration);$(SolutionDir)third_party\protobuf\$(Configuration);$(SolutionDir)third_party\imgui\lib\$(Configuration);$(SolutionDir)third_party\glfw\lib\$(Configuration);$(SoltutionDir)third_party\glew\lib\$(Configuration);$(SolutionDir)third_party\miniz\lib\$(Configuration);$(SolutionDir)third_party\skyr-url\lib\$(Configuration);$(LibraryPath)</LibraryPath>
     <EnableMicrosoftCodeAnalysis>true</EnableMicrosoftCodeAnalysis>
     <EnableClangTidyCodeAnalysis>false</EnableClangTidyCodeAnalysis>
@@ -191,6 +191,7 @@
     <ClCompile Include="src\bind_callback.cc" />
     <ClCompile Include="src\config.cc" />
     <ClCompile Include="src\file.cc" />
+    <ClCompile Include="src\file_handle.cc" />
     <ClCompile Include="src\gui.cc" />
     <ClCompile Include="src\http_client.cc" />
     <ClCompile Include="src\main.cc" />
@@ -215,18 +216,19 @@
     <ClCompile Include="src\zip_file.cc" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="data\resource\resource.h" />
     <ClInclude Include="src\include\addon_updater\addon.h" />
     <ClInclude Include="src\include\addon_updater\bind_callback.h" />
     <ClInclude Include="src\include\addon_updater\config.h" />
     <ClInclude Include="src\include\addon_updater\defer.h" />
     <ClInclude Include="src\include\addon_updater\file.h" />
+    <ClInclude Include="src\include\addon_updater\file_handle.h" />
     <ClInclude Include="src\include\addon_updater\gui.h" />
     <ClInclude Include="src\include\addon_updater\http_client.h" />
     <ClInclude Include="src\include\addon_updater\pch.h" />
     <ClInclude Include="src\include\addon_updater\products.h" />
     <ClInclude Include="src\include\addon_updater\products.pb.h" />
     <ClInclude Include="src\include\addon_updater\rapidjson_util.h" />
+    <ClInclude Include="src\include\addon_updater\resource.h" />
     <ClInclude Include="src\include\addon_updater\resource_loader.h" />
     <ClInclude Include="src\include\addon_updater\singleton.h" />
     <ClInclude Include="src\include\addon_updater\string_util.h" />
@@ -237,11 +239,11 @@
     <ClInclude Include="src\include\addon_updater\zip_file.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="data\resource\resource.rc" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="src\include\addon_updater\rapidjson_util.inl" />
     <None Include="src\include\addon_updater\string_util.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="src\include\addon_updater\resource.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
